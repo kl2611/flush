@@ -6,16 +6,23 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300italic,300,700' rel='stylesheet' type='text/css'>
+
+   <script>
+        <% if logged_in? %>
+            var client = "<%= current_user.username %>";
+            localStorage.setItem("client", client);
+        <% else %>
+            localStorage.removeItem("client");
+        <% end %>
+   </script>
+
 </head>
 <body>
-    <% if current_user %>
-        <script>
-            window.CURRENT_USER_ID = <%= current_user.id %>
-        </script>
-    <% end %>
 
     <%= render partial: "shared/errors" %>
-        <%= yield %>
+
+    <%= yield %>
+
     <!-- <%#= render partial: "shared/footer" %> -->
 </body>
 </html>
