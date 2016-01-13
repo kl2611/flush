@@ -17,4 +17,7 @@
 /tmp
 
 bundle.js
-node_modules
+bundle.js.map
+/node_modules
+
+/config/application.yml
