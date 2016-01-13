@@ -1,0 +1,57 @@
+/* HEADER *************/
+
+.header-wrapper {
+    width: 100%;
+    height: 100px;
+}
+
+.header-container {
+    height: 100%;
+    padding-bottom: 6px;
+    border-bottom: 2px dotted #ADD8E6;
+}
+
+.logo {
+    float: left;
+    margin-top: 30px;
+}
+
+.nav-bar {
+    float: right;
+    margin-top: 53px;
+    text-transform: lowercase;
+    font-size: 20px;
+}
+
+.nav-menu li {
+    font-size: 16px;
+    font-family: 'Inconsolata';
+    list-style: none;
+    display: inline;
+    margin-left: 30px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #9aa2b0
+}
+
+.nav-menu a:hover {
+    color: #a3d9ea;
+}
+
+.search-bar {
+
+}
+
+.search-bar input {
+
+}
+
+.location-bar {
+
+}
+
+.location-bar input {
+
+}
