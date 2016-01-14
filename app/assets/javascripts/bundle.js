@@ -56,7 +56,7 @@
 	var Home = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/home/home\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var SpotStore = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./stores/spot\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var TagStore = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./stores/tag\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	var TagUtil = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./util/tag_util\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var TagUtil = __webpack_require__(159);
 	var ReviewStore = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./stores/review\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var SpotDetail = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/spots/spotDetail\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var App = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/app\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
@@ -19673,6 +19673,12 @@
 	'use strict';
 	
 	module.exports = __webpack_require__(3);
+
+
+/***/ },
+/* 159 */
+/***/ function(module, exports) {
+
 
 
 /***/ }
