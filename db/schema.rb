@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160114010444) do
+ActiveRecord::Schema.define(version: 20160114051038) do
 
   create_table "pictures", force: :cascade do |t|
     t.string   "name",           null: false
@@ -35,6 +35,19 @@ ActiveRecord::Schema.define(version: 20160114010444) do
 
   add_index "reviews", ["spot_id"], name: "index_reviews_on_spot_id"
   add_index "reviews", ["user_id"], name: "index_reviews_on_user_id"
+
+  create_table "spot_addresses", force: :cascade do |t|
+    t.integer  "spot_id",                             null: false
+    t.string   "street_address",                      null: false
+    t.string   "city",           default: "New York"
+    t.string   "state",          default: "NY"
+    t.integer  "zip",                                 null: false
+    t.string   "neighborhood"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "spot_addresses", ["spot_id"], name: "index_spot_addresses_on_spot_id", unique: true
 
   create_table "spots", force: :cascade do |t|
     t.string   "name",                        null: false
