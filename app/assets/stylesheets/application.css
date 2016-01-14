@@ -21,3 +21,105 @@
 body, h1, h2, h3, h4, h5, h6, p, span, a {
   font-family: "Roboto", sans-serif;
 }
+
+body {
+    margin-left: 150px;
+    margin-right: 150px;
+}
+
+/* HEADER *************/
+.header-wrapper {
+    width: 100%;
+    height: 100px;
+}
+
+.header-container {
+    height: 100%;
+    padding-bottom: 6px;
+    border-bottom: 2px dotted #ADD8E6;
+}
+
+.logo {
+    float: left;
+    margin-top: 30px;
+}
+
+.logo h1 {
+    text-transform: uppercase;
+    font-family: 'Inconsolata';
+    letter-spacing: 4px;
+    font-size: 40px;
+}
+
+.logo h1 a {
+    text-decoration: none;
+    color: #a3d9ea;
+}
+
+.logo h1 a:hover {
+    color: #eab4a3;
+}
+
+.nav-bar {
+    float: right;
+    margin-top: 53px;
+    text-transform: lowercase;
+    font-size: 20px;
+}
+
+.nav-menu li {
+    font-size: 16px;
+    font-family: 'Inconsolata';
+    list-style: none;
+    display: inline;
+    margin-left: 30px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #9aa2b0
+}
+
+.nav-menu a:hover {
+    color: #a3d9ea;
+}
+
+/* CONTENT *************/
+.content-wrapper {
+    width: 100%;
+    height: 400px;
+    padding-bottom: 40px;
+}
+
+.content-container {
+    height: 100%;
+    font-family: "Inconsolata";
+    color: #9aa2b0;
+}
+
+.content-container h3 {
+    padding-top: 0px;
+    font-family: "Inconsolata";
+    font-size: 20px;
+}
+
+/* FOOTER *************/
+.footer-wrapper {
+    height: 40px;
+    width: 100%;
+    position: absolute;
+    margin-bottom: 0px;
+    background-color: #d4ebf2;
+}
+
+.footer-container {
+    height: 100%;
+    padding-top: 20px;
+    text-align: center;
+    font-family: "Inconsolata";
+    background-color: #d4ebf2;
+}
+
+.footer-container li {
+    list-style: none;
+}

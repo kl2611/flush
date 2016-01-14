@@ -2,35 +2,34 @@
 <html>
 <head>
   <title>Flush</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300italic,300,700' rel='stylesheet' type='text/css'>
 
-   <script>
-        <% if logged_in? %>
-            var client = "<%= current_user.username %>";
-            localStorage.setItem("client", client);
-        <% else %>
-            localStorage.removeItem("client");
-        <% end %>
-   </script>
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe7wJ7_QURxvvX7qt0yMQWoDEaGZvzQpQ"
+        type="text/javascript"></script>
 
 </head>
-<body>
 
-  <% if current_user.nil? %>
-    <%= link_to "Sign in", new_session_url %> or
-    <%= link_to "Sign up", new_user_url %>
-  <% else %>
-    <%= current_user.username %>
-    <%= button_to "Logout", session_url, method: :delete %>
-  <% end %>
+<body>
+    <%= render partial: "shared/header" %>
+
+  <p><p>
+
+      <% if current_user.nil? %>
+        <%= link_to "Sign in", new_session_url %> or
+        <%= link_to "Sign up", new_user_url %>
+      <% else %>
+        <%= current_user.username %>
+        <%= button_to "Logout", session_url, method: :delete %>
+      <% end %>
 
     <%= render partial: "shared/errors" %>
 
     <%= yield %>
+    <p>
 
-    <!-- <%#= render partial: "shared/footer" %> -->
+    <%= render partial: "shared/footer" %>
 </body>
 </html>
