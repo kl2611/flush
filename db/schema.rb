@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160114051038) do
+ActiveRecord::Schema.define(version: 20160114075329) do
 
   create_table "pictures", force: :cascade do |t|
     t.string   "name",           null: false
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 20160114051038) do
     t.text     "description"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.float    "lat",         default: 0.0,   null: false
+    t.float    "lng",         default: 0.0,   null: false
   end
 
   add_index "spots", ["name"], name: "index_spots_on_name"

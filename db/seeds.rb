@@ -24,8 +24,8 @@ Review.create (  [spot_id: 1,
 Spot.create([{
                         name: "Lerner Hall",
                         description: "Easily accessible, on Columbia University campus",
-                        lat: 37.74,
-                        lng: -122.4
+                        lat: 40.8068,
+                        lng: 73.9639
                      }
                      ])
 

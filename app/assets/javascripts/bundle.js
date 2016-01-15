@@ -71,13 +71,8 @@
 	  React.createElement(Route, { path: 'spot/:spotId', component: SpotDetail })
 	);
 	
-	document.addEventListener('DOMContentLoaded', function () {
-	  var root = document.getElementById('root');
-	  ReactDOM.render(React.createElement(
-	    Router,
-	    null,
-	    routes
-	  ), root);
+	document.addEventListener("DOMContentLoaded", function () {
+	  ReactDOM.render(routes, document.getElementById('root'));
 	});
 
 /***/ },
