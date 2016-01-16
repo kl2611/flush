@@ -14,5 +14,5 @@ Rails.application.routes.draw do
         resources :tags, only: [:index, :create, :show]
     end
 
-  get "*path", to: "static_pages#index"
+  get "*path", to: "static_pages#root"
 end
