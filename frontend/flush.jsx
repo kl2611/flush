@@ -5,26 +5,28 @@ var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 
-// components required here
-var SpotsSearchIndex = require('./components/spots/spotsSearchIndex');
-var Home = require('./components/home/home');
-var SpotStore = require('./stores/spot');
-var TagStore = require('./stores/tag');
-var TagUtil = require('./util/tag_util');
-var ReviewStore = require('./stores/review');
-var SpotDetail = require('./components/spots/spotDetail');
-var App = require('./components/app');
-var SpotRequestForm = require('./components/spots/spotRequest');
+var SpotIndex = require('./components/spots/SpotsIndex');
+var SpotsSearch = require('./components/spots/SpotsSearch');
+var Map = require('./components/spots/Map');
 
-var routes = (
-  <Route path='/' component={App}>
-    <IndexRoute component={Home} />
-    <Route path='spot/request' component={SpotRequestForm} />
-    <Route path='spots/search'  component={SpotsSearchIndex} />
-    <Route path='spot/:spotId' component={SpotDetail} />
-  </Route>
-);
+var App = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <header><h1>Flush</h1></header>
+        {this.props.children}
+      </div>
+    );
+  }
+});
 
-document.addEventListener("DOMContentLoaded", function () {
-  ReactDOM.render(routes, document.getElementById('root'));
+// var routes = (
+//   <Route path="/" component={App}>
+//     <IndexRoute component={SpotsSearch} />
+//   </Route>
+// );
+
+document.addEventListener('DOMContentLoaded', function() {
+  var root = document.getElementById('root');
+  ReactDOM.render(<Map />, root);
 });

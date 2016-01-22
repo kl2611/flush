@@ -6,11 +6,9 @@
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300italic,300,700' rel='stylesheet' type='text/css'>
-
+  <script src="http://widget.cloudinary.com/global/all.js" type="text/javascript"></script>
    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe7wJ7_QURxvvX7qt0yMQWoDEaGZvzQpQ"
         type="text/javascript"></script>
-
-  <script src="http://maps.googleapis.com/maps/api/js"></script>
 
 </head>
 
@@ -21,9 +19,8 @@
 
     <%= render partial: "shared/errors" %>
 
-    <div class="container">
       <%= yield %>
-    </div>
+
     <p>
 
     <%= render partial: "shared/footer" %>

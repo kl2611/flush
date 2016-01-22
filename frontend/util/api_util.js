@@ -1,17 +1,22 @@
 var ApiActions = require('../actions/api_actions');
-var UserActions = require('../actions/user_actions');
+//var UserActions = require('../actions/user_actions');
 
 var ApiUtil = {
-    fetchUsers: function() {
+    fetchSpots: function () {
         $.ajax({
-            url: "api/users/" + userId,
-            data: userId,
-            success: function(user) {
-                UserActions.receiveCurrentUser(user);
-            }
-        });
+            url: "api/spots/" + spotId,
+            data: spotId,
+        })
     },
-
+    // fetchUsers: function() {
+    //     $.ajax({
+    //         url: "api/users/" + userId,
+    //         data: userId,
+    //         success: function(user) {
+    //             UserActions.receiveCurrentUser(user);
+    //         }
+    //     });
+    // },
     destroySession: function(id) {
         $ajax({
             url: "/session",
@@ -24,5 +29,5 @@ var ApiUtil = {
     }
 };
 
-window.ApiUtil = ApiUtil;
+window.exports = ApiUtil;
 module.exports = ApiUtil;
