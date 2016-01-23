@@ -41,13 +41,13 @@ Spot.create ([{
                         lng: -73.9621
                      },
                      {
-                      name: "Dolores Park",
+                      name: "Somewhere on Broadway",
                       description: "Grassy plains cover a whole block. Recreational facilities are well taken care of!",
                       lat: 40.807,
                       lng: -73.9641
                      },
                      {
-                      name: "Mission Cliffs",
+                      name: "Absolute Bagels",
                       description: "Indoor rock climbing gym has challenging courses. Gym equipment is available as well.",
                       lat: 40.81,
                       lng: -73.9639
