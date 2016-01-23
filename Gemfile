@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem "rake", "10.4.2"
 # PostgresSQL as database for ActiveRecord
 gem 'pg'
 # SCSS for stylesheets
@@ -8,8 +9,6 @@ gem 'bootstrap-sass'
 gem 'bcrypt'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.5'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets

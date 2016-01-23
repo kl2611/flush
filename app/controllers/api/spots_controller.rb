@@ -1,6 +1,7 @@
 class Api::SpotsController < ApplicationController
     def index
-        get_spots_from_params
+        #get_spots_from_params
+        @spots = Spot.all
         render :index
     end
 

@@ -8,17 +8,22 @@ function _getCoordsObj(latLng) {
   };
 }
 
-var CENTER = {lat: 40.7127, lng: -74.0059};
+var CENTER = {lat: 40.8081, lng: -73.9621};
 
 var Map = React.createClass({
-    componentDidMount: function(){
+    componentDidMount: function() {
       console.log('map mounted');
-      var mapDOMNode = this.refs.map;
+      var map = ReactDOM.findDOMNode(this.refs.map);
       var mapOptions = {
         center: CENTER,
-        zoom: 13
+        zoom: 15
       };
-      this.map = new google.maps.Map(mapDOMNode, mapOptions);
+      this.map = new google.maps.Map(map, mapOptions);
+      this.registerListeners();
+      this.markers = [];
+      if (this.props.spots) {
+        this.props.spots.forEach(this.createMarkerFromSpot);
+      }
     },
 
   componentDidUpdate: function (oldProps) {
@@ -56,6 +61,22 @@ var Map = React.createClass({
   componentWillUnmount: function(){
     this.markerListener.remove();
     console.log("map UNmounted");
+  },
+
+  registerListeners: function() {
+    var that = this;
+    google.maps.event.addListener(this.map, 'idle', function() {
+      var bounds = that.map.getBounds();
+      var northEast = _getCoordsObj(bounds.getNorthEast());
+      var southWest = _getCoordsObj(bounds.getSouthWest());
+      var bounds = {
+        northEast: northEast,
+        southWest: southWest
+      };
+    });
+    google.maps.event.addListener(this.map, 'click', function(event) {
+      var coords = {lat: event.latLng.lat(), lng: event.latLng.lng() };
+    });
   },
 
   createMarkerFromSpot: function (spot) {

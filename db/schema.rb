@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20160114075329) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "pictures", force: :cascade do |t|
     t.string   "name",           null: false
     t.string   "source",         null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at",     null: false
   end
 
-  add_index "pictures", ["imageable_id"], name: "index_pictures_on_imageable_id"
+  add_index "pictures", ["imageable_id"], name: "index_pictures_on_imageable_id", using: :btree
 
   create_table "reviews", force: :cascade do |t|
     t.integer  "spot_id",                null: false
@@ -33,8 +36,8 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "reviews", ["spot_id"], name: "index_reviews_on_spot_id"
-  add_index "reviews", ["user_id"], name: "index_reviews_on_user_id"
+  add_index "reviews", ["spot_id"], name: "index_reviews_on_spot_id", using: :btree
+  add_index "reviews", ["user_id"], name: "index_reviews_on_user_id", using: :btree
 
   create_table "spot_addresses", force: :cascade do |t|
     t.integer  "spot_id",                             null: false
@@ -47,7 +50,7 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at",                          null: false
   end
 
-  add_index "spot_addresses", ["spot_id"], name: "index_spot_addresses_on_spot_id", unique: true
+  add_index "spot_addresses", ["spot_id"], name: "index_spot_addresses_on_spot_id", unique: true, using: :btree
 
   create_table "spots", force: :cascade do |t|
     t.string   "name",                        null: false
@@ -59,7 +62,7 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.float    "lng",         default: 0.0,   null: false
   end
 
-  add_index "spots", ["name"], name: "index_spots_on_name"
+  add_index "spots", ["name"], name: "index_spots_on_name", using: :btree
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "spot_id",    null: false
@@ -68,8 +71,8 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "taggings", ["spot_id"], name: "index_taggings_on_spot_id"
-  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id"
+  add_index "taggings", ["spot_id"], name: "index_taggings_on_spot_id", using: :btree
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "name",       null: false
@@ -77,7 +80,7 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "tags", ["name"], name: "index_tags_on_name", unique: true
+  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "password_digest", null: false
@@ -87,7 +90,7 @@ ActiveRecord::Schema.define(version: 20160114075329) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "users", ["session_token"], name: "index_users_on_session_token", unique: true
-  add_index "users", ["username"], name: "index_users_on_username", unique: true
+  add_index "users", ["session_token"], name: "index_users_on_session_token", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
 end

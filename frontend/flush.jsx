@@ -28,5 +28,5 @@ var App = React.createClass({
 
 document.addEventListener('DOMContentLoaded', function() {
   var root = document.getElementById('root');
-  ReactDOM.render(<Map />, root);
+  ReactDOM.render(<SpotsSearch />, root);
 });
