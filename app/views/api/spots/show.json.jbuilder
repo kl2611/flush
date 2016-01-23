@@ -6,11 +6,11 @@ json.taggings do
     json.extract! tagging.tag, :name
   end
 end
+
 json.pictures do
   json.array! @spot.pictures do |picture|
     json.extract! picture, :id, :source
   end
 end
-json.address do
-  json.extract! @spot.spot_address, :street_address, :city, :state, :zip, :neighborhood
-end
+
+

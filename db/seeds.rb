@@ -183,7 +183,7 @@ Tagging.create([
                          ])
 
 50.times do
-    user = User.create (
+        User.create (
         {username: "username",
         password: "mystery"})
 end
