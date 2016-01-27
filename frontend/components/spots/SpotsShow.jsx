@@ -46,8 +46,8 @@ var SpotShow = React.createClass({
 
         return (
             <div>
-                <Link to = "/">Back to Spots Index</Link>
-                <Map className="map">
+                <Link to = "/">Back to Restrooms Index</Link>
+                <Map className="map"
                     singleSpot={true}
                     spots={spots}
                     onMapClick={this.handleMapClick} />
