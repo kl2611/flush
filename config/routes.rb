@@ -8,8 +8,8 @@ Rails.application.routes.draw do
         resources :users, only: [:show]
         resources :spots, only: [:index, :new, :create, :show]
 
-        # get 'spots/search', to: 'spots#search'
-        # resources :reviews, only: [:index, :create, :show, :update, :destroy]
+        get 'spots/search', to: 'spots#search'
+        resources :reviews, only: [:index, :create, :show, :update, :destroy]
         # resources :taggings, only: [:index, :create, :show, :destroy]
         # resources :tags, only: [:index, :create, :show]
     end

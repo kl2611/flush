@@ -9,7 +9,7 @@ json.array! @reviews do |review|
     end
 
     if current_user
-        json.belongsToCurrentUser review.user.id == current.user.id
+        json.belongsToCurrentUser review.user.id == current_user.id
     end
 
     date_array = review[:updated_at].to_s(:db).split.first.split("-")
