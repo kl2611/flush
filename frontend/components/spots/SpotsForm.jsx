@@ -45,13 +45,16 @@ var SpotForm = React.createClass({
                     <label>Description</label>
                     <input type="text" valueLink ={this.linkState('description')} />
                     <br />
+                    <label>City</label>
+                    <input type="text" valueLink={this.linkState('city')} />
+                    <br />
                     <label>Latitude</label>
                     <input type="text"  value={lat}/>
                     <br/>
                     <label>Longitude</label>
                     <input type="text" value={lng}/>
                     <br/>
-                    <input type="submit" value="create spot"/>
+                    <input type="submit" value="create spot" />
                 </form>
                 <button onClick={this.handleCancel}>Cancel</button>
             </div>

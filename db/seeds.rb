@@ -73,29 +73,21 @@ Spot.create ([{
 
 SpotAddress.create ([{
                                     spot_id: 1,
-                                    street_address: "Broadway",
-                                    zip: 10027,
                                     city: "New York"
                                     },
 
                                     {
                                     spot_id: 2,
-                                    street_address: "116th Street",
-                                    zip: 10027,
                                     city: "New York"
                                     },
 
                                     {
                                     spot_id: 3,
-                                    street_address: "116th Street",
-                                    zip: 10027,
                                     city: "New York"
                                     },
 
                                     {
                                     spot_id: 4,
-                                    street_address: "116th Street",
-                                    zip: 10027,
                                     city: "New York"
                                     }
                                     ])
@@ -206,5 +198,4 @@ Tagging.create([
         password: "mystery"})
 end
 
-NYC_ZIPS = [10027]
 CITIES = ["New York"]

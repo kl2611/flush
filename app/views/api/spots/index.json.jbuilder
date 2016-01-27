@@ -14,7 +14,4 @@ json.array! @spots do |spot|
     end
   end
 
-  json.address do
-    json.extract! spot.spot_address, :street_address, :city, :state, :zip, :neighborhood
-  end
 end
