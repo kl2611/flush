@@ -44,7 +44,7 @@ var ReviewForm = React.createClass({
                     <textarea
                         cols='30'
                         rows='10'
-                        valueLink={this.linkState('body')}></textarea>
+                        valueLink={this.linkState('comment')}></textarea>
                     <br />
                     <input type="submit" />
                 </form>

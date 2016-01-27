@@ -31757,7 +31757,7 @@
 	                React.createElement('textarea', {
 	                    cols: '30',
 	                    rows: '10',
-	                    valueLink: this.linkState('body') }),
+	                    valueLink: this.linkState('comment') }),
 	                React.createElement('br', null),
 	                React.createElement('input', { type: 'submit' })
 	            ),

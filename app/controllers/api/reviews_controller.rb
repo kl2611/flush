@@ -1,4 +1,5 @@
 class Api::ReviewsController < ApplicationController
+
     def index
         get_reviews_from_params
         render :index
