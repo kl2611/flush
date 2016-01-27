@@ -55,6 +55,7 @@
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(218);
 	var SpotShow = __webpack_require__(240);
+	var ReviewForm = __webpack_require__(242);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -82,7 +83,11 @@
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: SpotsSearch }),
 	  React.createElement(Route, { path: 'spots/new', component: SpotForm }),
-	  React.createElement(Route, { path: 'spots/:spotId', component: SpotShow })
+	  React.createElement(
+	    Route,
+	    { path: 'spots/:spotId', component: SpotShow },
+	    React.createElement(Route, { path: 'review', components: ReviewForm })
+	  )
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -24843,6 +24848,7 @@
 	var AppDispatcher = __webpack_require__(209);
 	var SpotConstants = __webpack_require__(213);
 	var SpotStore = new Store(AppDispatcher);
+	var CHANGE_EVENT = "change";
 	
 	var _spots = [];
 	var _currentSpot = null;
@@ -24860,11 +24866,12 @@
 	        case SpotConstants.SPOT_RECEIVED:
 	            resetSpot(payload.spot);
 	            SpotStore.__emitChange();
+	            break;
 	    }
 	};
 	
 	var resetSpots = function (spots) {
-	    _spots = spots;
+	    _spots = spots.slice(0);
 	};
 	
 	var updateSpot = function (newSpot) {
@@ -31691,6 +31698,223 @@
 	});
 	
 	module.exports = Spot;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(214);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(243);
+	
+	var ReviewForm = React.createClass({
+	    displayName: 'ReviewForm',
+	
+	    mixins: [LinkedStateMixin, ReactRouter.history],
+	    getInitialState: function () {
+	        return { rating: 5, body: "" };
+	    },
+	
+	    navigateToSpotShow: function () {
+	        var spotUrl = "/spots/" + this.props.params.spotId;
+	        this.props.history.pushState(null, spotUrl);
+	    },
+	
+	    handleCancel: function (event) {
+	        event.preventDefault();
+	        this.navigatetoSpotShow();
+	    },
+	
+	    handleSubmit: function (event) {
+	        event.preventDefault();
+	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
+	        ReviewUtil.createReview(review);
+	        this.navigateToSpotShow();
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { className: 'review-form' },
+	            React.createElement(
+	                'form',
+	                { onSubmit: this.handleSubmit },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Rating'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Comment'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('textarea', {
+	                    cols: '30',
+	                    rows: '10',
+	                    valueLink: this.linkState('body') }),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'submit' })
+	            ),
+	            React.createElement(
+	                'button',
+	                { onClick: this.handleCancel },
+	                'Cancel'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewForm;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ReviewActions = __webpack_require__(244);
+	
+	var ReviewUtil = {
+	    createReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { review: review },
+	            success: function (review) {
+	                ReviewActions.receiveSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            type: "PATCH",
+	            dataType: "json",
+	            data: { review: review },
+	            success: function (reviewData) {
+	                ReviewActions.updatesingleReview(reviewData);
+	            }
+	        });
+	    },
+	
+	    fetchReviews: function () {
+	        $.ajax({
+	            url: 'api/reviews',
+	            success: function (reviews) {
+	                ReviewActions.receiveAllReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            data: { review: review },
+	            type: "DELETE",
+	            dataType: "json",
+	            success: function (review) {
+	                ReviewActions.deleteSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    fetchUserReviews: function (userId) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { user_id: userId },
+	            success: function (reviews) {
+	                ReviewActions.receiveUserReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    fetchSpotReviews: function (spotId) {
+	        $.ajax({
+	            url: "api/reviews",
+	            dataType: 'json',
+	            success: function (reviews) {
+	                ReviewActions.receiveSpotReviews(reviews);
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = ReviewUtil;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var ReviewConstants = __webpack_require__(245);
+	
+	var ReviewActions = {
+	    receiveAllReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEWS_RECEIVED,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEW_RECEIVED,
+	            review: review
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.UPDATE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.DELETE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    receiveUserReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSpotsReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
+	            reviews: reviews
+	        });
+	    }
+	};
+	
+	module.exports = ReviewActions;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports) {
+
+	ReviewConstants = {
+	    REVIEWS_RECEIVED: "REVIEWS_RECEIVED",
+	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
+	    UPDATE_REVIEW: "UPDATE_REVIEW",
+	    DELETE_REVIEW: "DELETE_REVIEW",
+	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
+	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
+	};
+	
+	module.exports = ReviewConstants;
 
 /***/ }
 /******/ ]);

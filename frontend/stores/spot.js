@@ -1,7 +1,8 @@
 var Store = require('flux/utils').Store;
-var AppDispatcher = require('../dispatcher/dispatcher');
+var AppDispatcher = require('../dispatcher/dispatcher.js');
 var SpotConstants = require('../constants/spot_constants');
 var SpotStore = new Store(AppDispatcher);
+var CHANGE_EVENT = "change";
 
 var _spots = [];
 var _currentSpot = null;
@@ -19,11 +20,12 @@ switch(payload.actionType) {
     case SpotConstants.SPOT_RECEIVED:
         resetSpot(payload.spot);
         SpotStore.__emitChange();
+        break;
     }
 };
 
 var resetSpots = function(spots){
-    _spots = spots;
+    _spots = spots.slice(0);
 };
 
 var updateSpot = function(newSpot) {
@@ -35,7 +37,7 @@ var resetSpot = function(newSpot) {
 };
 
 SpotStore.all = function () {
-    return _spots.slice(0)
+    return _spots.slice(0);
 };
 
 SpotStore.current = function() {

@@ -9,6 +9,7 @@ var IndexRoute = ReactRouter.IndexRoute;
 var SpotForm = require('./components/spots/SpotsForm');
 var SpotsSearch = require('./components/spots/SpotsSearch');
 var SpotShow = require('./components/spots/SpotsShow');
+var ReviewForm = require('./components/reviews/ReviewsForm');
 
 var App = React.createClass({
   render: function() {
@@ -25,7 +26,9 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={SpotsSearch} />
     <Route path="spots/new" component={SpotForm} />
-    <Route path="spots/:spotId" component={SpotShow} />
+    <Route path="spots/:spotId" component={SpotShow}>
+        <Route path="review" components={ReviewForm} />
+    </Route>
   </Route>
 );
 
