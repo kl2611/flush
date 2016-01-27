@@ -1,13 +1,14 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
+var root = document.getElementById('root')
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 
-var SpotIndex = require('./components/spots/SpotsIndex');
+var SpotForm = require('./components/spots/SpotsForm');
 var SpotsSearch = require('./components/spots/SpotsSearch');
-var Map = require('./components/spots/Map');
+
 
 var App = React.createClass({
   render: function() {
@@ -20,13 +21,14 @@ var App = React.createClass({
   }
 });
 
-// var routes = (
-//   <Route path="/" component={App}>
-//     <IndexRoute component={SpotsSearch} />
-//   </Route>
-// );
+var routes = (
+  <Route path="/" component={App}>
+    <IndexRoute component={SpotsSearch} />
+    <Route path="spots/new" component={SpotForm} />
+  </Route>
+);
 
 document.addEventListener('DOMContentLoaded', function() {
   var root = document.getElementById('root');
-  ReactDOM.render(<SpotsSearch />, root);
+  ReactDOM.render(<Router>{routes}</Router>, root);
 });

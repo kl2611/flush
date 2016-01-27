@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   resources :users, only: [:create, :new, :show, :index]
 
     namespace :api, defaults: { format: :json } do
-        resources :users, only: [:index, :show]
+        resources :users, only: [:show]
         resources :spots, only: [:index, :new, :create, :show]
 
         # get 'spots/search', to: 'spots#search'

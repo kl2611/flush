@@ -1,7 +1,7 @@
 var React = require('react');
 var SpotStore = require('../../stores/spot');
 var SpotUtil = require('../../util/spot_util');
-//var SpotIndexItem = require('./spotIndexItem');
+var SpotIndexItem = require('./SpotsIndexItem.js');
 
 var SpotIndex = React.createClass({
     getInitialState: function() {
@@ -33,7 +33,7 @@ var SpotIndex = React.createClass({
             {
               this.props.spots.map(function(spot){
                 var boundClick = handleItemClick.bind(null, spot);
-                return <IndexItem
+                return <SpotIndexItem
                   onClick={boundClick}
                   spot={spot}
                   key={spot.id} />

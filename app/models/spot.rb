@@ -20,4 +20,8 @@ class Spot < ActiveRecord::Base
         partial = "%#{str.downcase}%"
         Spot.where("lower(name) LIKE ?", partial)
     end
+
+    def average_rating
+        reviews.average(:rating)
+    end
 end

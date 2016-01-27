@@ -26,6 +26,12 @@ var SpotUtil = {
                 SpotActions.receiveSingleSpot(spot);
             }
         });
+    },
+
+    createSpot: function(data){
+        $.post('api/spots', { spot: data }, function(spot) {
+            SpotActions.receiveAllSpots([spot]);
+        });
     }
 };
 

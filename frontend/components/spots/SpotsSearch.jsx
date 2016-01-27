@@ -42,7 +42,7 @@ var SpotsSearch = React.createClass({
         this.props.history.pushState(null, "spots/new", coords);
     },
 
-    handleMarkerClick: function (bench) {
+    handleMarkerClick: function (spot) {
         this.props.history.pushState(null, "spots/" + spot.id);
     },
 
@@ -54,7 +54,7 @@ var SpotsSearch = React.createClass({
                     onMapClick={this.handleMapClick}
                     onMarkerClick={this.handleMarkerClick}
                     spots={this.state.spots}/>
-                <div className = "Map">
+                <div className = "map">
                     <SpotsIndex spots={this.state.spots} history={this.props.history} />
                 </div>
             </div>
