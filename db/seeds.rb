@@ -25,6 +25,24 @@ Review.create ([ {spot_id: 1,
                             user_id: 1,
                             rating: 2,
                             comment: "Meh"
+                            },
+
+                            {spot_id: 3,
+                            user_id: 1,
+                            rating: 3,
+                            comment: "Average"
+                            },
+
+                            {spot_id: 4,
+                            user_id: 1,
+                            rating: 5,
+                            comment: "very clean!"
+                            },
+
+                            {spot_id: 5,
+                            user_id: 1,
+                            rating: 4,
+                            comment: "nice"
                             }
                         ])
 
@@ -57,28 +75,28 @@ SpotAddress.create ([{
                                     spot_id: 1,
                                     street_address: "Broadway",
                                     zip: 10027,
-                                    neighborhood: "Morningside Heights"
+                                    city: "New York"
                                     },
 
                                     {
                                     spot_id: 2,
                                     street_address: "116th Street",
                                     zip: 10027,
-                                    neighborhood: "Morningside Heights"
+                                    city: "New York"
                                     },
 
                                     {
                                     spot_id: 3,
                                     street_address: "116th Street",
                                     zip: 10027,
-                                    neighborhood: "Morningside Heights"
+                                    city: "New York"
                                     },
 
                                     {
                                     spot_id: 4,
                                     street_address: "116th Street",
                                     zip: 10027,
-                                    neighborhood: "Morningside Heights"
+                                    city: "New York"
                                     }
                                     ])
 
@@ -189,5 +207,4 @@ Tagging.create([
 end
 
 NYC_ZIPS = [10027]
-
-NYC_NEIGHBORHOODS = ["Morningside Heights", "Upper West Side", "Upper East Side", "Harlem"]
+CITIES = ["New York"]
