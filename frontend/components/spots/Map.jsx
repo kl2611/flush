@@ -59,7 +59,7 @@ var Map = React.createClass({
   },
 
   componentWillUnmount: function(){
-    this.markerListener.remove();
+    //this.markerListener.remove();
     console.log("map UNmounted");
   },
 
@@ -76,6 +76,7 @@ var Map = React.createClass({
     });
     google.maps.event.addListener(this.map, 'click', function(event) {
       var coords = {lat: event.latLng.lat(), lng: event.latLng.lng() };
+      that.props.onMapClick(coords);
     });
   },
 

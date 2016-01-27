@@ -24101,14 +24101,14 @@
 	                    null,
 	                    'Latitude'
 	                ),
-	                React.createElement('input', { type: 'text', value: lat }),
+	                React.createElement('input', { type: 'text', disabled: 'true', value: lat }),
 	                React.createElement('br', null),
 	                React.createElement(
 	                    'label',
 	                    null,
 	                    'Longitude'
 	                ),
-	                React.createElement('input', { type: 'text', value: lng }),
+	                React.createElement('input', { type: 'text', disabled: 'true', value: lng }),
 	                React.createElement('br', null),
 	                React.createElement('input', { type: 'submit', value: 'create spot' })
 	            ),
@@ -31277,7 +31277,7 @@
 	  },
 	
 	  componentWillUnmount: function () {
-	    this.markerListener.remove();
+	    //this.markerListener.remove();
 	    console.log("map UNmounted");
 	  },
 	
@@ -31294,6 +31294,7 @@
 	    });
 	    google.maps.event.addListener(this.map, 'click', function (event) {
 	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+	      that.props.onMapClick(coords);
 	    });
 	  },
 	
