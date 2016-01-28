@@ -25,7 +25,7 @@ var SpotShow = React.createClass({
               return res;
     },
     componentDidMount: function() {
-        this.spotListener = SpotStore.addListener(this._spotChanaged);
+        this.spotListener = SpotStore.addListener(this._spotChanged);
         SpotUtil.fetchSpots();
     },
     componentWillUnmount: function () {

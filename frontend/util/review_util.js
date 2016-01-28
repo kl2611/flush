@@ -20,7 +20,7 @@ var ReviewUtil = {
             dataType: "json",
             data: {review: review},
             success: function(reviewData) {
-                ReviewActions.updatesingleReview(reviewData);
+                ReviewActions.updateSingleReview(reviewData);
             }
         });
     },
@@ -63,6 +63,17 @@ var ReviewUtil = {
             dataType: 'json',
             success: function(reviews) {
                 ReviewActions.receiveSpotReviews(reviews);
+            }
+        });
+    },
+
+    fetchRecentReviews: function(number) {
+        $.ajax({
+            url: 'api/reviews',
+            dataType: 'json',
+            data: {number: number},
+            success: function(reviews) {
+                ReviewActions.receiveRecentReviews(reviews);
             }
         });
     }

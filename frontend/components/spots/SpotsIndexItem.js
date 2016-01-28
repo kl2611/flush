@@ -10,19 +10,12 @@ String.prototype.capitalizeFirstLetter = function() {
 
 var SpotIndexItem = React.createClass({
     mixins: [History],
-
-    getInitialState: function() {
-        return  { avg: "No rating yet!", reviewCount: 0} ;
-    },
-
-    showDetail: function() {
-        this.history.pushState(null, 'spot/' + this.props.spot.id, {});
-    },
-
     render: function() {
         var spot = this.props.spot;
         return (
             <div className="spot-index-item" onClick={this.props.onClick}>
+                {spot.name}
+                <br />
                 {spot.description}
                 <br />
                 Rating: {spot.average_rating || "No reviews yet"}

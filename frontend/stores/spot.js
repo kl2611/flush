@@ -7,25 +7,8 @@ var CHANGE_EVENT = "change";
 var _spots = [];
 var _currentSpot = null;
 
-SpotStore.__onDispatch = function (payload) {
-switch(payload.actionType) {
-    case SpotConstants.SPOTS_RECEIVED:
-        resetSpots(payload.spots);
-        SpotStore.__emitChange();
-        break;
-    case SpotConstants.SPOT_UPDATED:
-        updateSpot(payload.spot);
-        SpotStore.__emitChange();
-        break;
-    case SpotConstants.SPOT_RECEIVED:
-        resetSpot(payload.spot);
-        SpotStore.__emitChange();
-        break;
-    }
-};
-
-var resetSpots = function(spots){
-    _spots = spots.slice(0);
+var resetSpots = function(newSpots){
+    _spots = newSpots;
 };
 
 var updateSpot = function(newSpot) {
@@ -49,6 +32,23 @@ SpotStore.find = function (id) {
         if (_spots[i].id === id) {
             return _spots[i];
         }
+    }
+};
+
+SpotStore.__onDispatch = function (payload) {
+switch(payload.actionType) {
+    case SpotConstants.SPOTS_RECEIVED:
+        resetSpots(payload.spots);
+        SpotStore.__emitChange();
+        break;
+    case SpotConstants.SPOT_UPDATED:
+        updateSpot(payload.spot);
+        SpotStore.__emitChange();
+        break;
+    case SpotConstants.SPOT_RECEIVED:
+        resetSpot(payload.spot);
+        SpotStore.__emitChange();
+        break;
     }
 };
 

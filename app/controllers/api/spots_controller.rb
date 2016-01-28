@@ -30,8 +30,7 @@ class Api::SpotsController < ApplicationController
             :name,
             :lat,
             :lng,
-            :description,
-            :seating
+            :description
         )
     end
 

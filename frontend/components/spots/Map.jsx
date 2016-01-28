@@ -64,6 +64,11 @@ var Map = React.createClass({
     });
     toAdd.forEach(this.createMarkerFromSpot);
     toRemove.forEach(this.removeMarker);
+
+    if (this.props.singleSpot) {
+      this.map.setOptions({draggable: false});
+      this.map.setCenter(this.centerSpotCoords());
+    }
   },
 
   componentWillUnmount: function(){

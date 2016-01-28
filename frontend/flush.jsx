@@ -1,11 +1,11 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
-var root = document.getElementById('root')
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 
+// components
 var SpotForm = require('./components/spots/SpotsForm');
 var SpotsSearch = require('./components/spots/SpotsSearch');
 var SpotShow = require('./components/spots/SpotsShow');
@@ -15,7 +15,6 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <header><h1>Flush</h1></header>
         {this.props.children}
       </div>
     );

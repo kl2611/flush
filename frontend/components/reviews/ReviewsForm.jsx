@@ -6,7 +6,7 @@ var ReviewUtil = require('../../util/review_util');
 var ReviewForm = React.createClass({
     mixins: [LinkedStateMixin, ReactRouter.history],
     getInitialState: function () {
-        return { rating: 5, body: "" };
+        return { rating: 5, comment: "" };
     },
 
     navigateToSpotShow: function () {
@@ -16,7 +16,7 @@ var ReviewForm = React.createClass({
 
     handleCancel: function(event) {
         event.preventDefault();
-        this.navigatetoSpotShow();
+        this.navigateToSpotShow();
     },
 
     handleSubmit: function(event) {

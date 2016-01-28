@@ -47,11 +47,11 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var ReactRouter = __webpack_require__(159);
-	var root = document.getElementById('root');
 	var Router = ReactRouter.Router;
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	
+	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(218);
 	var SpotShow = __webpack_require__(240);
@@ -64,15 +64,6 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(
-	        'header',
-	        null,
-	        React.createElement(
-	          'h1',
-	          null,
-	          'Flush'
-	        )
-	      ),
 	      this.props.children
 	    );
 	  }
@@ -24043,9 +24034,7 @@
 	        router: React.PropTypes.func
 	    },
 	    getInitialState: function () {
-	        return {
-	            name: ""
-	        };
+	        return { name: "" };
 	    },
 	
 	    handleSubmit: function (event) {
@@ -24853,25 +24842,8 @@
 	var _spots = [];
 	var _currentSpot = null;
 	
-	SpotStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case SpotConstants.SPOTS_RECEIVED:
-	            resetSpots(payload.spots);
-	            SpotStore.__emitChange();
-	            break;
-	        case SpotConstants.SPOT_UPDATED:
-	            updateSpot(payload.spot);
-	            SpotStore.__emitChange();
-	            break;
-	        case SpotConstants.SPOT_RECEIVED:
-	            resetSpot(payload.spot);
-	            SpotStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	var resetSpots = function (spots) {
-	    _spots = spots.slice(0);
+	var resetSpots = function (newSpots) {
+	    _spots = newSpots;
 	};
 	
 	var updateSpot = function (newSpot) {
@@ -24895,6 +24867,23 @@
 	        if (_spots[i].id === id) {
 	            return _spots[i];
 	        }
+	    }
+	};
+	
+	SpotStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case SpotConstants.SPOTS_RECEIVED:
+	            resetSpots(payload.spots);
+	            SpotStore.__emitChange();
+	            break;
+	        case SpotConstants.SPOT_UPDATED:
+	            updateSpot(payload.spot);
+	            SpotStore.__emitChange();
+	            break;
+	        case SpotConstants.SPOT_RECEIVED:
+	            resetSpot(payload.spot);
+	            SpotStore.__emitChange();
+	            break;
 	    }
 	};
 	
@@ -31353,29 +31342,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SpotStore = __webpack_require__(219);
-	var SpotUtil = __webpack_require__(207);
 	var SpotIndexItem = __webpack_require__(238);
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
-	
-	    getInitialState: function () {
-	        return { spots: SpotStore.all() };
-	    },
-	
-	    _onChange: function () {
-	        this.setState({ spots: SpotStore.all() });
-	    },
-	
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
 	
 	    handleItemClick: function (spot) {
 	        this.props.history.pushState(null, "spots/" + spot.id);
@@ -31422,20 +31392,13 @@
 	    displayName: 'SpotIndexItem',
 	
 	    mixins: [History],
-	
-	    getInitialState: function () {
-	        return { avg: "No rating yet!", reviewCount: 0 };
-	    },
-	
-	    showDetail: function () {
-	        this.history.pushState(null, 'spot/' + this.props.spot.id, {});
-	    },
-	
 	    render: function () {
 	        var spot = this.props.spot;
 	        return React.createElement(
 	            'div',
 	            { className: 'spot-index-item', onClick: this.props.onClick },
+	            spot.name,
+	            React.createElement('br', null),
 	            spot.description,
 	            React.createElement('br', null),
 	            'Rating: ',
@@ -31521,6 +31484,11 @@
 	    });
 	    toAdd.forEach(this.createMarkerFromSpot);
 	    toRemove.forEach(this.removeMarker);
+	
+	    if (this.props.singleSpot) {
+	      this.map.setOptions({ draggable: false });
+	      this.map.setCenter(this.centerSpotCoords());
+	    }
 	  },
 	
 	  componentWillUnmount: function () {
@@ -31613,7 +31581,7 @@
 	        return res;
 	    },
 	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._spotChanaged);
+	        this.spotListener = SpotStore.addListener(this._spotChanged);
 	        SpotUtil.fetchSpots();
 	    },
 	    componentWillUnmount: function () {
@@ -31660,41 +31628,73 @@
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var Link = ReactRouter.Link;
+	
+	var Review = __webpack_require__(249);
+	var ReviewStore = __webpack_require__(246);
 	
 	var Spot = React.createClass({
-	    displayName: 'Spot',
+	  displayName: 'Spot',
 	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'ul',
-	                null,
-	                React.createElement(
-	                    'li',
-	                    null,
-	                    'Description: ',
-	                    this.props.spot.description
-	                ),
-	                React.createElement(
-	                    'li',
-	                    null,
-	                    'Latitude: ',
-	                    this.props.spot.lat
-	                ),
-	                React.createElement(
-	                    'li',
-	                    null,
-	                    'Longitude: ',
-	                    this.props.spot.lng
-	                )
-	            )
-	        );
-	    }
+	  render: function () {
+	    var spotRating = ReviewStore.averageRating();
+	    var reviews = this.props.spot.reviews || [];
+	    var Link = ReactRouter.Link;
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        null,
+	        React.createElement(
+	          'li',
+	          null,
+	          'Rating: ',
+	          this.props.spot.average_rating || "No reviews yet"
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Name: ',
+	          this.props.spot.name
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Description: ',
+	          this.props.spot.description
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Latitude: ',
+	          this.props.spot.lat
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Longitude: ',
+	          this.props.spot.lng
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'reviews' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Reviews'
+	        ),
+	        reviews.map(function (review) {
+	          return React.createElement(Review, _extends({ key: review.id }, review));
+	        })
+	      )
+	    );
+	  }
 	});
 	
 	module.exports = Spot;
@@ -31713,7 +31713,7 @@
 	
 	    mixins: [LinkedStateMixin, ReactRouter.history],
 	    getInitialState: function () {
-	        return { rating: 5, body: "" };
+	        return { rating: 5, comment: "" };
 	    },
 	
 	    navigateToSpotShow: function () {
@@ -31723,7 +31723,7 @@
 	
 	    handleCancel: function (event) {
 	        event.preventDefault();
-	        this.navigatetoSpotShow();
+	        this.navigateToSpotShow();
 	    },
 	
 	    handleSubmit: function (event) {
@@ -31798,7 +31798,7 @@
 	            dataType: "json",
 	            data: { review: review },
 	            success: function (reviewData) {
-	                ReviewActions.updatesingleReview(reviewData);
+	                ReviewActions.updateSingleReview(reviewData);
 	            }
 	        });
 	    },
@@ -31843,6 +31843,17 @@
 	                ReviewActions.receiveSpotReviews(reviews);
 	            }
 	        });
+	    },
+	
+	    fetchRecentReviews: function (number) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { number: number },
+	            success: function (reviews) {
+	                ReviewActions.receiveRecentReviews(reviews);
+	            }
+	        });
 	    }
 	};
 	
@@ -31884,6 +31895,13 @@
 	        });
 	    },
 	
+	    receiveRecentReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
 	    receiveUserReviews: function (reviews) {
 	        AppDispatcher.dispatch({
 	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
@@ -31910,11 +31928,265 @@
 	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
 	    UPDATE_REVIEW: "UPDATE_REVIEW",
 	    DELETE_REVIEW: "DELETE_REVIEW",
+	    RECEIVE_RANDOM_REVIEWS: "RECEIVE_RANDOM_REVIEWS",
 	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
 	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
 	};
 	
 	module.exports = ReviewConstants;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(220).Store;
+	var AppDispatcher = __webpack_require__(209);
+	var _reviews = [];
+	var _myReviews = [];
+	var _recentReviews = [];
+	var _userReviews = [];
+	var _spotReviews = [];
+	var currentReview = null;
+	
+	var ReviewConstants = __webpack_require__(245);
+	var ReviewStore = new Store(AppDispatcher);
+	
+	var resetReviews = function (reviews) {
+	    _reviews = reviews.slice(0);
+	    findMyReviews();
+	};
+	
+	var resetUserReviews = function (newReviews) {
+	    _userReviews = newReviews;
+	};
+	
+	var resetSpotReviews = function (newReviews) {
+	    _spotReviews = newReviews;
+	};
+	
+	var addReview = function (newReview) {
+	    _reviews.push(newReview);
+	    findMyReviews();
+	    _recentReviews.splice(-1, 1);
+	    _recentReviews.unshift(newReview);
+	    _userReviews.push(newReview);
+	};
+	
+	var updateReview = function (editedReview) {
+	    var targetId = editedReview.id;
+	    _reviews.forEach(function (review, idx) {
+	        if (review.id === targetId) {
+	            _reviews[idx] = editedReview;
+	        }
+	    });
+	    findMyReviews();
+	    _recentReviews.forEach(function (review, idx) {
+	        if (review.id === targetId) {
+	            _recentReviews.splice(idx, 1);
+	            _recentReviews.unshift(editedReview);
+	        }
+	    });
+	
+	    if (_recentReviews.indexOf(editedReview) === -1) {
+	        _recentReviews.splice(-1, 1);
+	        _recentReviews.unshift(editedReview);
+	    }
+	
+	    _userReviews.forEach(function (review, idx) {
+	        if (review.id === targetId) {
+	            _userReviews[idx] = editedReview;
+	        }
+	    });
+	};
+	
+	var deleteReview = function (deletedReview) {
+	    var targetId = deletedReview.id;
+	    var index;
+	    _reviews.forEach(function (review, idx) {
+	        if (review.id === targetId) {
+	            var index = idx;
+	        }
+	    });
+	    _reviews.splice(index, 1);
+	
+	    var reviewIndex;
+	    _uesrReviews.forEach(function (review, idx) {
+	        if (review.id === targetId) {
+	            reviewIndex = idx;
+	        }
+	    });
+	    _userReviews.splice(reviewIndex, 1);
+	    findMyReviews();
+	};
+	
+	var resetRecentReviews = function (reviews) {
+	    _recentReviews = reviews;
+	};
+	
+	var findMyReviews = function () {
+	    var myReviews = [];
+	    _reviews.forEach(function (review) {
+	        if (review.belongsToCurrentUser) {
+	            myReviews.push(review);
+	        }
+	    });
+	    _myReviews = myReviews;
+	};
+	
+	var findUserReviews = function (userId) {
+	    var userReviews = [];
+	    _reviews.forEach(function (review) {
+	        if (review.user_id === userId) {
+	            userReviews.push(review);
+	        }
+	    });
+	
+	    return userReviews;
+	};
+	
+	var findMySpotReview = function (spotId) {
+	    for (var i = 0; i < _myReviews.length; i++) {
+	        if (_myReviews[i].spot_id === spotId) {
+	            currentReview = _myReviews[i];
+	            break;
+	        }
+	    }
+	    return currentReview;
+	};
+	
+	ReviewStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case ReviewConstants.REVIEWS_RECEIVED:
+	            resetReviews(payload.reviews);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.REVIEW_RECEIVED:
+	            addReview(payload.review);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.UPDATE_REVIEW:
+	            updateReview(payload.review);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.DELETE_REVIEW:
+	            deleteReview(payload.review);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.RECEIVE_RANDOM_REVIEWS:
+	            resetRecentReviews(payload.reviews);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.RECEIVE_USER_REVIEWS:
+	            resetUserReviews(payload.reviews);
+	            ReviewStore.__emitChange();
+	            break;
+	        case ReviewConstants.RECEIVE_SPOT_REVIEWS:
+	            resetSpotReviews(payload.reviews);
+	            ReviewStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	ReviewStore.findBySpot = function () {
+	    return _spotReviews.slice(0);
+	};
+	
+	ReviewStore.spotReviewsFromAll = function (spotId) {
+	    _itemSpotReviews = [];
+	    _reviews.forEach(function (review) {
+	        if (review.spot_id === spotId) {
+	            _itemSpotReviews.push(review);
+	        }
+	    });
+	    return _itemSpotReviews;
+	};
+	
+	ReviewStore.findBySpotLimit = function () {
+	    return _spotReviews.slice(0, 3);
+	};
+	
+	ReviewStore.findMySpotReview = function (spotId) {
+	    currentReview = undefined;
+	    for (var i = 0; i < _userReviews.length; i++) {
+	        if (_userReviews[i].spot_id === spotId) {
+	            currentReview = _userReviews[i];
+	            break;
+	        }
+	    }
+	    return currentReview;
+	};
+	
+	ReviewStore.all = function () {
+	    return _reviews.slice(0);
+	};
+	
+	ReviewStore.allMyReviews = function () {
+	    return _myReviews.slice(0);
+	};
+	
+	ReviewStore.singleUserAllReviews = function () {
+	    return _userReviews.slice(0);
+	};
+	
+	ReviewStore.averageRating = function () {
+	    totalRatings = 0;
+	    _spotReviews.forEach(function (review) {
+	        totalRatings += review.rating;
+	    });
+	    return Math.round(totalRatings / _spotReviews.length * 2) / 2;
+	};
+	
+	ReviewStore.recentReviews = function () {
+	    return _recentReviews.slice(0);
+	};
+	
+	module.exports = ReviewStore;
+
+/***/ },
+/* 247 */,
+/* 248 */,
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewForm = __webpack_require__(242);
+	var ReviewStore = __webpack_require__(246);
+	var ReviewUtil = __webpack_require__(243);
+	
+	var Review = React.createClass({
+	  displayName: 'Review',
+	
+	  componentDidMount: function () {
+	    var reviewId = "#review-rating-user-" + this.props.id;
+	    var that = this;
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        null,
+	        React.createElement(
+	          'li',
+	          null,
+	          'Rating: ',
+	          this.props.rating
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          this.props.comment
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Review;
 
 /***/ }
 /******/ ]);

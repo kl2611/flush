@@ -30,6 +30,13 @@ var ReviewActions = {
         });
     },
 
+    receiveRecentReviews: function(reviews) {
+        AppDispatcher.dispatch({
+            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
+            reviews: reviews
+        });
+    },
+
     receiveUserReviews: function(reviews) {
         AppDispatcher.dispatch({
             actionType: ReviewConstants.RECEIVE_USER_REVIEWS,

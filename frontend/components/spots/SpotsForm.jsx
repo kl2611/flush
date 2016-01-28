@@ -8,14 +8,12 @@ var SpotForm = React.createClass({
         router: React.PropTypes.func
     },
     getInitialState: function() {
-        return ({
-                    name: ""
-                });
+        return ({name: "" });
     },
 
     handleSubmit: function(event) {
         event.preventDefault();
-        var spot=Object.assign({}, this.state, this._coords());
+        var spot = Object.assign({}, this.state, this._coords());
         SpotUtil.createSpot(spot);
         this.navigateToSearch();
     },
