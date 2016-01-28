@@ -1,5 +1,6 @@
 var React = require('react');
 var SpotIndexItem = require('./SpotsIndexItem.js');
+var ReviewIndexItem = require('../reviews/ReviewsIndexItem');
 
 var SpotIndex = React.createClass({
     handleItemClick: function (spot) {

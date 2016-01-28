@@ -10,6 +10,7 @@ var SpotForm = require('./components/spots/SpotsForm');
 var SpotsSearch = require('./components/spots/SpotsSearch');
 var SpotShow = require('./components/spots/SpotsShow');
 var ReviewForm = require('./components/reviews/ReviewsForm');
+var Review = require('./components/reviews/Review');
 
 var App = React.createClass({
   render: function() {

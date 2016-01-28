@@ -39,6 +39,7 @@ var updateReview = function(editedReview) {
         }
     });
     findMyReviews();
+
     _recentReviews.forEach(function(review, idx) {
         if (review.id === targetId) {
             _recentReviews.splice(idx, 1);

@@ -32,7 +32,13 @@ var SpotUtil = {
         $.post('api/spots', { spot: data }, function(spot) {
             SpotActions.receiveAllSpots([spot]);
         });
-    }
+    },
+
+    createReview: function(data) {
+        $.post('api/reviews', { review: data }, function (spot) {
+            SpotActions.receiveAllSpots([spot]);
+        });
+  }
 };
 
 module.exports = SpotUtil;

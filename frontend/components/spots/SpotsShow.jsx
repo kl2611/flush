@@ -5,6 +5,8 @@ var Spot = require('./Spot');
 var Map = require('./Map');
 var SpotUtil = require('../../util/spot_util.js');
 
+var Review = require('../reviews/Review');
+
 var SpotShow = React.createClass({
     contextTypes: {
         router: React.PropTypes.func

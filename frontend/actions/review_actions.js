@@ -44,7 +44,7 @@ var ReviewActions = {
         });
     },
 
-    receiveSpotsReviews: function(reviews) {
+    receiveSpotReviews: function(reviews) {
         AppDispatcher.dispatch({
             actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
             reviews: reviews

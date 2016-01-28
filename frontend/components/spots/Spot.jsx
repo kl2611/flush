@@ -1,9 +1,9 @@
 var React = require('react');
 var ReactRouter = require('react-router');
 
-
-var Review = require('../reviews/Review');
+var ReviewIndex = require('../reviews/ReviewsIndex');
 var ReviewStore = require('../../stores/review');
+var Review = require('../reviews/Review');
 
 var Spot = React.createClass({
     render: function () {
