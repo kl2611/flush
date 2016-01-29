@@ -12,6 +12,7 @@ var Review = React.createClass({
       <div>
       <ul>
         <li>Rating: {this.props.rating}</li>
+        <li>by: {this.props.username}</li>
         <li>{this.props.comment}</li>
       </ul>
       </div>

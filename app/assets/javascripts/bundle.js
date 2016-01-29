@@ -54,9 +54,9 @@
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(218);
-	var SpotShow = __webpack_require__(240);
-	var ReviewForm = __webpack_require__(242);
-	var Review = __webpack_require__(249);
+	var SpotShow = __webpack_require__(241);
+	var ReviewForm = __webpack_require__(249);
+	var Review = __webpack_require__(248);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24767,7 +24767,7 @@
 	var SpotStore = __webpack_require__(219);
 	var SpotUtil = __webpack_require__(207);
 	var SpotsIndex = __webpack_require__(237);
-	var Map = __webpack_require__(239);
+	var Map = __webpack_require__(240);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -31350,7 +31350,7 @@
 
 	var React = __webpack_require__(1);
 	var SpotIndexItem = __webpack_require__(238);
-	var ReviewIndexItem = __webpack_require__(248);
+	var ReviewIndexItem = __webpack_require__(239);
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
@@ -31421,6 +31421,97 @@
 
 /***/ },
 /* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewIndexItem = React.createClass({
+	    displayName: 'ReviewIndexItem',
+	
+	    componentDidMount: function () {
+	        var reviewId = "#review-rating-user-" + this.props.id;
+	        var that = this;
+	        $(reviewId).rating({
+	            min: "0",
+	            max: "5",
+	            step: "1",
+	            showClear: false,
+	            showCaption: false,
+	            readonly: true,
+	            size: "xxs"
+	        });
+	        $(reviewId).rating('update', this.props.rating);
+	    },
+	
+	    render: function () {
+	        var reviewId = "review-rating-user-" + this.props.id;
+	        var name = this.props.username;
+	        var altTag = name + " User Avatar";
+	
+	        var userReviewCount;
+	        if (this.props.reviewCount < 2) {
+	            userReviewCount = this.props.reviewCount + " review";
+	        } else {
+	            userReviewCount = this.props.reviewCount + " reviews";
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'review-index-item-components' },
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-info' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        username
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        userReviewCount
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-review' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        React.createElement('input', { id: reviewId,
+	                            className: 'rating',
+	                            type: 'number',
+	                            min: '1',
+	                            max: '5' }),
+	                        React.createElement(
+	                            'div',
+	                            null,
+	                            this.props.date
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        this.props.comment
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndexItem;
+
+/***/ },
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31557,17 +31648,17 @@
 	module.exports = Map;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var SpotStore = __webpack_require__(219);
-	var Spot = __webpack_require__(241);
-	var Map = __webpack_require__(239);
+	var Spot = __webpack_require__(242);
+	var Map = __webpack_require__(240);
 	var SpotUtil = __webpack_require__(207);
 	
-	var Review = __webpack_require__(249);
+	var Review = __webpack_require__(248);
 	
 	var SpotShow = React.createClass({
 	    displayName: 'SpotShow',
@@ -31635,7 +31726,7 @@
 	module.exports = SpotShow;
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -31643,9 +31734,9 @@
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
-	var ReviewIndex = __webpack_require__(247);
-	var ReviewStore = __webpack_require__(246);
-	var Review = __webpack_require__(249);
+	var ReviewIndex = __webpack_require__(243);
+	var ReviewStore = __webpack_require__(247);
+	var Review = __webpack_require__(248);
 	
 	var Spot = React.createClass({
 	  displayName: 'Spot',
@@ -31678,18 +31769,6 @@
 	          null,
 	          'Description: ',
 	          this.props.spot.description
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Latitude: ',
-	          this.props.spot.lat
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Longitude: ',
-	          this.props.spot.lng
 	        )
 	      ),
 	      React.createElement(
@@ -31711,83 +31790,71 @@
 	module.exports = Spot;
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(214);
 	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(243);
+	var ReviewUtil = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(247);
+	var ReviewIndexItem = __webpack_require__(239);
 	
-	var ReviewForm = React.createClass({
-	    displayName: 'ReviewForm',
+	var ReviewIndex = React.createClass({
+	    displayName: 'ReviewIndex',
 	
-	    mixins: [LinkedStateMixin, ReactRouter.history],
 	    getInitialState: function () {
-	        return { rating: 5, comment: "" };
+	        return { allReviews: [] };
 	    },
 	
-	    navigateToSpotShow: function () {
-	        var spotUrl = "/spots/" + this.props.params.spotId;
-	        this.props.history.pushState(null, spotUrl);
+	    componentDidMount: function () {
+	        reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchReviews();
 	    },
 	
-	    handleCancel: function (event) {
-	        event.preventDefault();
-	        this.navigateToSpotShow();
+	    componentWillUnmount: function () {
+	        reviewListener.remove();
 	    },
 	
-	    handleSubmit: function (event) {
-	        event.preventDefault();
-	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
-	        ReviewUtil.createReview(review);
-	        this.navigateToSpotShow();
+	    onChange: function () {
+	        this.setState({ allReviews: ReviewStore.all() });
 	    },
 	
 	    render: function () {
+	        var reviews = this.props.reviews;
+	
+	        if (reviews.length === 0) {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                'You are the first to review'
+	            );
+	        } else {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                this.state.reviews.map(function (review) {
+	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
+	                })
+	            );
+	        }
+	
 	        return React.createElement(
 	            'div',
-	            { className: 'review-form' },
-	            React.createElement(
-	                'form',
-	                { onSubmit: this.handleSubmit },
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Rating'
-	                ),
-	                React.createElement('br', null),
-	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
-	                React.createElement('br', null),
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Comment'
-	                ),
-	                React.createElement('br', null),
-	                React.createElement('textarea', {
-	                    cols: '30',
-	                    rows: '10',
-	                    valueLink: this.linkState('comment') }),
-	                React.createElement('br', null),
-	                React.createElement('input', { type: 'submit' })
-	            ),
-	            React.createElement(
-	                'button',
-	                { onClick: this.handleCancel },
-	                'Cancel'
-	            )
+	            null,
+	            reviewDisplay
 	        );
 	    }
 	});
 	
-	module.exports = ReviewForm;
+	module.exports = ReviewIndex;
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ReviewActions = __webpack_require__(244);
+	var ReviewActions = __webpack_require__(245);
 	
 	var ReviewUtil = {
 	    createReview: function (review) {
@@ -31871,11 +31938,11 @@
 	module.exports = ReviewUtil;
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var ReviewConstants = __webpack_require__(245);
+	var ReviewConstants = __webpack_require__(246);
 	
 	var ReviewActions = {
 	    receiveAllReviews: function (reviews) {
@@ -31931,7 +31998,7 @@
 	module.exports = ReviewActions;
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports) {
 
 	ReviewConstants = {
@@ -31947,7 +32014,7 @@
 	module.exports = ReviewConstants;
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -31959,7 +32026,7 @@
 	var _spotReviews = [];
 	var currentReview = null;
 	
-	var ReviewConstants = __webpack_require__(245);
+	var ReviewConstants = __webpack_require__(246);
 	var ReviewStore = new Store(AppDispatcher);
 	
 	var resetReviews = function (reviews) {
@@ -32155,168 +32222,16 @@
 	module.exports = ReviewStore;
 
 /***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(243);
-	var ReviewStore = __webpack_require__(246);
-	var ReviewIndexItem = __webpack_require__(248);
-	
-	var ReviewIndex = React.createClass({
-	    displayName: 'ReviewIndex',
-	
-	    getInitialState: function () {
-	        return { allReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchReviews();
-	    },
-	
-	    componentWillUnmount: function () {
-	        reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        this.setState({ allReviews: ReviewStore.all() });
-	    },
-	
-	    render: function () {
-	        var reviews = this.props.reviews;
-	
-	        if (reviews.length === 0) {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                'You are the first to review'
-	            );
-	        } else {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                this.state.reviews.map(function (review) {
-	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
-	                })
-	            );
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            reviewDisplay
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndex;
-
-/***/ },
 /* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
-	var ReviewIndexItem = React.createClass({
-	    displayName: 'ReviewIndexItem',
-	
-	    componentDidMount: function () {
-	        var reviewId = "#review-rating-user-" + this.props.id;
-	        var that = this;
-	        $(reviewId).rating({
-	            min: "0",
-	            max: "5",
-	            step: "1",
-	            showClear: false,
-	            showCaption: false,
-	            readonly: true,
-	            size: "xxs"
-	        });
-	        $(reviewId).rating('update', this.props.rating);
-	    },
-	
-	    render: function () {
-	        var reviewId = "review-rating-user-" + this.props.id;
-	        var name = this.props.username;
-	        var altTag = name + " User Avatar";
-	
-	        var userReviewCount;
-	        if (this.props.reviewCount < 2) {
-	            userReviewCount = this.props.reviewCount + " review";
-	        } else {
-	            userReviewCount = this.props.reviewCount + " reviews";
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'review-index-item-components' },
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-info' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        username
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        userReviewCount
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-review' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        React.createElement('input', { id: reviewId,
-	                            className: 'rating',
-	                            type: 'number',
-	                            min: '1',
-	                            max: '5' }),
-	                        React.createElement(
-	                            'div',
-	                            null,
-	                            this.props.date
-	                        )
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        this.props.comment
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndexItem;
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var ReviewActions = __webpack_require__(244);
-	var ReviewForm = __webpack_require__(242);
-	var ReviewStore = __webpack_require__(246);
-	var ReviewUtil = __webpack_require__(243);
+	var ReviewActions = __webpack_require__(245);
+	var ReviewForm = __webpack_require__(249);
+	var ReviewStore = __webpack_require__(247);
+	var ReviewUtil = __webpack_require__(244);
 	
 	var Review = React.createClass({
 	  displayName: 'Review',
@@ -32337,6 +32252,12 @@
 	        React.createElement(
 	          'li',
 	          null,
+	          'by: ',
+	          this.props.username
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
 	          this.props.comment
 	        )
 	      )
@@ -32345,6 +32266,79 @@
 	});
 	
 	module.exports = Review;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(214);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(244);
+	
+	var ReviewForm = React.createClass({
+	    displayName: 'ReviewForm',
+	
+	    mixins: [LinkedStateMixin, ReactRouter.history],
+	    getInitialState: function () {
+	        return { rating: 5, comment: "" };
+	    },
+	
+	    navigateToSpotShow: function () {
+	        var spotUrl = "/spots/" + this.props.params.spotId;
+	        this.props.history.pushState(null, spotUrl);
+	    },
+	
+	    handleCancel: function (event) {
+	        event.preventDefault();
+	        this.navigateToSpotShow();
+	    },
+	
+	    handleSubmit: function (event) {
+	        event.preventDefault();
+	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
+	        ReviewUtil.createReview(review);
+	        this.navigateToSpotShow();
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { className: 'review-form' },
+	            React.createElement(
+	                'form',
+	                { onSubmit: this.handleSubmit },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Rating'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Comment'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('textarea', {
+	                    cols: '30',
+	                    rows: '10',
+	                    valueLink: this.linkState('comment') }),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'submit' })
+	            ),
+	            React.createElement(
+	                'button',
+	                { onClick: this.handleCancel },
+	                'Cancel'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewForm;
 
 /***/ }
 /******/ ]);

@@ -17,8 +17,6 @@ var Spot = React.createClass({
                   <li>Rating: {this.props.spot.average_rating || "No reviews yet"}</li>
                   <li>Name: {this.props.spot.name}</li>
                   <li>Description: {this.props.spot.description}</li>
-                  <li>Latitude: {this.props.spot.lat}</li>
-                  <li>Longitude: {this.props.spot.lng}</li>
                 </ul>
 
               <div className="reviews">
