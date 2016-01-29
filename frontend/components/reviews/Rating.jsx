@@ -1,34 +1,33 @@
 var React = require('react');
 var ReactRouter = require('react-router');
+var StarRating = require('react-star-rating');
 
 var Rating = React.createClass({
     componentDidMount: function() {
-        ratingId = "spot-rating-" + this.props.ratingId;
-        $(ratingId).rating({
-            min: "0",
-            max: "5",
-            step: "1",
-            showClear: false,
-            showCaption: false,
-            readonly: true,
-            size: "xxs"
-        });
+        var options = {
+            max_value: 5,
+            step_size: 1,
+            initial_value: 1
+        }
+        $("#spot-rating").rating(options);
     },
 
     componentWillReceiveProps: function(newProp) {
-        ratingId = "spot-rating-" + this.props.ratingId;
-        $(ratingId).rating('update', newProp.rating);
+       $("#spot-rating").rating('update', newProp.rating);
     },
 
     render: function() {
-        ratingId = "spot-rating-" + this.props.ratingId;
         return (
             <div>
-                <input id={ratingId}
+            <ul>
+                <li>
+                <input id="spot-rating"
                     className="rating"
                     type="number"
                     min='1'
                     max='5' />
+                </li>
+            </ul>
             </div>
         );
     }
