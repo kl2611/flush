@@ -24819,22 +24819,18 @@
 	            'div',
 	            null,
 	            React.createElement(
-	                'div',
+	                'h4',
 	                null,
-	                React.createElement(
-	                    'h4',
-	                    null,
-	                    'Your Next Review Awaits'
-	                ),
-	                React.createElement(Map, {
-	                    onMapClick: this.handleMapClick,
-	                    onMarkerClick: this.handleMarkerClick,
-	                    spots: this.state.spots }),
-	                React.createElement(
-	                    'div',
-	                    { className: 'map' },
-	                    React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
-	                )
+	                'Your Next Review Awaits'
+	            ),
+	            React.createElement(Map, {
+	                onMapClick: this.handleMapClick,
+	                onMarkerClick: this.handleMarkerClick,
+	                spots: this.state.spots }),
+	            React.createElement(
+	                'div',
+	                { className: 'map' },
+	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
 	            )
 	        );
 	    }

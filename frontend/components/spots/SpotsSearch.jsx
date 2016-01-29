@@ -48,7 +48,6 @@ var SpotsSearch = React.createClass({
 
     render: function() {
         return(
-            <div>
                 <div>
                     <h4>Your Next Review Awaits</h4>
                     <Map
@@ -59,7 +58,6 @@ var SpotsSearch = React.createClass({
                         <SpotsIndex spots={this.state.spots} history={this.props.history} />
                     </div>
                 </div>
-            </div>
         );
     }
 });
