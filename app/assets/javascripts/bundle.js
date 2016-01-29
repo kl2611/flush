@@ -31350,7 +31350,7 @@
 
 	var React = __webpack_require__(1);
 	var SpotIndexItem = __webpack_require__(238);
-	var ReviewIndexItem = __webpack_require__(239);
+	//var ReviewIndexItem = require('../reviews/ReviewsIndexItem');
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
@@ -31365,9 +31365,9 @@
 	            'div',
 	            null,
 	            React.createElement(
-	                'h1',
+	                'h3',
 	                null,
-	                'Index'
+	                'Recent Reviews'
 	            ),
 	            this.props.spots.map(function (spot) {
 	                var boundClick = handleItemClick.bind(null, spot);
