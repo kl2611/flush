@@ -16,7 +16,7 @@ var Home = require('./components/home/Home');
 var App = React.createClass({
   render: function() {
     return (
-      <div className="container below-nav">
+      <div className="container">
         {this.props.children}
       </div>
     );

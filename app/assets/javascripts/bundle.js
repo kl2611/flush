@@ -65,7 +65,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { className: 'container below-nav' },
+	      { className: 'container' },
 	      this.props.children
 	    );
 	  }
