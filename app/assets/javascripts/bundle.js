@@ -54,9 +54,10 @@
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(218);
-	var SpotShow = __webpack_require__(241);
-	var ReviewForm = __webpack_require__(249);
-	var Review = __webpack_require__(248);
+	var SpotShow = __webpack_require__(245);
+	var ReviewForm = __webpack_require__(250);
+	var Review = __webpack_require__(249);
+	var Home = __webpack_require__(251);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -74,6 +75,7 @@
 	  Route,
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: SpotsSearch }),
+	  React.createElement(Route, { path: 'spots/search', component: SpotsSearch }),
 	  React.createElement(Route, { path: 'spots/new', component: SpotForm }),
 	  React.createElement(
 	    Route,
@@ -24767,7 +24769,7 @@
 	var SpotStore = __webpack_require__(219);
 	var SpotUtil = __webpack_require__(207);
 	var SpotsIndex = __webpack_require__(237);
-	var Map = __webpack_require__(240);
+	var Map = __webpack_require__(244);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -24817,18 +24819,22 @@
 	            'div',
 	            null,
 	            React.createElement(
-	                'h4',
-	                null,
-	                'Map'
-	            ),
-	            React.createElement(Map, {
-	                onMapClick: this.handleMapClick,
-	                onMarkerClick: this.handleMarkerClick,
-	                spots: this.state.spots }),
-	            React.createElement(
 	                'div',
-	                { className: 'map' },
-	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
+	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Your Next Review Awaits'
+	                ),
+	                React.createElement(Map, {
+	                    onMapClick: this.handleMapClick,
+	                    onMarkerClick: this.handleMarkerClick,
+	                    spots: this.state.spots }),
+	                React.createElement(
+	                    'div',
+	                    { className: 'map' },
+	                    React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
+	                )
 	            )
 	        );
 	    }
@@ -31350,7 +31356,7 @@
 
 	var React = __webpack_require__(1);
 	var SpotIndexItem = __webpack_require__(238);
-	var RecentReviews = __webpack_require__(250);
+	var RecentReviews = __webpack_require__(239);
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
@@ -31362,7 +31368,7 @@
 	    render: function () {
 	        return React.createElement(
 	            'div',
-	            null,
+	            { className: 'recent-reviews' },
 	            React.createElement(RecentReviews, null)
 	        );
 	    }
@@ -31413,596 +31419,95 @@
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
+	var Link = ReactRouter.Link;
 	
-	var ReviewIndexItem = React.createClass({
-	    displayName: 'ReviewIndexItem',
+	var ReviewStore = __webpack_require__(240);
+	var ReviewUtil = __webpack_require__(242);
+	var Rating = __webpack_require__(253);
+	
+	var RecentReviews = React.createClass({
+	    displayName: 'RecentReviews',
+	
+	    getInitialState: function () {
+	        return { recentReviews: [] };
+	    },
 	
 	    componentDidMount: function () {
-	        var reviewId = "#review-rating-user-" + this.props.id;
-	        var that = this;
-	        $(reviewId).rating({
-	            min: "0",
-	            max: "5",
-	            step: "1",
-	            showClear: false,
-	            showCaption: false,
-	            readonly: true,
-	            size: "xxs"
-	        });
-	        $(reviewId).rating('update', this.props.rating);
+	        this.reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchRecentReviews(5);
+	    },
+	
+	    onChange: function () {
+	        this.setState({ recentReviews: ReviewStore.recentReviews() });
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.reviewListener.remove();
 	    },
 	
 	    render: function () {
-	        var reviewId = "review-rating-user-" + this.props.id;
-	        var name = this.props.username;
-	        var altTag = name + " User Avatar";
-	
-	        var userReviewCount;
-	        if (this.props.reviewCount < 2) {
-	            userReviewCount = this.props.reviewCount + " review";
+	        if (this.state.recentReviews.length === 0) {
+	            reviews = React.createElement('div', null);
 	        } else {
-	            userReviewCount = this.props.reviewCount + " reviews";
-	        }
+	            reviews = this.state.recentReviews.map(function (review) {
+	                var spotLink = "/spots/" + review.spot_name.id;
+	                var rating = review.rating;
+	                var username = review.user.username;
+	                var nameDisplay = React.createElement(
+	                    'strong',
+	                    null,
+	                    username
+	                );
+	                var status = " wrote a review for ";
 	
-	        return React.createElement(
-	            'div',
-	            { className: 'review-index-item-components' },
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-info' },
-	                React.createElement(
+	                return React.createElement(
 	                    'ul',
-	                    null,
+	                    { key: review.id },
 	                    React.createElement(
 	                        'li',
 	                        null,
-	                        username
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        userReviewCount
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-review' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        React.createElement('input', { id: reviewId,
-	                            className: 'rating',
-	                            type: 'number',
-	                            min: '1',
-	                            max: '5' }),
+	                        nameDisplay,
+	                        status,
 	                        React.createElement(
-	                            'div',
-	                            null,
-	                            this.props.date
+	                            Link,
+	                            { to: spotLink },
+	                            review.spot_name.name,
+	                            ':'
 	                        )
 	                    ),
 	                    React.createElement(
 	                        'li',
 	                        null,
-	                        this.props.comment
+	                        review.rating,
+	                        ' Stars, ',
+	                        review.date
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        review.comment
 	                    )
-	                )
-	            )
+	                );
+	            });
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'recent-reviews-container' },
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Recent Activity'
+	            ),
+	            reviews
 	        );
 	    }
 	});
 	
-	module.exports = ReviewIndexItem;
+	module.exports = RecentReviews;
 
 /***/ },
 /* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	function _getCoordsObj(latLng) {
-	  return {
-	    lat: latLng.lat(),
-	    lng: latLng.lng()
-	  };
-	}
-	
-	var CENTER = { lat: 40.8081, lng: -73.9621 };
-	
-	var Map = React.createClass({
-	  displayName: 'Map',
-	
-	  componentDidMount: function () {
-	    console.log('map mounted');
-	    var map = ReactDOM.findDOMNode(this.refs.map);
-	    var mapOptions = {
-	      center: this.centerSpotCoords(),
-	      zoom: 15
-	    };
-	    this.map = new google.maps.Map(map, mapOptions);
-	    this.registerListeners();
-	    this.markers = [];
-	    if (this.props.spots) {
-	      this.props.spots.forEach(this.createMarkerFromSpot);
-	    };
-	  },
-	  centerSpotCoords: function () {
-	    if (this.props.spots[0] && this.props.spots[0].lng) {
-	      var spot = this.props.spots[0];
-	      return { lat: spot.lat, lng: spot.lng };
-	    } else {
-	      return CENTER;
-	    }
-	  },
-	
-	  componentDidUpdate: function (oldProps) {
-	    this._onChange();
-	  },
-	
-	  componentWillReceiveProps: function (newProps) {
-	    if (this.props.spots) {
-	      newProps.spots.forEach(this.createMarkerFromSpot);
-	    }
-	  },
-	
-	  _onChange: function () {
-	    var spots = this.props.spots;
-	    var toAdd = [],
-	        toRemove = this.markers.slice(0);
-	    spots.forEach(function (spot, idx) {
-	      var idx = -1;
-	
-	      for (var i = 0; i < toRemove.length; i++) {
-	        if (toRemove[i].spotId == spot.id) {
-	          idx = i;
-	          break;
-	        }
-	      }
-	      if (idx === -1) {
-	        toAdd.push(spot);
-	      } else {
-	        toRemove.splice(idx, 1);
-	      }
-	    });
-	    toAdd.forEach(this.createMarkerFromSpot);
-	    toRemove.forEach(this.removeMarker);
-	
-	    if (this.props.singleSpot) {
-	      this.map.setOptions({ draggable: false });
-	      this.map.setCenter(this.centerSpotCoords());
-	    }
-	  },
-	
-	  componentWillUnmount: function () {
-	    //this.markerListener.remove();
-	    console.log("map UNmounted");
-	  },
-	
-	  registerListeners: function () {
-	    var that = this;
-	    google.maps.event.addListener(this.map, 'idle', function () {
-	      var bounds = that.map.getBounds();
-	      var northEast = _getCoordsObj(bounds.getNorthEast());
-	      var southWest = _getCoordsObj(bounds.getSouthWest());
-	      var bounds = {
-	        northEast: northEast,
-	        southWest: southWest
-	      };
-	    });
-	    google.maps.event.addListener(this.map, 'click', function (event) {
-	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-	      that.props.onMapClick(coords);
-	    });
-	  },
-	
-	  createMarkerFromSpot: function (spot) {
-	    var that = this;
-	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
-	    var marker = new google.maps.Marker({
-	      position: pos,
-	      map: this.map,
-	      spotId: spot.id
-	    });
-	    this.markerListener = marker.addListener('click', function () {
-	      that.props.onMarkerClick(spot);
-	    });
-	    this.markers.push(marker);
-	  },
-	
-	  removeMarker: function (marker) {
-	    for (var i = 0; i < this.markers.length; i++) {
-	      if (this.markers[i].spotId === marker.spotId) {
-	        this.markers[i].setMap(null);
-	        this.markers.splice(i, 1);
-	        break;
-	      }
-	    }
-	  },
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      { className: 'map', ref: 'map' },
-	      'Map'
-	    );
-	  }
-	});
-	
-	module.exports = Map;
-
-/***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(219);
-	var Spot = __webpack_require__(242);
-	var Map = __webpack_require__(240);
-	var SpotUtil = __webpack_require__(207);
-	
-	var Review = __webpack_require__(248);
-	
-	var SpotShow = React.createClass({
-	    displayName: 'SpotShow',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    getInitialState: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId) || {};
-	        return { spot: spot };
-	    },
-	    _findSpotById: function (id) {
-	        var res;
-	        SpotStore.all().forEach(function (spot) {
-	            if (id == spot.id) {
-	                res = spot;
-	            }
-	        }.bind(this));
-	        return res;
-	    },
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._spotChanged);
-	        SpotUtil.fetchSpots();
-	    },
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	    _spotChanged: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId);
-	        this.setState({ spot: spot });
-	    },
-	    render: function () {
-	        var spots = [];
-	        if (this.state.spot) {
-	            spots.push(this.state.spot);
-	        }
-	        var Link = ReactRouter.Link;
-	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                Link,
-	                { to: '/' },
-	                'Back to Restrooms Index'
-	            ),
-	            React.createElement(Map, { className: 'map',
-	                singleSpot: true,
-	                spots: spots,
-	                onMapClick: this.handleMapClick }),
-	            React.createElement(Spot, { spot: this.state.spot, className: 'map' }),
-	            this.props.children || React.createElement(
-	                Link,
-	                { to: reviewURL },
-	                'Leave a Review'
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotShow;
-
-/***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var ReviewIndex = __webpack_require__(243);
-	var ReviewStore = __webpack_require__(247);
-	var Review = __webpack_require__(248);
-	
-	var Spot = React.createClass({
-	  displayName: 'Spot',
-	
-	  render: function () {
-	    var spotRating = ReviewStore.averageRating();
-	    var reviews = this.props.spot.reviews || [];
-	    var Link = ReactRouter.Link;
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'ul',
-	        null,
-	        React.createElement(
-	          'li',
-	          null,
-	          'Rating: ',
-	          this.props.spot.average_rating || "No reviews yet"
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Name: ',
-	          this.props.spot.name
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Description: ',
-	          this.props.spot.description
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'reviews' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          'Reviews'
-	        ),
-	        reviews.map(function (review) {
-	          return React.createElement(Review, _extends({ key: review.id }, review));
-	        })
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = Spot;
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
-	var ReviewStore = __webpack_require__(247);
-	var ReviewIndexItem = __webpack_require__(239);
-	
-	var ReviewIndex = React.createClass({
-	    displayName: 'ReviewIndex',
-	
-	    getInitialState: function () {
-	        return { allReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchReviews();
-	    },
-	
-	    componentWillUnmount: function () {
-	        reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        this.setState({ allReviews: ReviewStore.all() });
-	    },
-	
-	    render: function () {
-	        var reviews = this.props.reviews;
-	
-	        if (reviews.length === 0) {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                'You are the first to review'
-	            );
-	        } else {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                this.state.reviews.map(function (review) {
-	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
-	                })
-	            );
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            reviewDisplay
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndex;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ReviewActions = __webpack_require__(245);
-	
-	var ReviewUtil = {
-	    createReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            type: 'POST',
-	            data: { review: review },
-	            success: function (review) {
-	                ReviewActions.receiveSingleReview(review);
-	            }
-	        });
-	    },
-	
-	    updateSingleReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews/' + review.id,
-	            type: "PATCH",
-	            dataType: "json",
-	            data: { review: review },
-	            success: function (reviewData) {
-	                ReviewActions.updateSingleReview(reviewData);
-	            }
-	        });
-	    },
-	
-	    fetchReviews: function () {
-	        $.ajax({
-	            url: 'api/reviews',
-	            success: function (reviews) {
-	                ReviewActions.receiveAllReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    deleteSingleReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews/' + review.id,
-	            data: { review: review },
-	            type: "DELETE",
-	            dataType: "json",
-	            success: function (review) {
-	                ReviewActions.deleteSingleReview(review);
-	            }
-	        });
-	    },
-	
-	    fetchUserReviews: function (userId) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            data: { user_id: userId },
-	            success: function (reviews) {
-	                ReviewActions.receiveUserReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    fetchSpotReviews: function (spotId) {
-	        $.ajax({
-	            url: "api/reviews",
-	            dataType: 'json',
-	            success: function (reviews) {
-	                ReviewActions.receiveSpotReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    fetchRecentReviews: function (number) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            data: { number: number },
-	            success: function (reviews) {
-	                ReviewActions.receiveRecentReviews(reviews);
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = ReviewUtil;
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var ReviewConstants = __webpack_require__(246);
-	
-	var ReviewActions = {
-	    receiveAllReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.REVIEWS_RECEIVED,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.REVIEW_RECEIVED,
-	            review: review
-	        });
-	    },
-	
-	    updateSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.UPDATE_REVIEW,
-	            review: review
-	        });
-	    },
-	
-	    deleteSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.DELETE_REVIEW,
-	            review: review
-	        });
-	    },
-	
-	    receiveRecentReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveUserReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveSpotReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
-	            reviews: reviews
-	        });
-	    }
-	};
-	
-	module.exports = ReviewActions;
-
-/***/ },
-/* 246 */
-/***/ function(module, exports) {
-
-	ReviewConstants = {
-	    REVIEWS_RECEIVED: "REVIEWS_RECEIVED",
-	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
-	    UPDATE_REVIEW: "UPDATE_REVIEW",
-	    DELETE_REVIEW: "DELETE_REVIEW",
-	    RECEIVE_RANDOM_REVIEWS: "RECEIVE_RANDOM_REVIEWS",
-	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
-	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
-	};
-	
-	module.exports = ReviewConstants;
-
-/***/ },
-/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32014,7 +31519,7 @@
 	var _spotReviews = [];
 	var currentReview = null;
 	
-	var ReviewConstants = __webpack_require__(246);
+	var ReviewConstants = __webpack_require__(241);
 	var ReviewStore = new Store(AppDispatcher);
 	
 	var resetReviews = function (reviews) {
@@ -32210,16 +31715,606 @@
 	module.exports = ReviewStore;
 
 /***/ },
+/* 241 */
+/***/ function(module, exports) {
+
+	ReviewConstants = {
+	    REVIEWS_RECEIVED: "REVIEWS_RECEIVED",
+	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
+	    UPDATE_REVIEW: "UPDATE_REVIEW",
+	    DELETE_REVIEW: "DELETE_REVIEW",
+	    RECEIVE_RANDOM_REVIEWS: "RECEIVE_RANDOM_REVIEWS",
+	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
+	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
+	};
+	
+	module.exports = ReviewConstants;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ReviewActions = __webpack_require__(243);
+	
+	var ReviewUtil = {
+	    createReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { review: review },
+	            success: function (review) {
+	                ReviewActions.receiveSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            type: "PATCH",
+	            dataType: "json",
+	            data: { review: review },
+	            success: function (reviewData) {
+	                ReviewActions.updateSingleReview(reviewData);
+	            }
+	        });
+	    },
+	
+	    fetchReviews: function () {
+	        $.ajax({
+	            url: 'api/reviews',
+	            success: function (reviews) {
+	                ReviewActions.receiveAllReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            data: { review: review },
+	            type: "DELETE",
+	            dataType: "json",
+	            success: function (review) {
+	                ReviewActions.deleteSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    fetchUserReviews: function (userId) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { user_id: userId },
+	            success: function (reviews) {
+	                ReviewActions.receiveUserReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    fetchSpotReviews: function (spotId) {
+	        $.ajax({
+	            url: "api/reviews",
+	            dataType: 'json',
+	            success: function (reviews) {
+	                ReviewActions.receiveSpotReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    fetchRecentReviews: function (number) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { number: number },
+	            success: function (reviews) {
+	                ReviewActions.receiveRecentReviews(reviews);
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = ReviewUtil;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var ReviewConstants = __webpack_require__(241);
+	
+	var ReviewActions = {
+	    receiveAllReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEWS_RECEIVED,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEW_RECEIVED,
+	            review: review
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.UPDATE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.DELETE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    receiveRecentReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveUserReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSpotReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
+	            reviews: reviews
+	        });
+	    }
+	};
+	
+	module.exports = ReviewActions;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	function _getCoordsObj(latLng) {
+	  return {
+	    lat: latLng.lat(),
+	    lng: latLng.lng()
+	  };
+	}
+	
+	var CENTER = { lat: 40.8081, lng: -73.9621 };
+	
+	var Map = React.createClass({
+	  displayName: 'Map',
+	
+	  componentDidMount: function () {
+	    console.log('map mounted');
+	    var map = ReactDOM.findDOMNode(this.refs.map);
+	    var mapOptions = {
+	      center: this.centerSpotCoords(),
+	      zoom: 15
+	    };
+	    this.map = new google.maps.Map(map, mapOptions);
+	    this.registerListeners();
+	    this.markers = [];
+	    if (this.props.spots) {
+	      this.props.spots.forEach(this.createMarkerFromSpot);
+	    };
+	  },
+	  centerSpotCoords: function () {
+	    if (this.props.spots[0] && this.props.spots[0].lng) {
+	      var spot = this.props.spots[0];
+	      return { lat: spot.lat, lng: spot.lng };
+	    } else {
+	      return CENTER;
+	    }
+	  },
+	
+	  componentDidUpdate: function (oldProps) {
+	    this._onChange();
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    if (this.props.spots) {
+	      newProps.spots.forEach(this.createMarkerFromSpot);
+	    }
+	  },
+	
+	  _onChange: function () {
+	    var spots = this.props.spots;
+	    var toAdd = [],
+	        toRemove = this.markers.slice(0);
+	    spots.forEach(function (spot, idx) {
+	      var idx = -1;
+	
+	      for (var i = 0; i < toRemove.length; i++) {
+	        if (toRemove[i].spotId == spot.id) {
+	          idx = i;
+	          break;
+	        }
+	      }
+	      if (idx === -1) {
+	        toAdd.push(spot);
+	      } else {
+	        toRemove.splice(idx, 1);
+	      }
+	    });
+	    toAdd.forEach(this.createMarkerFromSpot);
+	    toRemove.forEach(this.removeMarker);
+	
+	    if (this.props.singleSpot) {
+	      this.map.setOptions({ draggable: false });
+	      this.map.setCenter(this.centerSpotCoords());
+	    }
+	  },
+	
+	  componentWillUnmount: function () {
+	    //this.markerListener.remove();
+	    console.log("map UNmounted");
+	  },
+	
+	  registerListeners: function () {
+	    var that = this;
+	    google.maps.event.addListener(this.map, 'idle', function () {
+	      var bounds = that.map.getBounds();
+	      var northEast = _getCoordsObj(bounds.getNorthEast());
+	      var southWest = _getCoordsObj(bounds.getSouthWest());
+	      var bounds = {
+	        northEast: northEast,
+	        southWest: southWest
+	      };
+	    });
+	    google.maps.event.addListener(this.map, 'click', function (event) {
+	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+	      that.props.onMapClick(coords);
+	    });
+	  },
+	
+	  createMarkerFromSpot: function (spot) {
+	    var that = this;
+	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
+	    var marker = new google.maps.Marker({
+	      position: pos,
+	      map: this.map,
+	      spotId: spot.id
+	    });
+	    this.markerListener = marker.addListener('click', function () {
+	      that.props.onMarkerClick(spot);
+	    });
+	    this.markers.push(marker);
+	  },
+	
+	  removeMarker: function (marker) {
+	    for (var i = 0; i < this.markers.length; i++) {
+	      if (this.markers[i].spotId === marker.spotId) {
+	        this.markers[i].setMap(null);
+	        this.markers.splice(i, 1);
+	        break;
+	      }
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement('div', { className: 'map', ref: 'map' });
+	  }
+	});
+	
+	module.exports = Map;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(219);
+	var Spot = __webpack_require__(246);
+	var Map = __webpack_require__(244);
+	var SpotUtil = __webpack_require__(207);
+	
+	var Review = __webpack_require__(249);
+	
+	var SpotShow = React.createClass({
+	    displayName: 'SpotShow',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    getInitialState: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId) || {};
+	        return { spot: spot };
+	    },
+	    _findSpotById: function (id) {
+	        var res;
+	        SpotStore.all().forEach(function (spot) {
+	            if (id == spot.id) {
+	                res = spot;
+	            }
+	        }.bind(this));
+	        return res;
+	    },
+	    componentDidMount: function () {
+	        this.spotListener = SpotStore.addListener(this._spotChanged);
+	        SpotUtil.fetchSpots();
+	    },
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	    },
+	    _spotChanged: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId);
+	        this.setState({ spot: spot });
+	    },
+	    render: function () {
+	        var spots = [];
+	        if (this.state.spot) {
+	            spots.push(this.state.spot);
+	        }
+	        var Link = ReactRouter.Link;
+	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                Link,
+	                { to: '/' },
+	                'Back to Restrooms Index'
+	            ),
+	            React.createElement(Map, { className: 'map',
+	                singleSpot: true,
+	                spots: spots,
+	                onMapClick: this.handleMapClick }),
+	            React.createElement(Spot, { spot: this.state.spot, className: 'map' }),
+	            this.props.children || React.createElement(
+	                Link,
+	                { to: reviewURL },
+	                'Leave a Review'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SpotShow;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewIndex = __webpack_require__(247);
+	var ReviewStore = __webpack_require__(240);
+	var Review = __webpack_require__(249);
+	
+	var Spot = React.createClass({
+	  displayName: 'Spot',
+	
+	  render: function () {
+	    var spotRating = ReviewStore.averageRating();
+	    var reviews = this.props.spot.reviews || [];
+	    var Link = ReactRouter.Link;
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        null,
+	        React.createElement(
+	          'li',
+	          null,
+	          'Rating: ',
+	          this.props.spot.average_rating || "No reviews yet"
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Name: ',
+	          this.props.spot.name
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          'Description: ',
+	          this.props.spot.description
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'reviews' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Reviews'
+	        ),
+	        reviews.map(function (review) {
+	          return React.createElement(Review, _extends({ key: review.id }, review));
+	        })
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Spot;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(242);
+	var ReviewStore = __webpack_require__(240);
+	var ReviewIndexItem = __webpack_require__(248);
+	
+	var ReviewIndex = React.createClass({
+	    displayName: 'ReviewIndex',
+	
+	    getInitialState: function () {
+	        return { allReviews: [] };
+	    },
+	
+	    componentDidMount: function () {
+	        reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchReviews();
+	    },
+	
+	    componentWillUnmount: function () {
+	        reviewListener.remove();
+	    },
+	
+	    onChange: function () {
+	        this.setState({ allReviews: ReviewStore.all() });
+	    },
+	
+	    render: function () {
+	        var reviews = this.props.reviews;
+	
+	        if (reviews.length === 0) {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                'You are the first to review'
+	            );
+	        } else {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                this.state.reviews.map(function (review) {
+	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
+	                })
+	            );
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            reviewDisplay
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndex;
+
+/***/ },
 /* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
-	var ReviewActions = __webpack_require__(245);
-	var ReviewForm = __webpack_require__(249);
-	var ReviewStore = __webpack_require__(247);
-	var ReviewUtil = __webpack_require__(244);
+	var ReviewIndexItem = React.createClass({
+	    displayName: 'ReviewIndexItem',
+	
+	    componentDidMount: function () {
+	        var reviewId = "#review-rating-user-" + this.props.id;
+	        var that = this;
+	        $(reviewId).rating({
+	            min: "0",
+	            max: "5",
+	            step: "1",
+	            showClear: false,
+	            showCaption: false,
+	            readonly: true,
+	            size: "xxs"
+	        });
+	        $(reviewId).rating('update', this.props.rating);
+	    },
+	
+	    render: function () {
+	        var reviewId = "review-rating-user-" + this.props.id;
+	        var name = this.props.username;
+	        var altTag = name + " User Avatar";
+	
+	        var userReviewCount;
+	        if (this.props.reviewCount < 2) {
+	            userReviewCount = this.props.reviewCount + " review";
+	        } else {
+	            userReviewCount = this.props.reviewCount + " reviews";
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'review-index-item-components' },
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-info' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        username
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        userReviewCount
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-review' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        React.createElement('input', { id: reviewId,
+	                            className: 'rating',
+	                            type: 'number',
+	                            min: '1',
+	                            max: '5' }),
+	                        React.createElement(
+	                            'div',
+	                            null,
+	                            this.props.date
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        this.props.comment
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndexItem;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewActions = __webpack_require__(243);
+	var ReviewForm = __webpack_require__(250);
+	var ReviewStore = __webpack_require__(240);
+	var ReviewUtil = __webpack_require__(242);
 	
 	var Review = React.createClass({
 	  displayName: 'Review',
@@ -32256,13 +32351,13 @@
 	module.exports = Review;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(214);
 	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
+	var ReviewUtil = __webpack_require__(242);
 	
 	var ReviewForm = React.createClass({
 	    displayName: 'ReviewForm',
@@ -32329,105 +32424,120 @@
 	module.exports = ReviewForm;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var Link = ReactRouter.Link;
+	var RecentReviews = __webpack_require__(239);
+	var ReviewUtil = __webpack_require__(242);
+	var ReviewStore = __webpack_require__(240);
+	var SpotSearch = __webpack_require__(218);
 	
-	var ReviewStore = __webpack_require__(247);
-	var ReviewUtil = __webpack_require__(244);
-	
-	var RecentReviews = React.createClass({
-	    displayName: 'RecentReviews',
+	var Home = React.createClass({
+	    displayName: 'Home',
 	
 	    getInitialState: function () {
-	        return { recentReviews: [] };
+	        return { userSpotReviews: [] };
 	    },
 	
 	    componentDidMount: function () {
 	        this.reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchRecentReviews(5);
-	    },
-	
-	    onChange: function () {
-	        this.setState({ recentReviews: ReviewStore.recentReviews() });
+	        ReviewUtil.fetchUserReviews(CURRENT_USER_ID);
 	    },
 	
 	    componentWillUnmount: function () {
 	        this.reviewListener.remove();
 	    },
 	
+	    onChange: function () {
+	        var reviews = ReviewStore.singleUserAllReviews();
+	        var refIds = reviews.map(function (review) {
+	            return { spot_id: review.spot_id,
+	                review_id: review.id };
+	        });
+	        this.setState({ userSpotReviews: refIds });
+	    },
+	
 	    render: function () {
-	        if (this.state.recentReviews.length === 0) {
-	            reviews = React.createElement('div', null);
-	        } else {
-	            reviews = this.state.recentReviews.map(function (review) {
-	                var spotLink = "/spots/" + review.spot_name.id;
-	                var username = review.user.username;
-	                var nameDisplay = React.createElement(
-	                    'strong',
-	                    null,
-	                    username
-	                );
-	                var status = " wrote a review for ";
-	
-	                return React.createElement(
-	                    'ul',
-	                    { key: review.id },
+	        return React.createElement(
+	            'div',
+	            { id: 'homepage-container' },
+	            React.createElement(
+	                'div',
+	                { className: 'left-column' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'map-container' },
+	                    React.createElement(SpotSearch, null)
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'homepage-review-form' },
 	                    React.createElement(
-	                        'li',
+	                        'h3',
 	                        null,
-	                        React.createElement(
-	                            'ul',
-	                            { className: 'recent-reviews' },
-	                            React.createElement(
-	                                'li',
-	                                null,
-	                                nameDisplay,
-	                                status,
-	                                React.createElement(
-	                                    Link,
-	                                    { to: spotLink },
-	                                    review.spot_name.name,
-	                                    ':'
-	                                )
-	                            ),
-	                            React.createElement(
-	                                'li',
-	                                null,
-	                                React.createElement(
-	                                    'div',
-	                                    null,
-	                                    review.date
-	                                )
-	                            ),
-	                            React.createElement(
-	                                'li',
-	                                null,
-	                                review.comment
-	                            )
-	                        )
+	                        'Your Next Review Awaits!'
 	                    )
-	                );
-	            });
-	        }
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'recent-activiy' },
+	                    React.createElement(RecentReviews, null)
+	                )
+	            )
+	        );
+	    }
 	
+	});
+	
+	module.exports = Home;
+
+/***/ },
+/* 252 */,
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var Rating = React.createClass({
+	    displayName: 'Rating',
+	
+	    componentDidMount: function () {
+	        ratingId = "spot-rating-" + this.props.ratingId;
+	        $(ratingId).rating({
+	            min: "0",
+	            max: "5",
+	            step: "1",
+	            showClear: false,
+	            showCaption: false,
+	            readonly: true,
+	            size: "xxs"
+	        });
+	    },
+	
+	    componentWillReceiveProps: function (newProp) {
+	        ratingId = "spot-rating-" + this.props.ratingId;
+	        $(ratingId).rating('update', newProp.rating);
+	    },
+	
+	    render: function () {
+	        ratingId = "spot-rating-" + this.props.ratingId;
 	        return React.createElement(
 	            'div',
 	            null,
-	            React.createElement(
-	                'h4',
-	                null,
-	                'Recent Reviews'
-	            ),
-	            reviews
+	            React.createElement('input', { id: ratingId,
+	                className: 'rating',
+	                type: 'number',
+	                min: '1',
+	                max: '5' })
 	        );
 	    }
+	
 	});
 	
-	module.exports = RecentReviews;
+	module.exports = Rating;
 
 /***/ }
 /******/ ]);

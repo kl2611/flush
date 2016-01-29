@@ -25,6 +25,7 @@ body, h1, h2, h3, h4, h5, h6, p, span, a {
 body {
     margin-left: 150px;
     margin-right: 150px;
+    background-color: #F0F9FE;
 }
 
 /* HEADER *************/
@@ -51,37 +52,26 @@ body {
     font-size: 40px;
 }
 
-.logo h1 a {
+.logo h1 a:link, a:hover, a:active,  {
     text-decoration: none;
     color: #a3d9ea;
 }
 
-.logo h1 a:hover {
-    color: #eab4a3;
-}
-
-.nav-bar {
-    float: right;
-    margin-top: 53px;
-    text-transform: lowercase;
+.navbar-right {
     font-size: 20px;
+    display: inline;
 }
 
-.nav-menu li {
+.navbar-right li {
     font-size: 16px;
     font-family: 'Inconsolata';
     list-style: none;
-    display: inline;
-    margin-left: 30px;
+    display: inline-block;
 }
 
-.nav-menu a {
+.navbar-right a:link, a:hover, a:active {
     text-decoration: none;
     color: #9aa2b0
-}
-
-.nav-menu a:hover {
-    color: #a3d9ea;
 }
 
 /* CONTENT *************/
@@ -94,13 +84,23 @@ body {
 .content-container {
     height: 100%;
     font-family: "Inconsolata";
-    color: #9aa2b0;
+    background-color: #FFFFFF;
 }
 
 .content-container h3 {
     padding-top: 0px;
     font-family: "Inconsolata";
     font-size: 20px;
+}
+
+.recent-reviews-container {
+    text-decoration: none;
+    list-style: none;
+}
+
+.recent-reviews-container ul, li {
+    text-decoration: none;
+    list-style: none;
 }
 
 /* MAP ************/

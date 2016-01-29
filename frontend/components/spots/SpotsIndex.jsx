@@ -7,9 +7,9 @@ var SpotIndex = React.createClass({
         this.props.history.pushState(null, "spots/" + spot.id );
     },
 
-    render: function(){
+    render: function() {
         return (
-        <div>
+        <div className="recent-reviews">
           <RecentReviews />
         </div>
         );

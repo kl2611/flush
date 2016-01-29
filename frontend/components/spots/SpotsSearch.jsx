@@ -49,13 +49,15 @@ var SpotsSearch = React.createClass({
     render: function() {
         return(
             <div>
-                <h4>Map</h4>
-                <Map
-                    onMapClick={this.handleMapClick}
-                    onMarkerClick={this.handleMarkerClick}
-                    spots={this.state.spots}/>
-                <div className = "map">
-                    <SpotsIndex spots={this.state.spots} history={this.props.history} />
+                <div>
+                    <h4>Your Next Review Awaits</h4>
+                    <Map
+                        onMapClick={this.handleMapClick}
+                        onMarkerClick={this.handleMarkerClick}
+                        spots={this.state.spots}/>
+                    <div className = "map">
+                        <SpotsIndex spots={this.state.spots} history={this.props.history} />
+                    </div>
                 </div>
             </div>
         );

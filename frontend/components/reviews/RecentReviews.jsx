@@ -4,6 +4,7 @@ var Link = ReactRouter.Link;
 
 var ReviewStore = require('../../stores/review');
 var ReviewUtil = require('../../util/review_util');
+var Rating = require('./Rating');
 
 var RecentReviews = React.createClass({
     getInitialState: function() {
@@ -29,26 +30,22 @@ var RecentReviews = React.createClass({
         } else {
             reviews = this.state.recentReviews.map(function(review) {
                 var spotLink = "/spots/" + review.spot_name.id;
+                var rating = review.rating;
                 var username = review.user.username;
                 var nameDisplay = <strong>{username}</strong>;
                 var status = " wrote a review for ";
 
                 return <ul key={review.id}>
-                    <li>
-                        <ul className = "recent-reviews">
                             <li>{nameDisplay}{status}<Link to={spotLink}>{review.spot_name.name}:</Link></li>
-                            <li>
-                            <div>{review.date}</div></li>
+                            <li>{review.rating} Stars, {review.date}</li>
                             <li>{review.comment}</li>
-                        </ul>
-                    </li>
                 </ul>;
             });
         }
 
         return (
-            <div>
-            <h4>Recent Reviews</h4>
+            <div className ="recent-reviews-container">
+            <h4>Recent Activity</h4>
                 {reviews}
             </div>
         );
