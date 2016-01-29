@@ -31350,7 +31350,7 @@
 
 	var React = __webpack_require__(1);
 	var SpotIndexItem = __webpack_require__(238);
-	//var ReviewIndexItem = require('../reviews/ReviewsIndexItem');
+	var RecentReviews = __webpack_require__(250);
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
@@ -31360,22 +31360,10 @@
 	    },
 	
 	    render: function () {
-	        var handleItemClick = this.handleItemClick;
 	        return React.createElement(
 	            'div',
 	            null,
-	            React.createElement(
-	                'h3',
-	                null,
-	                'Recent Reviews'
-	            ),
-	            this.props.spots.map(function (spot) {
-	                var boundClick = handleItemClick.bind(null, spot);
-	                return React.createElement(SpotIndexItem, {
-	                    onClick: boundClick,
-	                    spot: spot,
-	                    key: spot.id });
-	            })
+	            React.createElement(RecentReviews, null)
 	        );
 	    }
 	});
@@ -32339,6 +32327,107 @@
 	});
 	
 	module.exports = ReviewForm;
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var Link = ReactRouter.Link;
+	
+	var ReviewStore = __webpack_require__(247);
+	var ReviewUtil = __webpack_require__(244);
+	
+	var RecentReviews = React.createClass({
+	    displayName: 'RecentReviews',
+	
+	    getInitialState: function () {
+	        return { recentReviews: [] };
+	    },
+	
+	    componentDidMount: function () {
+	        this.reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchRecentReviews(5);
+	    },
+	
+	    onChange: function () {
+	        this.setState({ recentReviews: ReviewStore.recentReviews() });
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.reviewListener.remove();
+	    },
+	
+	    render: function () {
+	        if (this.state.recentReviews.length === 0) {
+	            reviews = React.createElement('div', null);
+	        } else {
+	            reviews = this.state.recentReviews.map(function (review) {
+	                var spotLink = "/spots/" + review.spot_name.id;
+	                var username = review.user.username;
+	                var nameDisplay = React.createElement(
+	                    'strong',
+	                    null,
+	                    username
+	                );
+	                var status = " wrote a review for ";
+	
+	                return React.createElement(
+	                    'ul',
+	                    { key: review.id },
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        React.createElement(
+	                            'ul',
+	                            { className: 'recent-reviews' },
+	                            React.createElement(
+	                                'li',
+	                                null,
+	                                nameDisplay,
+	                                status,
+	                                React.createElement(
+	                                    Link,
+	                                    { to: spotLink },
+	                                    review.spot_name.name,
+	                                    ':'
+	                                )
+	                            ),
+	                            React.createElement(
+	                                'li',
+	                                null,
+	                                React.createElement(
+	                                    'div',
+	                                    null,
+	                                    review.date
+	                                )
+	                            ),
+	                            React.createElement(
+	                                'li',
+	                                null,
+	                                review.comment
+	                            )
+	                        )
+	                    )
+	                );
+	            });
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Recent Reviews'
+	            ),
+	            reviews
+	        );
+	    }
+	});
+	
+	module.exports = RecentReviews;
 
 /***/ }
 /******/ ]);

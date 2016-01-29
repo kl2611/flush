@@ -1,6 +1,6 @@
 var React = require('react');
 var SpotIndexItem = require('./SpotsIndexItem.js');
-//var ReviewIndexItem = require('../reviews/ReviewsIndexItem');
+var RecentReviews = require('../reviews/RecentReviews');
 
 var SpotIndex = React.createClass({
     handleItemClick: function (spot) {
@@ -8,19 +8,9 @@ var SpotIndex = React.createClass({
     },
 
     render: function(){
-        var handleItemClick = this.handleItemClick;
         return (
         <div>
-            <h3>Recent Reviews</h3>
-            {
-              this.props.spots.map(function(spot){
-                var boundClick = handleItemClick.bind(null, spot);
-                return <SpotIndexItem
-                  onClick={boundClick}
-                  spot={spot}
-                  key={spot.id} />
-              })
-            }
+          <RecentReviews />
         </div>
         );
     }
