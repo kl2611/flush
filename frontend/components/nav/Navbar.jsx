@@ -1,6 +1,5 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
-var SearchBar = require('./search');
 var ApiUtil = require('../../util/api_util');
 var ReactRouter = require('react-router');
 var UserInfo = require('./UserInfo');

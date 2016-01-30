@@ -33174,7 +33174,6 @@
 
 	var ReactDOM = __webpack_require__(158);
 	var React = __webpack_require__(1);
-	var SearchBar = __webpack_require__(261);
 	var ApiUtil = __webpack_require__(262);
 	var ReactRouter = __webpack_require__(159);
 	var UserInfo = __webpack_require__(263);
@@ -33235,24 +33234,7 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var SpotUtil = __webpack_require__(207);
-	var Geosuggest = __webpack_require__(257);
-	
-	var SearchBar = React.createClass({
-	    displayName: 'SearchBar',
-	
-	    render: function () {
-	        return React.createElement(Geosuggest, null);
-	    }
-	});
-	
-	module.exports = SearchBar;
-
-/***/ },
+/* 261 */,
 /* 262 */
 /***/ function(module, exports, __webpack_require__) {
 

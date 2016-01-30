@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
         get 'spots/search', to: 'spots#search'
         resources :reviews, only: [:index, :create, :show, :update, :destroy]
-        # resources :taggings, only: [:index, :create, :show, :destroy]
-        # resources :tags, only: [:index, :create, :show]
+        resources :taggings, only: [:index, :create, :show, :destroy]
+        resources :tags, only: [:index, :create, :show]
     end
 end
