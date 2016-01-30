@@ -13,7 +13,7 @@ Tag.delete_all
 Tagging.delete_all
 Picture.delete_all
 
-User.create ( {username: "guest",
+User.create ( {username: "Guest",
                         password: "password"} )
 
 Review.create ([ {spot_id: 1,
@@ -59,108 +59,64 @@ Spot.create ([{
                         lng: -73.9621
                      },
                      {
-                      name: "Somewhere on Broadway",
-                      description: "Grassy plains cover a whole block. Recreational facilities are well taken care of!",
-                      lat: 40.807,
-                      lng: -73.9641
+                      name: "Diana Center",
+                      description: "Go through Barnard gates and bathrooms are located on the second floor",
+                      lat: 40.8096,
+                      lng: -73.9635
                      },
                      {
-                      name: "Absolute Bagels",
-                      description: "Indoor rock climbing gym has challenging courses. Gym equipment is available as well.",
-                      lat: 40.81,
-                      lng: -73.9639
+                      name: "Northwest Corner Building",
+                      description: "Located downstairs next to Joe's Coffee, go around the corner behind the escalators to find it",
+                      lat: 40.810055,
+                      lng: -73.961982
                      }])
 
-SpotAddress.create ([{
-                                    spot_id: 1,
-                                    city: "New York"
-                                    },
-
-                                    {
-                                    spot_id: 2,
-                                    city: "New York"
-                                    },
-
-                                    {
-                                    spot_id: 3,
-                                    city: "New York"
-                                    },
-
-                                    {
-                                    spot_id: 4,
-                                    city: "New York"
-                                    }
-                                    ])
 
 Picture.create([{
-                            name: "Bernal Heights 1",
-                            source: "http://res.cloudinary.com/stephlee/image/upload/v1450993606/bernal_heights1_zrnigs.jpg",
+                            name: "Lerner Hall 1",
+                            source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_1.jpg",
                             imageable_id: 1,
                             imageable_type: "Spot"
                            },
                            {
-                             name: "Bernal Heights 2",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993586/bernal_heights2_ewipim.jpg",
+                             name: "Lerner Hall 2",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_2.jpg",
                              imageable_id: 1,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Bernal Heights 3",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993588/bernalheights3_epzmi6.jpg",
-                             imageable_id: 1,
-                             imageable_type: "Spot"
-                           },
-                           {
-                             name: "Dolores Park 1",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993613/dolo1_bo7hef.jpg",
+                             name: "Low Library 1",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_1.jpg",
                              imageable_id: 2,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Dolores Park 2",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993596/dolo2_i3nxhg.jpg",
+                             name: "Low Library 2",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_2.jpg",
                              imageable_id: 2,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Dolores Park 3",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993615/dolo3_gnn9ee.jpg",
-                             imageable_id: 2,
-                             imageable_type: "Spot"
-                           },
-                           {
-                             name: "Mission Cliffs 1",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993609/missioncliffs1_wvajz9.jpg",
+                             name: "Diana Center 1",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454127564/banard_diana_1.jpg",
                              imageable_id: 3,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Mission Cliffs 2",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993613/missioncliffs2_hhfsy1.jpg",
+                             name: "Diana Center 2",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454130200/banard_diana_2.jpg",
                              imageable_id: 3,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Mission Cliffs 3",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993612/missioncliffs3_dk4vbc.jpg",
-                             imageable_id: 3,
-                             imageable_type: "Spot"
-                           },
-                           {
-                             name: "Fisherman's Wharf 1",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993588/FishermansWharf1_ge9ur3.jpg",
+                             name: "Northwest Corner Building 1",
+                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454127536/columbia_noco_1.jpg",
                              imageable_id: 4,
                              imageable_type: "Spot"
                            },
                            {
-                             name: "Fisherman's Wharf 2",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993632/fishermanswharf2_leelw7.jpg",
-                             imageable_id: 4,
-                             imageable_type: "Spot"
-                           },
-                           {
-                             name: "Fisherman's Wharf 3",
-                             source: "http://res.cloudinary.com/stephlee/image/upload/v1450993616/fishermans-wharf3_pnqgew.jpg",
+                             name: "Northwest Corner Building 2",
+                             source: "",
                              imageable_id: 4,
                              imageable_type: "Spot"
                            }
@@ -173,8 +129,10 @@ Tag.create([
                     { name: "indoor" },
                     { name: "outdoor" },
                     { name: "park" },
-                    { name: "beach" },
-                    { name: "fast food" }
+                    { name: "fast food" },
+                    { name: "gender neutral"},
+                    { name: "family restroom"},
+                    { name: "baby friendly"}
                     ])
 
 Tagging.create([
@@ -185,17 +143,9 @@ Tagging.create([
                          { spot_id: 2, tag_id: 1 },
                          { spot_id: 2, tag_id: 2 },
                          { spot_id: 3, tag_id: 5 },
-                         { spot_id: 3, tag_id: 4 },
+                         { spot_id: 3, tag_id: 6 },
                          { spot_id: 3, tag_id: 5 },
                          { spot_id: 4, tag_id: 6 },
                          { spot_id: 4, tag_id: 7 },
                          { spot_id: 4, tag_id: 8 }
                          ])
-
-50.times do
-        User.create (
-        {username: "username",
-        password: "mystery"})
-end
-
-CITIES = ["New York"]

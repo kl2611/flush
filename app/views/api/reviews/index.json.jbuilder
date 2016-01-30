@@ -1,6 +1,7 @@
 json.array! @reviews do |review|
     json.extract! review, :id, :rating, :comment, :spot_id, :updated_at
     json.spot_name review.spot, :id, :name
+
     json.user do
         json.extract! review.user, :id, :username
         if review.user.picture

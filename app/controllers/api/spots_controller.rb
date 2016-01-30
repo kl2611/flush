@@ -1,8 +1,9 @@
 class Api::SpotsController < ApplicationController
   def index
-    spots = Spot.all
+    # spots = Spot.all
 
-    @spots= spots.includes(:reviews)
+    # @spots= spots.includes(:reviews)
+    get_spots_from_params
     render 'index'
   end
 
@@ -42,15 +43,15 @@ class Api::SpotsController < ApplicationController
 
 
 
-  # private
-  #   def get_spots_from_params
-  #       @spots = Spot.all.includes(:tags)
-  #       if params[:tag_search]
-  #           @spots = Spot.find_by_tag_partial(params[:tag_search])
-  #       elsif params[:spot_search]
-  #           @spots = Spot.find_by_spot_partial(params[:spot_search])
-  #       end
-  #   end
+  private
+    def get_spots_from_params
+        @spots = Spot.all.includes(:tags)
+        if params[:tag_search]
+            @spots = Spot.find_by_tag_partial(params[:tag_search])
+        elsif params[:spot_search]
+            @spots = Spot.find_by_spot_partial(params[:spot_search])
+        end
+    end
 
   #   def spot_params
   #       params.require(:spot).permit(

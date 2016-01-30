@@ -32104,64 +32104,68 @@
 	
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
+	var LinkedStateMixin = __webpack_require__(214);
 	
 	var ReviewIndex = __webpack_require__(247);
 	var ReviewStore = __webpack_require__(240);
 	var Review = __webpack_require__(249);
 	
+	var TaggingUtil = __webpack_require__(267);
+	var TagStore = __webpack_require__(268);
+	
 	var Spot = React.createClass({
-	    displayName: 'Spot',
+	  displayName: 'Spot',
 	
-	    render: function () {
-	        var spotRating = ReviewStore.averageRating();
-	        var reviews = this.props.spot.reviews || [];
-	        var Link = ReactRouter.Link;
+	  render: function () {
+	    var spotRating = ReviewStore.averageRating();
+	    var reviews = this.props.spot.reviews || [];
+	    var Link = ReactRouter.Link;
 	
-	        return React.createElement(
-	            'div',
-	            { id: 'spot-detail' },
-	            React.createElement(
-	                'div',
-	                { id: 'spot-name' },
-	                React.createElement(
-	                    'h3',
-	                    null,
-	                    this.props.spot.name
-	                )
-	            ),
-	            React.createElement(
-	                'li',
-	                null,
-	                'Rating: ',
-	                this.props.spot.average_rating || "No reviews yet"
-	            ),
-	            React.createElement(
-	                'li',
-	                null,
-	                'Description: ',
-	                this.props.spot.description
-	            ),
-	            React.createElement(
-	                'li',
-	                null,
-	                'Tags: ',
-	                this.props.spot.taggings
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'reviews' },
-	                React.createElement(
-	                    'h3',
-	                    null,
-	                    'Reviews'
-	                ),
-	                reviews.map(function (review) {
-	                    return React.createElement(Review, _extends({ key: review.id }, review));
-	                }),
-	                React.createElement('p', null)
-	            )
-	        );
-	    }
+	    return React.createElement(
+	      'div',
+	      { id: 'spot-detail' },
+	      React.createElement(
+	        'div',
+	        { id: 'spot-name' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          this.props.spot.name
+	        )
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Rating: ',
+	        this.props.spot.average_rating || "No reviews yet"
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Description: ',
+	        this.props.spot.description
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Tags: ',
+	        this.props.spot.taggings
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'reviews' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Reviews'
+	        ),
+	        reviews.map(function (review) {
+	          return React.createElement(Review, _extends({ key: review.id }, review));
+	        }),
+	        React.createElement('p', null)
+	      )
+	    );
+	  }
 	});
 	
 	module.exports = Spot;
@@ -32353,7 +32357,8 @@
 	        'li',
 	        null,
 	        this.props.comment
-	      )
+	      ),
+	      React.createElement('p', null)
 	    );
 	  }
 	});
@@ -33372,6 +33377,111 @@
 	};
 	
 	module.exports = UserActions;
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SpotActions = __webpack_require__(208);
+	
+	var TaggingUtil = {
+	    createTagging: function (tagging) {
+	        $.ajax({
+	            url: 'api/taggings',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { tagging: tagging },
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
+	        });
+	    },
+	
+	    deleteTagging: function (taggingId) {
+	        $.ajax({
+	            url: 'api/taggings/' + taggingId,
+	            dataType: 'json',
+	            data: { taggingId: taggingId },
+	            type: 'DELETE',
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = TaggingUtil;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(220).Store;
+	var TagStore = new Store(AppDispatcher);
+	var TagConstants = __webpack_require__(269);
+	
+	var _tags = [];
+	var _queriedTags = [];
+	
+	var resetTags = function (newTags) {
+	    _tags = newTags;
+	};
+	
+	var addTag = function (newTag) {
+	    _tags.push(newTag);
+	};
+	
+	var resetQueriedTags = function (newTags) {
+	    _queriedTags = newTags;
+	};
+	
+	TagStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case TagConstants.TAGS_RECEIVED:
+	            resetTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.TAG_RECEIVED:
+	            addTag(payload.tag);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.QUERIED_TAGS_RECEIVED:
+	            resetQueriedTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	TagStore.find = function (tagName) {
+	    for (var tag in _tags) {
+	        if (tag.name === tagName) {
+	            return tag.id;
+	        }
+	    }
+	};
+	
+	TagStore.all = function () {
+	    return _tags.slice(0);
+	};
+	
+	TagStore.queriedTags = function () {
+	    return _queriedTags.slice(0);
+	};
+	
+	module.exports = TagStore;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports) {
+
+	TagConstants = {
+	    TAGS_RECEIVED: "TAGS_RECEIVED",
+	    TAG_RECEIVED: "TAG_RECEIVED",
+	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
+	};
+	
+	module.exports = TagConstants;
 
 /***/ }
 /******/ ]);
