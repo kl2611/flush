@@ -8,6 +8,7 @@ function _getCoordsObj(latLng) {
   };
 }
 
+//var CENTER = {lat: 40.728, lng: -74.000};
 var CENTER = {lat: 40.8081, lng: -73.9621};
 
 var Map = React.createClass({

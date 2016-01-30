@@ -1,5 +1,4 @@
-var ApiActions = require('../actions/api_actions');
-//var UserActions = require('../actions/user_actions');
+var UserActions = require('../actions/user_actions');
 
 var ApiUtil = {
     fetchUser: function(userId) {
@@ -10,7 +9,7 @@ var ApiUtil = {
                 UserActions.receiveCurrentUser(user);
             }
         })
-    }
+    },
 
     destroySession: function(id) {
         $ajax({
@@ -24,5 +23,4 @@ var ApiUtil = {
     }
 };
 
-window.exports = ApiUtil;
 module.exports = ApiUtil;
