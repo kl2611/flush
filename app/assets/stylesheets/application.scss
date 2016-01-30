@@ -94,20 +94,21 @@ body {
     font-size: 20px;
 }
 
-.recent-reviews-container {
+.recent-activity-container {
     text-decoration: none;
+    float: left;
 }
 
-.recent-reviews-container ul, li {
+.recent-activity-container ul, li {
     text-decoration: none;
     list-style: none;
 }
+
 
 /* MAP ************/
 .map {
   width: 400px;
   height: 400px;
-  float: center;
   position: relative;
 }
 

@@ -44,7 +44,7 @@ var RecentReviews = React.createClass({
         }
 
         return (
-            <div className ="recent-reviews-container">
+            <div className ="recent-activity-container">
             <h4>Recent Activity</h4>
                 {reviews}
             </div>

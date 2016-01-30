@@ -31500,7 +31500,7 @@
 	
 	        return React.createElement(
 	            'div',
-	            { className: 'recent-reviews-container' },
+	            { className: 'recent-activity-container' },
 	            React.createElement(
 	                'h4',
 	                null,
@@ -32110,52 +32110,58 @@
 	var Review = __webpack_require__(249);
 	
 	var Spot = React.createClass({
-	  displayName: 'Spot',
+	    displayName: 'Spot',
 	
-	  render: function () {
-	    var spotRating = ReviewStore.averageRating();
-	    var reviews = this.props.spot.reviews || [];
-	    var Link = ReactRouter.Link;
+	    render: function () {
+	        var spotRating = ReviewStore.averageRating();
+	        var reviews = this.props.spot.reviews || [];
+	        var Link = ReactRouter.Link;
 	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'ul',
-	        null,
-	        React.createElement(
-	          'li',
-	          null,
-	          'Rating: ',
-	          this.props.spot.average_rating || "No reviews yet"
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Name: ',
-	          this.props.spot.name
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Description: ',
-	          this.props.spot.description
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'reviews' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          'Reviews'
-	        ),
-	        reviews.map(function (review) {
-	          return React.createElement(Review, _extends({ key: review.id }, review));
-	        })
-	      )
-	    );
-	  }
+	        return React.createElement(
+	            'div',
+	            { id: 'spot-detail' },
+	            React.createElement(
+	                'div',
+	                { id: 'spot-name' },
+	                React.createElement(
+	                    'h3',
+	                    null,
+	                    this.props.spot.name
+	                )
+	            ),
+	            React.createElement(
+	                'li',
+	                null,
+	                'Rating: ',
+	                this.props.spot.average_rating || "No reviews yet"
+	            ),
+	            React.createElement(
+	                'li',
+	                null,
+	                'Description: ',
+	                this.props.spot.description
+	            ),
+	            React.createElement(
+	                'li',
+	                null,
+	                'Tags: ',
+	                this.props.spot.taggings
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'reviews' },
+	                React.createElement(
+	                    'h3',
+	                    null,
+	                    'Reviews'
+	                ),
+	                reviews.map(function (review) {
+	                    return React.createElement(Review, _extends({ key: review.id }, review));
+	                }),
+	                React.createElement('p', null)
+	            )
+	        );
+	    }
 	});
 	
 	module.exports = Spot;
@@ -32332,25 +32338,21 @@
 	      'div',
 	      null,
 	      React.createElement(
-	        'ul',
+	        'li',
 	        null,
-	        React.createElement(
-	          'li',
-	          null,
-	          'Rating: ',
-	          this.props.rating
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'by: ',
-	          this.props.username
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          this.props.comment
-	        )
+	        'Rating: ',
+	        this.props.rating
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'by: ',
+	        this.props.username
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        this.props.comment
 	      )
 	    );
 	  }

@@ -12,20 +12,21 @@ var Spot = React.createClass({
       var Link = ReactRouter.Link;
 
         return (
-            <div>
-                <ul>
-                  <li>Rating: {this.props.spot.average_rating || "No reviews yet"}</li>
-                  <li>Name: {this.props.spot.name}</li>
-                  <li>Description: {this.props.spot.description}</li>
-                </ul>
+            <div id="spot-detail">
+                    <div id="spot-name"><h3>{this.props.spot.name}</h3></div>
+                    <li>Rating: {this.props.spot.average_rating || "No reviews yet"}</li>
+                    <li>Description: {this.props.spot.description}</li>
+                    <li>Tags: {this.props.spot.taggings}</li>
 
-              <div className="reviews">
-                  <h3>Reviews</h3>
-                  {reviews.map(function (review) {
-                    return <Review key={review.id} {...review} />;
-                 })}
+
+                <div className="reviews">
+                    <h3>Reviews</h3>
+                    {reviews.map(function (review) {
+                      return <Review key={review.id} {...review} />;
+                   })}
+                    <p />
+                </div>
               </div>
-            </div>
         );
     }
 });

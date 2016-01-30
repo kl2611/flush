@@ -10,11 +10,11 @@ var Review = React.createClass({
   render: function () {
     return (
       <div>
-      <ul>
+
         <li>Rating: {this.props.rating}</li>
         <li>by: {this.props.username}</li>
         <li>{this.props.comment}</li>
-      </ul>
+
       </div>
     );
   }

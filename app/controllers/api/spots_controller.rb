@@ -11,6 +11,11 @@ class Api::SpotsController < ApplicationController
     render json: spot
   end
 
+    def show
+        @spot = Spot.find(params[:id])
+        render :show
+    end
+
   private
   def spot_params
     params.require(:spot).permit(
@@ -35,10 +40,7 @@ class Api::SpotsController < ApplicationController
   #       render json: spot
   #   end
 
-  #   def show
-  #       @spot = Spot.find(params[:id])
-  #       render :show
-  #   end
+
 
   # private
   #   def get_spots_from_params
