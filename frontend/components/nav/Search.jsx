@@ -1,23 +1,30 @@
 var React = require('react');
 var SpotUtil = require('../../util/spot_util');
-var Geosuggest = require('react-geosuggest');
-//var Geocomplete = require('react-geocomplete');
 var Map = require('../spots/Map');
-
+var Geocomplete = require('geocomplete')
 
 var SearchBar = React.createClass({
-
     componentDidMount: function() {
-        new google.maps.places.Autocomplete(
-            document.getElementById('searchTextField')
-            );
+        $("input").geocomplete();
+    },
+
+    loadAutocomplete: function() {
+        $("input").geocomplete(options);
+    },
+
+    handleSearch: function() {
+        $("submit").click(function(){
+            $("input").trigger("geocode");
+        });
     },
 
     render: function() {
         return (
             <div>
-                <div><label htmlFor="searchTextField">Insert an address</label></div>
-                <div><input ref='searchField' id="searchTextField" /></div>
+            <form>
+                <input id="input" type="textbox" placeholder="Type in an address" />
+                <input id="submit" type="button" value="Search" onChange={this.handleSearch} />
+            </form>
             </div>
         )
     }

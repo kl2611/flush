@@ -6,6 +6,7 @@ var SpotsIndex = require('./SpotsIndex');
 var Map = require('./Map');
 var Search = require('../nav/Search');
 
+
 function _getAllSpots() {
     return SpotStore.all();
 }
@@ -51,7 +52,7 @@ var SpotsSearch = React.createClass({
         return(
                 <div>
                     <h4>Your Next Review Awaits</h4>
-
+                    <Search /> <p />
                     <Map
                         onMapClick={this.handleMapClick}
                         onMarkerClick={this.handleMarkerClick}

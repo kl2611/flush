@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var FilterActions = require('../../actions/filter_actions.js');
+var Search =require('../nav/Search');
 
 function _getCoordsObj(latLng) {
   return {
@@ -18,9 +19,9 @@ var Map = React.createClass({
         var map = ReactDOM.findDOMNode(this.refs.map);
         var mapOptions = {
           center: this.centerSpotCoords(),
-          scrollwheel: false,
           zoom: 15
         };
+
         this.map = new google.maps.Map(map, mapOptions);
         this.registerListeners();
         this.markers = [];
@@ -28,6 +29,7 @@ var Map = React.createClass({
           this.props.spots.forEach(this.createMarkerFromSpot);
         };
       },
+
       centerSpotCoords: function() {
         if (this.props.spots[0] && this.props.spots[0].lng) {
           var spot = this.props.spots[0];
@@ -105,6 +107,7 @@ var Map = React.createClass({
       map: this.map,
       spotId: spot.id
     });
+
     this.markerListener = marker.addListener('click', function () {
       that.props.onMarkerClick(spot);
     });
@@ -122,7 +125,9 @@ var Map = React.createClass({
   },
 
   render: function() {
-    return ( <div className="map" ref="map" />);
+    return (
+        <div className="map" ref="map" />
+      );
   }
 });
 

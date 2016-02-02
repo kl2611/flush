@@ -53,12 +53,11 @@
 	
 	// components
 	var SpotForm = __webpack_require__(206);
-	var SpotsSearch = __webpack_require__(218);
-	var SpotShow = __webpack_require__(249);
-	var ReviewForm = __webpack_require__(254);
-	var Review = __webpack_require__(253);
-	var Home = __webpack_require__(258);
-	var NavBar = __webpack_require__(259);
+	var SpotsSearch = __webpack_require__(237);
+	var SpotShow = __webpack_require__(251);
+	var ReviewForm = __webpack_require__(256);
+	var Review = __webpack_require__(255);
+	var Home = __webpack_require__(260);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24038,7 +24037,7 @@
 
 	var React = __webpack_require__(1);
 	var SpotUtil = __webpack_require__(207);
-	var LinkedStateMixin = __webpack_require__(214);
+	var LinkedStateMixin = __webpack_require__(233);
 	
 	var SpotForm = React.createClass({
 	    displayName: 'SpotForm',
@@ -24138,7 +24137,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var SpotActions = __webpack_require__(208);
-	var FilterParamsStore = __webpack_require__(270);
+	var FilterParamsStore = __webpack_require__(214);
 	
 	var SpotUtil = {
 	    fetchSpots: function () {
@@ -24544,373 +24543,28 @@
 /* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(215);
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(215).Store;
+	var FilterConstants = __webpack_require__(232);
+	
+	var FilterParamsStore = new Store(AppDispatcher);
+	
+	FilterParamsStore.params = function () {
+	  return Object.assign({});
+	};
+	
+	FilterParamsStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case FilterConstants.UPDATE_BOUNDS:
+	      FilterParamsStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = FilterParamsStore;
 
 /***/ },
 /* 215 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule LinkedStateMixin
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	var ReactLink = __webpack_require__(216);
-	var ReactStateSetters = __webpack_require__(217);
-	
-	/**
-	 * A simple mixin around ReactLink.forState().
-	 */
-	var LinkedStateMixin = {
-	  /**
-	   * Create a ReactLink that's linked to part of this component's state. The
-	   * ReactLink will have the current value of this.state[key] and will call
-	   * setState() when a change is requested.
-	   *
-	   * @param {string} key state key to update. Note: you may want to use keyOf()
-	   * if you're using Google Closure Compiler advanced mode.
-	   * @return {ReactLink} ReactLink instance linking to the state.
-	   */
-	  linkState: function (key) {
-	    return new ReactLink(this.state[key], ReactStateSetters.createStateKeySetter(this, key));
-	  }
-	};
-	
-	module.exports = LinkedStateMixin;
-
-/***/ },
-/* 216 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLink
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	/**
-	 * ReactLink encapsulates a common pattern in which a component wants to modify
-	 * a prop received from its parent. ReactLink allows the parent to pass down a
-	 * value coupled with a callback that, when invoked, expresses an intent to
-	 * modify that value. For example:
-	 *
-	 * React.createClass({
-	 *   getInitialState: function() {
-	 *     return {value: ''};
-	 *   },
-	 *   render: function() {
-	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
-	 *     return <input valueLink={valueLink} />;
-	 *   },
-	 *   _handleValueChange: function(newValue) {
-	 *     this.setState({value: newValue});
-	 *   }
-	 * });
-	 *
-	 * We have provided some sugary mixins to make the creation and
-	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
-	 */
-	
-	var React = __webpack_require__(2);
-	
-	/**
-	 * @param {*} value current value of the link
-	 * @param {function} requestChange callback to request a change
-	 */
-	function ReactLink(value, requestChange) {
-	  this.value = value;
-	  this.requestChange = requestChange;
-	}
-	
-	/**
-	 * Creates a PropType that enforces the ReactLink API and optionally checks the
-	 * type of the value being passed inside the link. Example:
-	 *
-	 * MyComponent.propTypes = {
-	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
-	 * }
-	 */
-	function createLinkTypeChecker(linkType) {
-	  var shapes = {
-	    value: typeof linkType === 'undefined' ? React.PropTypes.any.isRequired : linkType.isRequired,
-	    requestChange: React.PropTypes.func.isRequired
-	  };
-	  return React.PropTypes.shape(shapes);
-	}
-	
-	ReactLink.PropTypes = {
-	  link: createLinkTypeChecker
-	};
-	
-	module.exports = ReactLink;
-
-/***/ },
-/* 217 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactStateSetters
-	 */
-	
-	'use strict';
-	
-	var ReactStateSetters = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function (component, funcReturningState) {
-	    return function (a, b, c, d, e, f) {
-	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
-	      if (partialState) {
-	        component.setState(partialState);
-	      }
-	    };
-	  },
-	
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function (component, key) {
-	    // Memoize the setters.
-	    var cache = component.__keySetters || (component.__keySetters = {});
-	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
-	  }
-	};
-	
-	function createStateKeySetter(component, key) {
-	  // Partial state is allocated outside of the function closure so it can be
-	  // reused with every call, avoiding memory allocation when this function
-	  // is called.
-	  var partialState = {};
-	  return function stateKeySetter(value) {
-	    partialState[key] = value;
-	    component.setState(partialState);
-	  };
-	}
-	
-	ReactStateSetters.Mixin = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateSetter(function(xValue) {
-	   *     return {x: xValue};
-	   *   })(1);
-	   *
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function (funcReturningState) {
-	    return ReactStateSetters.createStateSetter(this, funcReturningState);
-	  },
-	
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateKeySetter('x')(1);
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function (key) {
-	    return ReactStateSetters.createStateKeySetter(this, key);
-	  }
-	};
-	
-	module.exports = ReactStateSetters;
-
-/***/ },
-/* 218 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(219);
-	var SpotUtil = __webpack_require__(207);
-	var SpotsIndex = __webpack_require__(237);
-	var Map = __webpack_require__(247);
-	var Search = __webpack_require__(248);
-	
-	function _getAllSpots() {
-	    return SpotStore.all();
-	}
-	
-	var SpotsSearch = React.createClass({
-	    displayName: 'SpotsSearch',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    _spotsChanged: function () {
-	        this.setState({ spots: _getAllSpots() });
-	    },
-	
-	    getInitialState: function () {
-	        return {
-	            spots: _getAllSpots(),
-	            clickedLoc: null
-	        };
-	    },
-	
-	    _onChange: function () {
-	        this.setState({ spots: SpotStore.all() });
-	    },
-	
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	
-	    handleMapClick: function (coords) {
-	        this.props.history.pushState(null, "spots/new", coords);
-	    },
-	
-	    handleMarkerClick: function (spot) {
-	        this.props.history.pushState(null, "spots/" + spot.id);
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'h4',
-	                null,
-	                'Your Next Review Awaits'
-	            ),
-	            React.createElement(Map, {
-	                onMapClick: this.handleMapClick,
-	                onMarkerClick: this.handleMarkerClick,
-	                spots: this.state.spots }),
-	            React.createElement(
-	                'div',
-	                { className: 'map' },
-	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotsSearch;
-
-/***/ },
-/* 219 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(220).Store;
-	var AppDispatcher = __webpack_require__(209);
-	var SpotConstants = __webpack_require__(213);
-	var SpotStore = new Store(AppDispatcher);
-	var CHANGE_EVENT = "change";
-	
-	var _spots = [];
-	var _currentSpot = null;
-	
-	var resetSpots = function (newSpots) {
-	    _spots = newSpots;
-	};
-	
-	var updateSpot = function (newSpot) {
-	    _currentSpot = newSpot;
-	};
-	
-	var resetSpot = function (newSpot) {
-	    _currentSpot = newSpot;
-	};
-	
-	SpotStore.all = function () {
-	    return _spots.slice(0);
-	};
-	
-	SpotStore.current = function () {
-	    return _currentSpot;
-	};
-	
-	SpotStore.find = function (id) {
-	    for (i = 0; i < _spots.length; i++) {
-	        if (_spots[i].id === id) {
-	            return _spots[i];
-	        }
-	    }
-	};
-	
-	SpotStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case SpotConstants.SPOTS_RECEIVED:
-	            resetSpots(payload.spots);
-	            SpotStore.__emitChange();
-	            break;
-	        case SpotConstants.SPOT_UPDATED:
-	            updateSpot(payload.spot);
-	            SpotStore.__emitChange();
-	            break;
-	        case SpotConstants.SPOT_RECEIVED:
-	            resetSpot(payload.spot);
-	            SpotStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	module.exports = SpotStore;
-
-/***/ },
-/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24922,15 +24576,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(221);
-	module.exports.MapStore = __webpack_require__(224);
-	module.exports.Mixin = __webpack_require__(236);
-	module.exports.ReduceStore = __webpack_require__(225);
-	module.exports.Store = __webpack_require__(226);
+	module.exports.Container = __webpack_require__(216);
+	module.exports.MapStore = __webpack_require__(219);
+	module.exports.Mixin = __webpack_require__(231);
+	module.exports.ReduceStore = __webpack_require__(220);
+	module.exports.Store = __webpack_require__(221);
 
 
 /***/ },
-/* 221 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24952,10 +24606,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(222);
+	var FluxStoreGroup = __webpack_require__(217);
 	
 	var invariant = __webpack_require__(212);
-	var shallowEqual = __webpack_require__(223);
+	var shallowEqual = __webpack_require__(218);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -25113,7 +24767,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 222 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25194,7 +24848,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 223 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/**
@@ -25249,7 +24903,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 224 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25270,8 +24924,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(225);
-	var Immutable = __webpack_require__(235);
+	var FluxReduceStore = __webpack_require__(220);
+	var Immutable = __webpack_require__(230);
 	
 	var invariant = __webpack_require__(212);
 	
@@ -25399,7 +25053,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 225 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25420,9 +25074,9 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(226);
+	var FluxStore = __webpack_require__(221);
 	
-	var abstractMethod = __webpack_require__(234);
+	var abstractMethod = __webpack_require__(229);
 	var invariant = __webpack_require__(212);
 	
 	var FluxReduceStore = (function (_FluxStore) {
@@ -25506,7 +25160,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 226 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25525,7 +25179,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(227);
+	var _require = __webpack_require__(222);
 	
 	var EventEmitter = _require.EventEmitter;
 	
@@ -25689,7 +25343,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 227 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25702,14 +25356,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(228)
+	  EventEmitter: __webpack_require__(223)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 228 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25728,11 +25382,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(229);
-	var EventSubscriptionVendor = __webpack_require__(231);
+	var EmitterSubscription = __webpack_require__(224);
+	var EventSubscriptionVendor = __webpack_require__(226);
 	
-	var emptyFunction = __webpack_require__(233);
-	var invariant = __webpack_require__(232);
+	var emptyFunction = __webpack_require__(228);
+	var invariant = __webpack_require__(227);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -25906,7 +25560,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 229 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25927,7 +25581,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(230);
+	var EventSubscription = __webpack_require__(225);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -25959,7 +25613,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 230 */
+/* 225 */
 /***/ function(module, exports) {
 
 	/**
@@ -26013,7 +25667,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 231 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26032,7 +25686,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(232);
+	var invariant = __webpack_require__(227);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -26122,7 +25776,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 232 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26178,7 +25832,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 233 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -26221,7 +25875,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 234 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26248,7 +25902,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 235 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31235,7 +30889,7 @@
 	}));
 
 /***/ },
-/* 236 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -31252,7 +30906,7 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(222);
+	var FluxStoreGroup = __webpack_require__(217);
 	
 	var invariant = __webpack_require__(212);
 	
@@ -31358,12 +31012,394 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
+/* 232 */
+/***/ function(module, exports) {
+
+	var FilterConstants = {
+	  UPDATE_BOUNDS: "UPDATE_BOUNDS"
+	};
+	
+	module.exports = FilterConstants;
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(234);
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule LinkedStateMixin
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactLink = __webpack_require__(235);
+	var ReactStateSetters = __webpack_require__(236);
+	
+	/**
+	 * A simple mixin around ReactLink.forState().
+	 */
+	var LinkedStateMixin = {
+	  /**
+	   * Create a ReactLink that's linked to part of this component's state. The
+	   * ReactLink will have the current value of this.state[key] and will call
+	   * setState() when a change is requested.
+	   *
+	   * @param {string} key state key to update. Note: you may want to use keyOf()
+	   * if you're using Google Closure Compiler advanced mode.
+	   * @return {ReactLink} ReactLink instance linking to the state.
+	   */
+	  linkState: function (key) {
+	    return new ReactLink(this.state[key], ReactStateSetters.createStateKeySetter(this, key));
+	  }
+	};
+	
+	module.exports = LinkedStateMixin;
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   _handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+	
+	var React = __webpack_require__(2);
+	
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+	
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ? React.PropTypes.any.isRequired : linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+	
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+	
+	module.exports = ReactLink;
+
+/***/ },
+/* 236 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactStateSetters
+	 */
+	
+	'use strict';
+	
+	var ReactStateSetters = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (component, funcReturningState) {
+	    return function (a, b, c, d, e, f) {
+	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
+	      if (partialState) {
+	        component.setState(partialState);
+	      }
+	    };
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (component, key) {
+	    // Memoize the setters.
+	    var cache = component.__keySetters || (component.__keySetters = {});
+	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
+	  }
+	};
+	
+	function createStateKeySetter(component, key) {
+	  // Partial state is allocated outside of the function closure so it can be
+	  // reused with every call, avoiding memory allocation when this function
+	  // is called.
+	  var partialState = {};
+	  return function stateKeySetter(value) {
+	    partialState[key] = value;
+	    component.setState(partialState);
+	  };
+	}
+	
+	ReactStateSetters.Mixin = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateSetter(function(xValue) {
+	   *     return {x: xValue};
+	   *   })(1);
+	   *
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (funcReturningState) {
+	    return ReactStateSetters.createStateSetter(this, funcReturningState);
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateKeySetter('x')(1);
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (key) {
+	    return ReactStateSetters.createStateKeySetter(this, key);
+	  }
+	};
+	
+	module.exports = ReactStateSetters;
+
+/***/ },
 /* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SpotIndexItem = __webpack_require__(238);
-	var RecentReviews = __webpack_require__(239);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(238);
+	var SpotUtil = __webpack_require__(207);
+	var SpotsIndex = __webpack_require__(239);
+	var Map = __webpack_require__(249);
+	var Search = __webpack_require__(250);
+	
+	function _getAllSpots() {
+	    return SpotStore.all();
+	}
+	
+	var SpotsSearch = React.createClass({
+	    displayName: 'SpotsSearch',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    _spotsChanged: function () {
+	        this.setState({ spots: _getAllSpots() });
+	    },
+	
+	    getInitialState: function () {
+	        return {
+	            spots: _getAllSpots(),
+	            clickedLoc: null
+	        };
+	    },
+	
+	    _onChange: function () {
+	        this.setState({ spots: SpotStore.all() });
+	    },
+	
+	    componentDidMount: function () {
+	        this.spotListener = SpotStore.addListener(this._onChange);
+	        SpotUtil.fetchSpots();
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	    },
+	
+	    handleMapClick: function (coords) {
+	        this.props.history.pushState(null, "spots/new", coords);
+	    },
+	
+	    handleMarkerClick: function (spot) {
+	        this.props.history.pushState(null, "spots/" + spot.id);
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Your Next Review Awaits'
+	            ),
+	            React.createElement(Search, null),
+	            ' ',
+	            React.createElement('p', null),
+	            React.createElement(Map, {
+	                onMapClick: this.handleMapClick,
+	                onMarkerClick: this.handleMarkerClick,
+	                spots: this.state.spots }),
+	            React.createElement(
+	                'div',
+	                { className: 'map' },
+	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SpotsSearch;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(215).Store;
+	var AppDispatcher = __webpack_require__(209);
+	var SpotConstants = __webpack_require__(213);
+	var SpotStore = new Store(AppDispatcher);
+	var CHANGE_EVENT = "change";
+	
+	var _spots = [];
+	var _currentSpot = null;
+	
+	var resetSpots = function (newSpots) {
+	    _spots = newSpots;
+	};
+	
+	var updateSpot = function (newSpot) {
+	    _currentSpot = newSpot;
+	};
+	
+	var resetSpot = function (newSpot) {
+	    _currentSpot = newSpot;
+	};
+	
+	SpotStore.all = function () {
+	    return _spots.slice(0);
+	};
+	
+	SpotStore.current = function () {
+	    return _currentSpot;
+	};
+	
+	SpotStore.find = function (id) {
+	    for (i = 0; i < _spots.length; i++) {
+	        if (_spots[i].id === id) {
+	            return _spots[i];
+	        }
+	    }
+	};
+	
+	SpotStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case SpotConstants.SPOTS_RECEIVED:
+	            resetSpots(payload.spots);
+	            SpotStore.__emitChange();
+	            break;
+	        case SpotConstants.SPOT_UPDATED:
+	            updateSpot(payload.spot);
+	            SpotStore.__emitChange();
+	            break;
+	        case SpotConstants.SPOT_RECEIVED:
+	            resetSpot(payload.spot);
+	            SpotStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	module.exports = SpotStore;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SpotIndexItem = __webpack_require__(240);
+	var RecentReviews = __webpack_require__(241);
 	
 	var SpotIndex = React.createClass({
 	    displayName: 'SpotIndex',
@@ -31384,7 +31420,7 @@
 	module.exports = SpotIndex;
 
 /***/ },
-/* 238 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31421,16 +31457,16 @@
 	module.exports = SpotIndexItem;
 
 /***/ },
-/* 239 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var Link = ReactRouter.Link;
 	
-	var ReviewStore = __webpack_require__(240);
-	var ReviewUtil = __webpack_require__(242);
-	var Rating = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(242);
+	var ReviewUtil = __webpack_require__(244);
+	var Rating = __webpack_require__(246);
 	
 	var RecentReviews = React.createClass({
 	    displayName: 'RecentReviews',
@@ -31514,10 +31550,10 @@
 	module.exports = RecentReviews;
 
 /***/ },
-/* 240 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(220).Store;
+	var Store = __webpack_require__(215).Store;
 	var AppDispatcher = __webpack_require__(209);
 	var _reviews = [];
 	var _myReviews = [];
@@ -31526,7 +31562,7 @@
 	var _spotReviews = [];
 	var currentReview = null;
 	
-	var ReviewConstants = __webpack_require__(241);
+	var ReviewConstants = __webpack_require__(243);
 	var ReviewStore = new Store(AppDispatcher);
 	
 	var resetReviews = function (reviews) {
@@ -31722,7 +31758,7 @@
 	module.exports = ReviewStore;
 
 /***/ },
-/* 241 */
+/* 243 */
 /***/ function(module, exports) {
 
 	ReviewConstants = {
@@ -31738,10 +31774,10 @@
 	module.exports = ReviewConstants;
 
 /***/ },
-/* 242 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ReviewActions = __webpack_require__(243);
+	var ReviewActions = __webpack_require__(245);
 	
 	var ReviewUtil = {
 	    createReview: function (review) {
@@ -31825,11 +31861,11 @@
 	module.exports = ReviewUtil;
 
 /***/ },
-/* 243 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var ReviewConstants = __webpack_require__(241);
+	var ReviewConstants = __webpack_require__(243);
 	
 	var ReviewActions = {
 	    receiveAllReviews: function (reviews) {
@@ -31885,12 +31921,12 @@
 	module.exports = ReviewActions;
 
 /***/ },
-/* 244 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var StarRating = __webpack_require__(245);
+	var StarRating = __webpack_require__(247);
 	
 	var Rating = React.createClass({
 	    displayName: 'Rating',
@@ -31933,13 +31969,13 @@
 	module.exports = Rating;
 
 /***/ },
-/* 245 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(246),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
+	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(248),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
 
 /***/ },
-/* 246 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31993,12 +32029,13 @@
 
 
 /***/ },
-/* 247 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var FilterActions = __webpack_require__(268);
+	var FilterActions = __webpack_require__(261);
+	var Search = __webpack_require__(250);
 	
 	function _getCoordsObj(latLng) {
 	  return {
@@ -32018,9 +32055,9 @@
 	    var map = ReactDOM.findDOMNode(this.refs.map);
 	    var mapOptions = {
 	      center: this.centerSpotCoords(),
-	      scrollwheel: false,
 	      zoom: 15
 	    };
+	
 	    this.map = new google.maps.Map(map, mapOptions);
 	    this.registerListeners();
 	    this.markers = [];
@@ -32028,6 +32065,7 @@
 	      this.props.spots.forEach(this.createMarkerFromSpot);
 	    };
 	  },
+	
 	  centerSpotCoords: function () {
 	    if (this.props.spots[0] && this.props.spots[0].lng) {
 	      var spot = this.props.spots[0];
@@ -32106,6 +32144,7 @@
 	      map: this.map,
 	      spotId: spot.id
 	    });
+	
 	    this.markerListener = marker.addListener('click', function () {
 	      that.props.onMarkerClick(spot);
 	    });
@@ -32130,20 +32169,29 @@
 	module.exports = Map;
 
 /***/ },
-/* 248 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var SpotUtil = __webpack_require__(207);
-	var Geosuggest = __webpack_require__(265);
-	//var Geocomplete = require('react-geocomplete');
-	var Map = __webpack_require__(247);
+	var Map = __webpack_require__(249);
+	var Geocomplete = __webpack_require__(262);
 	
 	var SearchBar = React.createClass({
 	    displayName: 'SearchBar',
 	
 	    componentDidMount: function () {
-	        new google.maps.places.Autocomplete(document.getElementById('searchTextField'));
+	        $("input").geocomplete();
+	    },
+	
+	    loadAutocomplete: function () {
+	        $("input").geocomplete(options);
+	    },
+	
+	    handleSearch: function () {
+	        $("submit").click(function () {
+	            $("input").trigger("geocode");
+	        });
 	    },
 	
 	    render: function () {
@@ -32151,18 +32199,10 @@
 	            'div',
 	            null,
 	            React.createElement(
-	                'div',
+	                'form',
 	                null,
-	                React.createElement(
-	                    'label',
-	                    { htmlFor: 'searchTextField' },
-	                    'Insert an address'
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                null,
-	                React.createElement('input', { ref: 'searchField', id: 'searchTextField' })
+	                React.createElement('input', { id: 'input', type: 'textbox', placeholder: 'Type in an address' }),
+	                React.createElement('input', { id: 'submit', type: 'button', value: 'Search', onChange: this.handleSearch })
 	            )
 	        );
 	    }
@@ -32171,17 +32211,17 @@
 	module.exports = SearchBar;
 
 /***/ },
-/* 249 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(219);
-	var Spot = __webpack_require__(250);
-	var Map = __webpack_require__(247);
+	var SpotStore = __webpack_require__(238);
+	var Spot = __webpack_require__(252);
+	var Map = __webpack_require__(249);
 	var SpotUtil = __webpack_require__(207);
 	
-	var Review = __webpack_require__(253);
+	var Review = __webpack_require__(255);
 	
 	var SpotShow = React.createClass({
 	    displayName: 'SpotShow',
@@ -32249,21 +32289,21 @@
 	module.exports = SpotShow;
 
 /***/ },
-/* 250 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var LinkedStateMixin = __webpack_require__(214);
+	var LinkedStateMixin = __webpack_require__(233);
 	
-	var ReviewIndex = __webpack_require__(251);
-	var ReviewStore = __webpack_require__(240);
-	var Review = __webpack_require__(253);
+	var ReviewIndex = __webpack_require__(253);
+	var ReviewStore = __webpack_require__(242);
+	var Review = __webpack_require__(255);
 	
-	var TaggingUtil = __webpack_require__(255);
-	var TagStore = __webpack_require__(256);
+	var TaggingUtil = __webpack_require__(257);
+	var TagStore = __webpack_require__(258);
 	
 	var Spot = React.createClass({
 	  displayName: 'Spot',
@@ -32323,16 +32363,16 @@
 	module.exports = Spot;
 
 /***/ },
-/* 251 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(242);
-	var ReviewStore = __webpack_require__(240);
-	var ReviewIndexItem = __webpack_require__(252);
+	var ReviewUtil = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(242);
+	var ReviewIndexItem = __webpack_require__(254);
 	
 	var ReviewIndex = React.createClass({
 	    displayName: 'ReviewIndex',
@@ -32384,7 +32424,7 @@
 	module.exports = ReviewIndex;
 
 /***/ },
-/* 252 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32475,16 +32515,16 @@
 	module.exports = ReviewIndexItem;
 
 /***/ },
-/* 253 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
-	var ReviewActions = __webpack_require__(243);
-	var ReviewForm = __webpack_require__(254);
-	var ReviewStore = __webpack_require__(240);
-	var ReviewUtil = __webpack_require__(242);
+	var ReviewActions = __webpack_require__(245);
+	var ReviewForm = __webpack_require__(256);
+	var ReviewStore = __webpack_require__(242);
+	var ReviewUtil = __webpack_require__(244);
 	
 	var Review = React.createClass({
 	  displayName: 'Review',
@@ -32518,13 +32558,13 @@
 	module.exports = Review;
 
 /***/ },
-/* 254 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(214);
+	var LinkedStateMixin = __webpack_require__(233);
 	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(242);
+	var ReviewUtil = __webpack_require__(244);
 	
 	var ReviewForm = React.createClass({
 	    displayName: 'ReviewForm',
@@ -32591,7 +32631,7 @@
 	module.exports = ReviewForm;
 
 /***/ },
-/* 255 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SpotActions = __webpack_require__(208);
@@ -32625,13 +32665,13 @@
 	module.exports = TaggingUtil;
 
 /***/ },
-/* 256 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(220).Store;
+	var Store = __webpack_require__(215).Store;
 	var TagStore = new Store(AppDispatcher);
-	var TagConstants = __webpack_require__(257);
+	var TagConstants = __webpack_require__(259);
 	
 	var _tags = [];
 	var _queriedTags = [];
@@ -32684,7 +32724,7 @@
 	module.exports = TagStore;
 
 /***/ },
-/* 257 */
+/* 259 */
 /***/ function(module, exports) {
 
 	TagConstants = {
@@ -32696,15 +32736,15 @@
 	module.exports = TagConstants;
 
 /***/ },
-/* 258 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
-	var RecentReviews = __webpack_require__(239);
-	var ReviewUtil = __webpack_require__(242);
-	var ReviewStore = __webpack_require__(240);
-	var SpotSearch = __webpack_require__(218);
+	var RecentReviews = __webpack_require__(241);
+	var ReviewUtil = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(242);
+	var SpotSearch = __webpack_require__(237);
 	
 	var Home = React.createClass({
 	    displayName: 'Home',
@@ -32766,753 +32806,11 @@
 	module.exports = Home;
 
 /***/ },
-/* 259 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ReactDOM = __webpack_require__(158);
-	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(260);
-	var ReactRouter = __webpack_require__(159);
-	var UserInfo = __webpack_require__(263);
-	var SearchBar = __webpack_require__(248);
-	
-	var NavBar = React.createClass({
-	    displayName: 'NavBar',
-	
-	    render: function () {
-	        return React.createElement(
-	            'nav',
-	            { className: 'navbar navbar-default' },
-	            React.createElement(
-	                'div',
-	                { className: 'container-fluid' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'navbar-header' },
-	                    React.createElement(
-	                        'ul',
-	                        { className: 'nav navbar-nav navbar-right' },
-	                        React.createElement(
-	                            'li',
-	                            { className: 'search-bar' },
-	                            React.createElement(SearchBar, { location: this.props.location })
-	                        ),
-	                        React.createElement(
-	                            'li',
-	                            { className: 'dropdown' },
-	                            React.createElement(
-	                                'a',
-	                                { href: '#',
-	                                    className: 'dropdown-toggle user-avatar',
-	                                    'data-toggle': 'dropdown',
-	                                    role: 'button',
-	                                    'aria-haspopup': 'true',
-	                                    'aria-expanded': 'false' },
-	                                'Username',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                React.createElement(
-	                                    'li',
-	                                    null,
-	                                    'Sign Out'
-	                                )
-	                            )
-	                        )
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = NavBar;
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var UserActions = __webpack_require__(261);
-	
-	var ApiUtil = {
-	    fetchUser: function (userId) {
-	        $.ajax({
-	            url: "api/users/" + userId,
-	            data: userId,
-	            success: function (user) {
-	                UserActions.receiveCurrentUser(user);
-	            }
-	        });
-	    },
-	
-	    destroySession: function (id) {
-	        $ajax({
-	            url: "/session",
-	            type: "DELETE",
-	            data: id,
-	            success: function () {
-	                window.location = "/";
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = ApiUtil;
-
-/***/ },
 /* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var UserConstants = __webpack_require__(262);
-	
-	var UserActions = {
-	    receiveCurrentUser: function (user) {
-	        AppDispatcher.dispatch({
-	            actionType: UserConstants.USER_RECEIVED,
-	            user: user
-	        });
-	    }
-	};
-	
-	module.exports = UserActions;
-
-/***/ },
-/* 262 */
-/***/ function(module, exports) {
-
-	UserConstants = {
-	    USER_RECEIVED: "USER_RECEIVED"
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var UserStore = __webpack_require__(264);
-	var ApiUtil = __webpack_require__(260);
-	var Link = ReactRouter.Link;
-	
-	var UserInfo = React.createClass({
-	    displayName: 'UserInfo',
-	
-	    getInitialState: function () {
-	        return {
-	            username: "",
-	            userlink: ""
-	        };
-	    },
-	
-	    componentDidMount: function () {
-	        this.userListener.UserStore.addListener(this.change);
-	        ApiUtil.fetchUser(CURRENT_USER_ID);
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.userListener.remove();
-	    },
-	
-	    change: function () {
-	        this.setState({
-	            username: UserStore.user()[0].username,
-	            userlink: "/#/users" + UserStore.user()[0].id
-	        });
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            Link,
-	            { to: '' },
-	            this.state.username
-	        );
-	    }
-	});
-	
-	module.exports = UserInfo;
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(220).Store;
-	var UserStore = new Store(AppDispatcher);
-	var UserConstants = __webpack_require__(262);
-	
-	var currentUser = [];
-	
-	var resetUser = function (newUser) {
-	    currentUser = [];
-	    currentUser.push(newUser);
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case UserConstants.USER_RECEIVED:
-	            resetUser(payload.user);
-	            UserStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	UserStore.user = function () {
-	    return currentUser.slice(0);
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
-/* 265 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* global window */
-	
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _GeosuggestItem = __webpack_require__(266);
-	
-	var _GeosuggestItem2 = _interopRequireDefault(_GeosuggestItem);
-	
-	// eslint-disable-line
-	
-	var _inputAttributes = __webpack_require__(267);
-	
-	var _inputAttributes2 = _interopRequireDefault(_inputAttributes);
-	
-	var Geosuggest = _react2['default'].createClass({
-	  displayName: 'Geosuggest',
-	
-	  /**
-	   * Get the default props
-	   * @return {Object} The state
-	   */
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      fixtures: [],
-	      initialValue: '',
-	      placeholder: 'Search places',
-	      disabled: false,
-	      className: '',
-	      inputClassName: '',
-	      location: null,
-	      radius: null,
-	      bounds: null,
-	      country: null,
-	      types: null,
-	      googleMaps: null,
-	      onSuggestSelect: function onSuggestSelect() {},
-	      onFocus: function onFocus() {},
-	      onBlur: function onBlur() {},
-	      onChange: function onChange() {},
-	      skipSuggest: function skipSuggest() {},
-	      getSuggestLabel: function getSuggestLabel(suggest) {
-	        return suggest.description;
-	      },
-	      autoActivateFirstSuggest: false
-	    };
-	  },
-	
-	  /**
-	   * Get the initial state
-	   * @return {Object} The state
-	   */
-	  getInitialState: function getInitialState() {
-	    return {
-	      isMounted: false,
-	      isSuggestsHidden: true,
-	      userInput: this.props.initialValue,
-	      activeSuggest: null,
-	      suggests: []
-	    };
-	  },
-	
-	  /**
-	   * Change inputValue if prop changes
-	   * @param {Object} props The new props
-	   */
-	  componentWillReceiveProps: function componentWillReceiveProps(props) {
-	    if (this.props.initialValue !== props.initialValue) {
-	      this.setState({ userInput: props.initialValue });
-	    }
-	  },
-	
-	  /**
-	   * Called on the client side after component is mounted.
-	   * Google api sdk object will be obtained and cached as a instance property.
-	   * Necessary objects of google api will also be determined and saved.
-	   */
-	  componentDidMount: function componentDidMount() {
-	    this.setInputValue(this.props.initialValue);
-	
-	    var googleMaps = this.props.googleMaps || window.google && // eslint-disable-line no-extra-parens
-	    window.google.maps || this.googleMaps;
-	
-	    if (!googleMaps) {
-	      console.error( // eslint-disable-line no-console
-	      'Google map api was not found in the page.');
-	      return;
-	    }
-	    this.googleMaps = googleMaps;
-	
-	    this.autocompleteService = new googleMaps.places.AutocompleteService();
-	    this.geocoder = new googleMaps.Geocoder();
-	
-	    this.setState({ isMounted: true });
-	  },
-	
-	  /**
-	   * When the component will unmount
-	   */
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.setState({ isMounted: false });
-	  },
-	
-	  /**
-	   * Method used for setting initial value.
-	   * @param {string} value to set in input
-	   */
-	  setInputValue: function setInputValue(value) {
-	    this.setState({ userInput: value });
-	  },
-	
-	  /**
-	   * When the input got changed
-	   */
-	  onInputChange: function onInputChange() {
-	    var _this = this;
-	
-	    var userInput = this.refs.geosuggestInput.value;
-	
-	    this.setState({ userInput: userInput }, function () {
-	      _this.showSuggests();
-	      _this.props.onChange(userInput);
-	    });
-	  },
-	
-	  /**
-	   * When the input gets focused
-	   */
-	  onFocus: function onFocus() {
-	    this.props.onFocus();
-	    this.showSuggests();
-	  },
-	
-	  /**
-	   * Update the value of the user input
-	   * @param {String} value the new value of the user input
-	   */
-	  update: function update(value) {
-	    this.setState({ userInput: value });
-	    this.props.onChange(value);
-	  },
-	
-	  /*
-	   * Clear the input and close the suggestion pane
-	   */
-	  clear: function clear() {
-	    var _this2 = this;
-	
-	    this.setState({ userInput: '' }, function () {
-	      return _this2.hideSuggests();
-	    });
-	  },
-	
-	  /**
-	   * Search for new suggests
-	   */
-	  searchSuggests: function searchSuggests() {
-	    var _this3 = this;
-	
-	    if (!this.state.userInput) {
-	      this.updateSuggests();
-	      return;
-	    }
-	
-	    var options = {
-	      input: this.state.userInput
-	    };
-	
-	    if (this.props.location) {
-	      options.location = this.props.location;
-	    }
-	
-	    if (this.props.radius) {
-	      options.radius = this.props.radius;
-	    }
-	
-	    if (this.props.bounds) {
-	      options.bounds = this.props.bounds;
-	    }
-	
-	    if (this.props.types) {
-	      options.types = this.props.types;
-	    }
-	
-	    if (this.props.country) {
-	      options.componentRestrictions = {
-	        country: this.props.country
-	      };
-	    }
-	
-	    this.autocompleteService.getPlacePredictions(options, function (suggestsGoogle) {
-	      _this3.updateSuggests(suggestsGoogle);
-	
-	      if (_this3.props.autoActivateFirstSuggest) {
-	        _this3.activateSuggest('next');
-	      }
-	    });
-	  },
-	
-	  /**
-	   * Update the suggests
-	   * @param  {Object} suggestsGoogle The new google suggests
-	   */
-	  updateSuggests: function updateSuggests(suggestsGoogle) {
-	    var _this4 = this;
-	
-	    if (!suggestsGoogle) {
-	      suggestsGoogle = [];
-	    }
-	
-	    var suggests = [],
-	        regex = new RegExp(this.state.userInput, 'gim'),
-	        skipSuggest = this.props.skipSuggest;
-	
-	    this.props.fixtures.forEach(function (suggest) {
-	      if (!skipSuggest(suggest) && suggest.label.match(regex)) {
-	        suggest.placeId = suggest.label;
-	        suggests.push(suggest);
-	      }
-	    });
-	
-	    suggestsGoogle.forEach(function (suggest) {
-	      if (!skipSuggest(suggest)) {
-	        suggests.push({
-	          label: _this4.props.getSuggestLabel(suggest),
-	          placeId: suggest.place_id
-	        });
-	      }
-	    });
-	
-	    this.setState({ suggests: suggests });
-	  },
-	
-	  /**
-	   * When the input gets focused
-	   */
-	  showSuggests: function showSuggests() {
-	    this.searchSuggests();
-	    this.setState({ isSuggestsHidden: false });
-	  },
-	
-	  /**
-	   * When the input loses focused
-	   */
-	  hideSuggests: function hideSuggests() {
-	    var _this5 = this;
-	
-	    this.props.onBlur();
-	    setTimeout(function () {
-	      if (_this5.state && _this5.state.isMounted) {
-	        _this5.setState({ isSuggestsHidden: true });
-	      }
-	    }, 100);
-	  },
-	
-	  /**
-	   * When a key gets pressed in the input
-	   * @param  {Event} event The keypress event
-	   */
-	  onInputKeyDown: function onInputKeyDown(event) {
-	    switch (event.which) {
-	      case 40:
-	        // DOWN
-	        event.preventDefault();
-	        this.activateSuggest('next');
-	        break;
-	      case 38:
-	        // UP
-	        event.preventDefault();
-	        this.activateSuggest('prev');
-	        break;
-	      case 13:
-	        // ENTER
-	        event.preventDefault();
-	        this.selectSuggest(this.state.activeSuggest);
-	        break;
-	      case 9:
-	        // TAB
-	        this.selectSuggest(this.state.activeSuggest);
-	        break;
-	      case 27:
-	        // ESC
-	        this.hideSuggests();
-	        break;
-	      default:
-	        break;
-	    }
-	  },
-	
-	  /**
-	   * Activate a new suggest
-	   * @param {String} direction The direction in which to activate new suggest
-	   */
-	  activateSuggest: function activateSuggest(direction) {
-	    // eslint-disable-line complexity
-	    if (this.state.isSuggestsHidden) {
-	      this.showSuggests();
-	      return;
-	    }
-	
-	    var suggestsCount = this.state.suggests.length - 1,
-	        next = direction === 'next',
-	        newActiveSuggest = null,
-	        newIndex = 0,
-	        i = 0; // eslint-disable-line id-length
-	
-	    for (i; i <= suggestsCount; i++) {
-	      if (this.state.suggests[i] === this.state.activeSuggest) {
-	        newIndex = next ? i + 1 : i - 1;
-	      }
-	    }
-	
-	    if (!this.state.activeSuggest) {
-	      newIndex = next ? 0 : suggestsCount;
-	    }
-	
-	    if (newIndex >= 0 && newIndex <= suggestsCount) {
-	      newActiveSuggest = this.state.suggests[newIndex];
-	    }
-	
-	    this.setState({ activeSuggest: newActiveSuggest });
-	  },
-	
-	  /**
-	   * When an item got selected
-	   * @param {GeosuggestItem} suggest The selected suggest item
-	   */
-	  selectSuggest: function selectSuggest(suggest) {
-	    if (!suggest) {
-	      suggest = {
-	        label: this.state.userInput
-	      };
-	    }
-	
-	    this.setState({
-	      isSuggestsHidden: true,
-	      userInput: suggest.label
-	    });
-	
-	    if (suggest.location) {
-	      this.props.onSuggestSelect(suggest);
-	      return;
-	    }
-	
-	    this.geocodeSuggest(suggest);
-	  },
-	
-	  /**
-	   * Geocode a suggest
-	   * @param  {Object} suggest The suggest
-	   */
-	  geocodeSuggest: function geocodeSuggest(suggest) {
-	    var _this6 = this;
-	
-	    this.geocoder.geocode({ address: suggest.label }, function (results, status) {
-	      if (status !== _this6.googleMaps.GeocoderStatus.OK) {
-	        return;
-	      }
-	
-	      var gmaps = results[0],
-	          location = gmaps.geometry.location;
-	
-	      suggest.gmaps = gmaps;
-	      suggest.location = {
-	        lat: location.lat(),
-	        lng: location.lng()
-	      };
-	
-	      _this6.props.onSuggestSelect(suggest);
-	    });
-	  },
-	
-	  /**
-	   * Render the view
-	   * @return {Function} The React element to render
-	   */
-	  render: function render() {
-	    var _this7 = this;
-	
-	    var attributes = {};
-	
-	    _inputAttributes2['default'].forEach(function (inputAttribute) {
-	      if (_this7.props[inputAttribute]) {
-	        attributes[inputAttribute] = _this7.props[inputAttribute];
-	      }
-	    });
-	
-	    return (// eslint-disable-line no-extra-parens
-	      _react2['default'].createElement(
-	        'div',
-	        { className: 'geosuggest ' + this.props.className,
-	          onClick: this.onClick },
-	        _react2['default'].createElement('input', _extends({
-	          className: 'geosuggest__input ' + this.props.inputClassName,
-	          ref: 'geosuggestInput',
-	          type: 'text'
-	        }, attributes, {
-	          value: this.state.userInput,
-	          onKeyDown: this.onInputKeyDown,
-	          onChange: this.onInputChange,
-	          onFocus: this.onFocus,
-	          onBlur: this.hideSuggests })),
-	        _react2['default'].createElement(
-	          'ul',
-	          { className: this.getSuggestsClasses() },
-	          this.getSuggestItems()
-	        )
-	      )
-	    );
-	  },
-	
-	  /**
-	   * Get the suggest items for the list
-	   * @return {Array} The suggestions
-	   */
-	  getSuggestItems: function getSuggestItems() {
-	    return this.state.suggests.map((function (suggest) {
-	      var isActive = this.state.activeSuggest && suggest.placeId === this.state.activeSuggest.placeId;
-	
-	      return (// eslint-disable-line no-extra-parens
-	        _react2['default'].createElement(_GeosuggestItem2['default'], {
-	          key: suggest.placeId,
-	          suggest: suggest,
-	          isActive: isActive,
-	          onSuggestSelect: this.selectSuggest })
-	      );
-	    }).bind(this));
-	  },
-	
-	  /**
-	   * The classes for the suggests list
-	   * @return {String} The classes
-	   */
-	  getSuggestsClasses: function getSuggestsClasses() {
-	    var classes = 'geosuggest__suggests';
-	
-	    classes += this.state.isSuggestsHidden ? ' geosuggest__suggests--hidden' : '';
-	
-	    return classes;
-	  }
-	});
-	
-	module.exports = Geosuggest;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var GeosuggestItem = _react2['default'].createClass({
-	  displayName: 'GeosuggestItem',
-	
-	  /**
-	   * Get the default props
-	   * @return {Object} The props
-	   */
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      isActive: false,
-	      suggest: {
-	        label: ''
-	      },
-	      onSuggestSelect: function onSuggestSelect() {}
-	    };
-	  },
-	
-	  /**
-	   * When the element gets clicked
-	   * @param  {Event} event The click event
-	   */
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    this.props.onSuggestSelect(this.props.suggest);
-	  },
-	
-	  /**
-	   * Render the view
-	   * @return {Function} The React element to render
-	   */
-	  render: function render() {
-	    return (// eslint-disable-line no-extra-parens
-	      _react2['default'].createElement(
-	        'li',
-	        { className: this.getSuggestClasses(),
-	          onClick: this.onClick },
-	        this.props.suggest.label
-	      )
-	    );
-	  },
-	
-	  /**
-	   * The classes for the suggest item
-	   * @return {String} The classes
-	   */
-	  getSuggestClasses: function getSuggestClasses() {
-	    var className = this.props.suggest.className;
-	    var classes = 'geosuggest-item';
-	
-	    classes += this.props.isActive ? ' geosuggest-item--active' : '';
-	    classes += className ? ' ' + className : '';
-	
-	    return classes;
-	  }
-	});
-	
-	module.exports = GeosuggestItem;
-
-/***/ },
-/* 267 */
-/***/ function(module, exports) {
-
-	/**
-	 * Attributes allowed on input elements
-	 */
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = ['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'autosave', 'disabled', 'form', 'formaction', 'formenctype', 'formmethod', 'formnovalidate', 'formtarget', 'height', 'id', 'inputmode', 'maxlength', 'maxlength', 'name', 'pattern', 'placeholder', 'readonly', 'required', 'selectionDirection', 'size', 'spellcheck', 'tabindex'];
-	module.exports = exports['default'];
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var FilterConstants = __webpack_require__(269);
+	var FilterConstants = __webpack_require__(232);
 	
 	var FilterActions = {
 	  updateBounds: function (bounds) {
@@ -33526,38 +32824,597 @@
 	module.exports = FilterActions;
 
 /***/ },
-/* 269 */
+/* 262 */
 /***/ function(module, exports) {
 
-	var FilterConstants = {
-	  UPDATE_BOUNDS: "UPDATE_BOUNDS"
-	};
+	/**
+	 * jQuery Geocoding and Places Autocomplete Plugin - V 1.6.5
+	 *
+	 * @author Martin Kleppe <kleppe@ubilabs.net>, 2014
+	 * @author Ubilabs http://ubilabs.net, 2014
+	 * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
+	 */
 	
-	module.exports = FilterConstants;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(220).Store;
-	var FilterConstants = __webpack_require__(269);
+	// # $.geocomplete()
+	// ## jQuery Geocoding and Places Autocomplete Plugin
+	//
+	// * https://github.com/ubilabs/geocomplete/
+	// * by Martin Kleppe <kleppe@ubilabs.net>
 	
-	var FilterParamsStore = new Store(AppDispatcher);
+	(function($, window, document, undefined){
 	
-	FilterParamsStore.params = function () {
-	  return Object.assign({});
-	};
+	  // ## Options
+	  // The default options for this plugin.
+	  //
+	  // * `map` - Might be a selector, an jQuery object or a DOM element. Default is `false` which shows no map.
+	  // * `details` - The container that should be populated with data. Defaults to `false` which ignores the setting.
+	  // * 'detailsScope' - Allows you to scope the 'details' container and have multiple geocomplete fields on one page. Must be a parent of the input. Default is 'null'
+	  // * `location` - Location to initialize the map on. Might be an address `string` or an `array` with [latitude, longitude] or a `google.maps.LatLng`object. Default is `false` which shows a blank map.
+	  // * `bounds` - Whether to snap geocode search to map bounds. Default: `true` if false search globally. Alternatively pass a custom `LatLngBounds object.
+	  // * `autoselect` - Automatically selects the highlighted item or the first item from the suggestions list on Enter.
+	  // * `detailsAttribute` - The attribute's name to use as an indicator. Default: `"name"`
+	  // * `mapOptions` - Options to pass to the `google.maps.Map` constructor. See the full list [here](http://code.google.com/apis/maps/documentation/javascript/reference.html#MapOptions).
+	  // * `mapOptions.zoom` - The inital zoom level. Default: `14`
+	  // * `mapOptions.scrollwheel` - Whether to enable the scrollwheel to zoom the map. Default: `false`
+	  // * `mapOptions.mapTypeId` - The map type. Default: `"roadmap"`
+	  // * `markerOptions` - The options to pass to the `google.maps.Marker` constructor. See the full list [here](http://code.google.com/apis/maps/documentation/javascript/reference.html#MarkerOptions).
+	  // * `markerOptions.draggable` - If the marker is draggable. Default: `false`. Set to true to enable dragging.
+	  // * `markerOptions.disabled` - Do not show marker. Default: `false`. Set to true to disable marker.
+	  // * `maxZoom` - The maximum zoom level too zoom in after a geocoding response. Default: `16`
+	  // * `types` - An array containing one or more of the supported types for the places request. Default: `['geocode']` See the full list [here](http://code.google.com/apis/maps/documentation/javascript/places.html#place_search_requests).
+	  // * `blur` - Trigger geocode when input loses focus.
+	  // * `geocodeAfterResult` - If blur is set to true, choose whether to geocode if user has explicitly selected a result before blur.
+	  // * `restoreValueAfterBlur` - Restores the input's value upon blurring. Default is `false` which ignores the setting.
 	
-	FilterParamsStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case FilterConstants.UPDATE_BOUNDS:
-	      FilterParamsStore.__emitChange();
-	      break;
+	  var defaults = {
+	    bounds: true,
+	    country: null,
+	    map: false,
+	    details: false,
+	    detailsAttribute: "name",
+	    detailsScope: null,
+	    autoselect: true,
+	    location: false,
+	
+	    mapOptions: {
+	      zoom: 14,
+	      scrollwheel: false,
+	      mapTypeId: "roadmap"
+	    },
+	
+	    markerOptions: {
+	      draggable: false
+	    },
+	
+	    maxZoom: 16,
+	    types: ['geocode'],
+	    blur: false,
+	    geocodeAfterResult: false,
+	    restoreValueAfterBlur: false
+	  };
+	
+	  // See: [Geocoding Types](https://developers.google.com/maps/documentation/geocoding/#Types)
+	  // on Google Developers.
+	  var componentTypes = ("street_address route intersection political " +
+	    "country administrative_area_level_1 administrative_area_level_2 " +
+	    "administrative_area_level_3 colloquial_area locality sublocality " +
+	    "neighborhood premise subpremise postal_code natural_feature airport " +
+	    "park point_of_interest post_box street_number floor room " +
+	    "lat lng viewport location " +
+	    "formatted_address location_type bounds").split(" ");
+	
+	  // See: [Places Details Responses](https://developers.google.com/maps/documentation/javascript/places#place_details_responses)
+	  // on Google Developers.
+	  var placesDetails = ("id place_id url website vicinity reference name rating " +
+	    "international_phone_number icon formatted_phone_number").split(" ");
+	
+	  // The actual plugin constructor.
+	  function GeoComplete(input, options) {
+	
+	    this.options = $.extend(true, {}, defaults, options);
+	
+	    this.input = input;
+	    this.$input = $(input);
+	
+	    this._defaults = defaults;
+	    this._name = 'geocomplete';
+	
+	    this.init();
 	  }
-	};
 	
-	module.exports = FilterParamsStore;
+	  // Initialize all parts of the plugin.
+	  $.extend(GeoComplete.prototype, {
+	    init: function(){
+	      this.initMap();
+	      this.initMarker();
+	      this.initGeocoder();
+	      this.initDetails();
+	      this.initLocation();
+	    },
+	
+	    // Initialize the map but only if the option `map` was set.
+	    // This will create a `map` within the given container
+	    // using the provided `mapOptions` or link to the existing map instance.
+	    initMap: function(){
+	      if (!this.options.map){ return; }
+	
+	      if (typeof this.options.map.setCenter == "function"){
+	        this.map = this.options.map;
+	        return;
+	      }
+	
+	      this.map = new google.maps.Map(
+	        $(this.options.map)[0],
+	        this.options.mapOptions
+	      );
+	
+	      // add click event listener on the map
+	      google.maps.event.addListener(
+	        this.map,
+	        'click',
+	        $.proxy(this.mapClicked, this)
+	      );
+	 
+	      // add dragend even listener on the map
+	      google.maps.event.addListener(
+	        this.map,
+	        'dragend',
+	        $.proxy(this.mapDragged, this)
+	      );
+	      
+	      // add idle even listener on the map
+	      google.maps.event.addListener(
+	        this.map,
+	        'idle',
+	        $.proxy(this.mapIdle, this)
+	      );
+	
+	      google.maps.event.addListener(
+	        this.map,
+	        'zoom_changed',
+	        $.proxy(this.mapZoomed, this)
+	      );
+	    },
+	
+	    // Add a marker with the provided `markerOptions` but only
+	    // if the option was set. Additionally it listens for the `dragend` event
+	    // to notify the plugin about changes.
+	    initMarker: function(){
+	      if (!this.map){ return; }
+	      var options = $.extend(this.options.markerOptions, { map: this.map });
+	
+	      if (options.disabled){ return; }
+	
+	      this.marker = new google.maps.Marker(options);
+	
+	      google.maps.event.addListener(
+	        this.marker,
+	        'dragend',
+	        $.proxy(this.markerDragged, this)
+	      );
+	    },
+	
+	    // Associate the input with the autocompleter and create a geocoder
+	    // to fall back when the autocompleter does not return a value.
+	    initGeocoder: function(){
+	
+	      // Indicates is user did select a result from the dropdown.
+	      var selected = false;
+	
+	      var options = {
+	        types: this.options.types,
+	        bounds: this.options.bounds === true ? null : this.options.bounds,
+	        componentRestrictions: this.options.componentRestrictions
+	      };
+	
+	      if (this.options.country){
+	        options.componentRestrictions = {country: this.options.country};
+	      }
+	
+	      this.autocomplete = new google.maps.places.Autocomplete(
+	        this.input, options
+	      );
+	
+	      this.geocoder = new google.maps.Geocoder();
+	
+	      // Bind autocomplete to map bounds but only if there is a map
+	      // and `options.bindToMap` is set to true.
+	      if (this.map && this.options.bounds === true){
+	        this.autocomplete.bindTo('bounds', this.map);
+	      }
+	
+	      // Watch `place_changed` events on the autocomplete input field.
+	      google.maps.event.addListener(
+	        this.autocomplete,
+	        'place_changed',
+	        $.proxy(this.placeChanged, this)
+	      );
+	
+	      // Prevent parent form from being submitted if user hit enter.
+	      this.$input.on('keypress.' + this._name, function(event){
+	        if (event.keyCode === 13){ return false; }
+	      });
+	
+	      // Assume that if user types anything after having selected a result,
+	      // the selected location is not valid any more.
+	      if (this.options.geocodeAfterResult === true){
+	        this.$input.bind('keypress.' + this._name, $.proxy(function(){
+	          if (event.keyCode != 9 && this.selected === true){
+	              this.selected = false;
+	          }
+	        }, this));
+	      }
+	
+	      // Listen for "geocode" events and trigger find action.
+	      this.$input.bind('geocode.' + this._name, $.proxy(function(){
+	        this.find();
+	      }, this));
+	
+	      // Saves the previous input value
+	      this.$input.bind('geocode:result.' + this._name, $.proxy(function(){
+	        this.lastInputVal = this.$input.val();
+	      }, this));
+	
+	      // Trigger find action when input element is blurred out and user has
+	      // not explicitly selected a result.
+	      // (Useful for typing partial location and tabbing to the next field
+	      // or clicking somewhere else.)
+	      if (this.options.blur === true){
+	        this.$input.on('blur.' + this._name, $.proxy(function(){
+	          if (this.options.geocodeAfterResult === true && this.selected === true) { return; }
+	
+	          if (this.options.restoreValueAfterBlur === true && this.selected === true) {
+	            setTimeout($.proxy(this.restoreLastValue, this), 0);
+	          } else {
+	            this.find();
+	          }
+	        }, this));
+	      }
+	    },
+	
+	    // Prepare a given DOM structure to be populated when we got some data.
+	    // This will cycle through the list of component types and map the
+	    // corresponding elements.
+	    initDetails: function(){
+	      if (!this.options.details){ return; }
+	
+	      if(this.options.detailsScope) {
+	        var $details = $(this.input).parents(this.options.detailsScope).find(this.options.details);
+	      } else {
+	        var $details = $(this.options.details);
+	      }
+	
+	      var attribute = this.options.detailsAttribute,
+	        details = {};
+	
+	      function setDetail(value){
+	        details[value] = $details.find("[" +  attribute + "=" + value + "]");
+	      }
+	
+	      $.each(componentTypes, function(index, key){
+	        setDetail(key);
+	        setDetail(key + "_short");
+	      });
+	
+	      $.each(placesDetails, function(index, key){
+	        setDetail(key);
+	      });
+	
+	      this.$details = $details;
+	      this.details = details;
+	    },
+	
+	    // Set the initial location of the plugin if the `location` options was set.
+	    // This method will care about converting the value into the right format.
+	    initLocation: function() {
+	
+	      var location = this.options.location, latLng;
+	
+	      if (!location) { return; }
+	
+	      if (typeof location == 'string') {
+	        this.find(location);
+	        return;
+	      }
+	
+	      if (location instanceof Array) {
+	        latLng = new google.maps.LatLng(location[0], location[1]);
+	      }
+	
+	      if (location instanceof google.maps.LatLng){
+	        latLng = location;
+	      }
+	
+	      if (latLng){
+	        if (this.map){ this.map.setCenter(latLng); }
+	        if (this.marker){ this.marker.setPosition(latLng); }
+	      }
+	    },
+	
+	    destroy: function(){
+	      if (this.map) {
+	        google.maps.event.clearInstanceListeners(this.map);
+	        google.maps.event.clearInstanceListeners(this.marker);
+	      }
+	
+	      this.autocomplete.unbindAll();
+	      google.maps.event.clearInstanceListeners(this.autocomplete);
+	      google.maps.event.clearInstanceListeners(this.input);
+	      this.$input.removeData();
+	      this.$input.off(this._name);
+	      this.$input.unbind('.' + this._name);
+	    },
+	
+	    // Look up a given address. If no `address` was specified it uses
+	    // the current value of the input.
+	    find: function(address){
+	      this.geocode({
+	        address: address || this.$input.val()
+	      });
+	    },
+	
+	    // Requests details about a given location.
+	    // Additionally it will bias the requests to the provided bounds.
+	    geocode: function(request){
+	      // Don't geocode if the requested address is empty
+	      if (!request.address) {
+	        return;
+	      }
+	      if (this.options.bounds && !request.bounds){
+	        if (this.options.bounds === true){
+	          request.bounds = this.map && this.map.getBounds();
+	        } else {
+	          request.bounds = this.options.bounds;
+	        }
+	      }
+	
+	      if (this.options.country){
+	        request.region = this.options.country;
+	      }
+	
+	      this.geocoder.geocode(request, $.proxy(this.handleGeocode, this));
+	    },
+	
+	    // Get the selected result. If no result is selected on the list, then get
+	    // the first result from the list.
+	    selectFirstResult: function() {
+	      //$(".pac-container").hide();
+	
+	      var selected = '';
+	      // Check if any result is selected.
+	      if ($(".pac-item-selected")[0]) {
+	        selected = '-selected';
+	      }
+	
+	      // Get the first suggestion's text.
+	      var $span1 = $(".pac-container:last .pac-item" + selected + ":first span:nth-child(2)").text();
+	      var $span2 = $(".pac-container:last .pac-item" + selected + ":first span:nth-child(3)").text();
+	
+	      // Adds the additional information, if available.
+	      var firstResult = $span1;
+	      if ($span2) {
+	        firstResult += " - " + $span2;
+	      }
+	
+	      this.$input.val(firstResult);
+	
+	      return firstResult;
+	    },
+	
+	    // Restores the input value using the previous value if it exists
+	    restoreLastValue: function() {
+	      if (this.lastInputVal){ this.$input.val(this.lastInputVal); }
+	    },
+	
+	    // Handles the geocode response. If more than one results was found
+	    // it triggers the "geocode:multiple" events. If there was an error
+	    // the "geocode:error" event is fired.
+	    handleGeocode: function(results, status){
+	      if (status === google.maps.GeocoderStatus.OK) {
+	        var result = results[0];
+	        this.$input.val(result.formatted_address);
+	        this.update(result);
+	
+	        if (results.length > 1){
+	          this.trigger("geocode:multiple", results);
+	        }
+	
+	      } else {
+	        this.trigger("geocode:error", status);
+	      }
+	    },
+	
+	    // Triggers a given `event` with optional `arguments` on the input.
+	    trigger: function(event, argument){
+	      this.$input.trigger(event, [argument]);
+	    },
+	
+	    // Set the map to a new center by passing a `geometry`.
+	    // If the geometry has a viewport, the map zooms out to fit the bounds.
+	    // Additionally it updates the marker position.
+	    center: function(geometry){
+	      if (geometry.viewport){
+	        this.map.fitBounds(geometry.viewport);
+	        if (this.map.getZoom() > this.options.maxZoom){
+	          this.map.setZoom(this.options.maxZoom);
+	        }
+	      } else {
+	        this.map.setZoom(this.options.maxZoom);
+	        this.map.setCenter(geometry.location);
+	      }
+	
+	      if (this.marker){
+	        this.marker.setPosition(geometry.location);
+	        this.marker.setAnimation(this.options.markerOptions.animation);
+	      }
+	    },
+	
+	    // Update the elements based on a single places or geocoding response
+	    // and trigger the "geocode:result" event on the input.
+	    update: function(result){
+	
+	      if (this.map){
+	        this.center(result.geometry);
+	      }
+	
+	      if (this.$details){
+	        this.fillDetails(result);
+	      }
+	
+	      this.trigger("geocode:result", result);
+	    },
+	
+	    // Populate the provided elements with new `result` data.
+	    // This will lookup all elements that has an attribute with the given
+	    // component type.
+	    fillDetails: function(result){
+	
+	      var data = {},
+	        geometry = result.geometry,
+	        viewport = geometry.viewport,
+	        bounds = geometry.bounds;
+	
+	      // Create a simplified version of the address components.
+	      $.each(result.address_components, function(index, object){
+	        var name = object.types[0];
+	
+	        $.each(object.types, function(index, name){
+	          data[name] = object.long_name;
+	          data[name + "_short"] = object.short_name;
+	        });
+	      });
+	
+	      // Add properties of the places details.
+	      $.each(placesDetails, function(index, key){
+	        data[key] = result[key];
+	      });
+	
+	      // Add infos about the address and geometry.
+	      $.extend(data, {
+	        formatted_address: result.formatted_address,
+	        location_type: geometry.location_type || "PLACES",
+	        viewport: viewport,
+	        bounds: bounds,
+	        location: geometry.location,
+	        lat: geometry.location.lat(),
+	        lng: geometry.location.lng()
+	      });
+	
+	      // Set the values for all details.
+	      $.each(this.details, $.proxy(function(key, $detail){
+	        var value = data[key];
+	        this.setDetail($detail, value);
+	      }, this));
+	
+	      this.data = data;
+	    },
+	
+	    // Assign a given `value` to a single `$element`.
+	    // If the element is an input, the value is set, otherwise it updates
+	    // the text content.
+	    setDetail: function($element, value){
+	
+	      if (value === undefined){
+	        value = "";
+	      } else if (typeof value.toUrlValue == "function"){
+	        value = value.toUrlValue();
+	      }
+	
+	      if ($element.is(":input")){
+	        $element.val(value);
+	      } else {
+	        $element.text(value);
+	      }
+	    },
+	
+	    // Fire the "geocode:dragged" event and pass the new position.
+	    markerDragged: function(event){
+	      this.trigger("geocode:dragged", event.latLng);
+	    },
+	
+	    mapClicked: function(event) {
+	        this.trigger("geocode:click", event.latLng);
+	    },
+	   
+	    // Fire the "geocode:mapdragged" event and pass the current position of the map center.
+	    mapDragged: function(event) {
+	      this.trigger("geocode:mapdragged", this.map.getCenter());
+	    },
+	
+	    // Fire the "geocode:idle" event and pass the current position of the map center.
+	    mapIdle: function(event) {
+	      this.trigger("geocode:idle", this.map.getCenter());
+	    },
+	
+	    mapZoomed: function(event) {
+	      this.trigger("geocode:zoom", this.map.getZoom());
+	    },
+	
+	    // Restore the old position of the marker to the last knwon location.
+	    resetMarker: function(){
+	      this.marker.setPosition(this.data.location);
+	      this.setDetail(this.details.lat, this.data.location.lat());
+	      this.setDetail(this.details.lng, this.data.location.lng());
+	    },
+	
+	    // Update the plugin after the user has selected an autocomplete entry.
+	    // If the place has no geometry it passes it to the geocoder.
+	    placeChanged: function(){
+	      var place = this.autocomplete.getPlace();
+	      this.selected = true;
+	
+	      if (!place.geometry){
+	        if (this.options.autoselect) {
+	          // Automatically selects the highlighted item or the first item from the
+	          // suggestions list.
+	          var autoSelection = this.selectFirstResult();
+	          this.find(autoSelection);
+	        }
+	      } else {
+	        // Use the input text if it already gives geometry.
+	        this.update(place);
+	      }
+	    }
+	  });
+	
+	  // A plugin wrapper around the constructor.
+	  // Pass `options` with all settings that are different from the default.
+	  // The attribute is used to prevent multiple instantiations of the plugin.
+	  $.fn.geocomplete = function(options) {
+	
+	    var attribute = 'plugin_geocomplete';
+	
+	    // If you call `.geocomplete()` with a string as the first parameter
+	    // it returns the corresponding property or calls the method with the
+	    // following arguments.
+	    if (typeof options == "string"){
+	
+	      var instance = $(this).data(attribute) || $(this).geocomplete().data(attribute),
+	        prop = instance[options];
+	
+	      if (typeof prop == "function"){
+	        prop.apply(instance, Array.prototype.slice.call(arguments, 1));
+	        return $(this);
+	      } else {
+	        if (arguments.length == 2){
+	          prop = arguments[1];
+	        }
+	        return prop;
+	      }
+	    } else {
+	      return this.each(function() {
+	        // Prevent against multiple instantiations.
+	        var instance = $.data(this, attribute);
+	        if (!instance) {
+	          instance = new GeoComplete( this, options );
+	          $.data(this, attribute, instance);
+	        }
+	      });
+	    }
+	  };
+	
+	})( jQuery, window, document );
+
 
 /***/ }
 /******/ ]);
