@@ -4,6 +4,11 @@ class Api::SpotsController < ApplicationController
 
     # @spots= spots.includes(:reviews)
     get_spots_from_params
+
+    if (bounds)
+      spots = Spot.in_bounds(bounds)
+    end
+
     render 'index'
   end
 
@@ -62,7 +67,7 @@ class Api::SpotsController < ApplicationController
   #       )
   #   end
 
-  #   def bounds
-  #       params[:bounds]
-  #   end
+    def bounds
+        params[:bounds]
+    end
 end

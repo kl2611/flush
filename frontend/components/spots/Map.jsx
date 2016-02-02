@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var FilterActions = require('../../actions/filter_actions.js');
 
 function _getCoordsObj(latLng) {
   return {
@@ -8,8 +9,8 @@ function _getCoordsObj(latLng) {
   };
 }
 
-//var CENTER = {lat: 40.728, lng: -74.000};
-var CENTER = {lat: 40.8081, lng: -73.9621};
+//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
+var CENTER = {lat: 40.8081, lng: -73.9621}; // Columbia University campus
 
 var Map = React.createClass({
     componentDidMount: function() {
@@ -17,6 +18,7 @@ var Map = React.createClass({
         var map = ReactDOM.findDOMNode(this.refs.map);
         var mapOptions = {
           center: this.centerSpotCoords(),
+          scrollwheel: false,
           zoom: 15
         };
         this.map = new google.maps.Map(map, mapOptions);
@@ -87,6 +89,7 @@ var Map = React.createClass({
         northEast: northEast,
         southWest: southWest
       };
+      FilterActions.updateBounds(bounds);
     });
     google.maps.event.addListener(this.map, 'click', function(event) {
       var coords = {lat: event.latLng.lat(), lng: event.latLng.lng() };

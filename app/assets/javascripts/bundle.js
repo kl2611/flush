@@ -54,11 +54,11 @@
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(218);
-	var SpotShow = __webpack_require__(245);
-	var ReviewForm = __webpack_require__(250);
-	var Review = __webpack_require__(249);
-	var Home = __webpack_require__(251);
-	var NavBar = __webpack_require__(260);
+	var SpotShow = __webpack_require__(249);
+	var ReviewForm = __webpack_require__(254);
+	var Review = __webpack_require__(253);
+	var Home = __webpack_require__(258);
+	var NavBar = __webpack_require__(259);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24138,14 +24138,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var SpotActions = __webpack_require__(208);
+	var FilterParamsStore = __webpack_require__(270);
 	
 	var SpotUtil = {
 	    fetchSpots: function () {
-	        $.ajax({
-	            url: 'api/spots',
-	            success: function (spots) {
-	                SpotActions.receiveAllSpots(spots);
-	            }
+	        var filter = FilterParamsStore.params();
+	        $.get('api/spots', filter, function (spots) {
+	            SpotActions.receiveAllSpots(spots);
 	        });
 	    },
 	
@@ -24780,7 +24779,8 @@
 	var SpotStore = __webpack_require__(219);
 	var SpotUtil = __webpack_require__(207);
 	var SpotsIndex = __webpack_require__(237);
-	var Map = __webpack_require__(244);
+	var Map = __webpack_require__(247);
+	var Search = __webpack_require__(248);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -31430,7 +31430,7 @@
 	
 	var ReviewStore = __webpack_require__(240);
 	var ReviewUtil = __webpack_require__(242);
-	var Rating = __webpack_require__(253);
+	var Rating = __webpack_require__(244);
 	
 	var RecentReviews = React.createClass({
 	    displayName: 'RecentReviews',
@@ -31889,7 +31889,116 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var StarRating = __webpack_require__(245);
+	
+	var Rating = React.createClass({
+	    displayName: 'Rating',
+	
+	    componentDidMount: function () {
+	        var options = {
+	            max_value: 5,
+	            step_size: 1,
+	            initial_value: 1
+	        };
+	        $("#spot-rating").rating(options);
+	    },
+	
+	    componentWillReceiveProps: function (newProp) {
+	        $("#spot-rating").rating('update', newProp.rating);
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'ul',
+	                null,
+	                React.createElement(
+	                    'li',
+	                    null,
+	                    React.createElement('input', { id: 'spot-rating',
+	                        className: 'rating',
+	                        type: 'number',
+	                        min: '1',
+	                        max: '5' })
+	                )
+	            )
+	        );
+	    }
+	
+	});
+	
+	module.exports = Rating;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(246),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var hasOwn = {}.hasOwnProperty;
+	
+		function classNames () {
+			var classes = [];
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+	
+			return classes.join(' ');
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
+	var FilterActions = __webpack_require__(268);
 	
 	function _getCoordsObj(latLng) {
 	  return {
@@ -31898,8 +32007,8 @@
 	  };
 	}
 	
-	//var CENTER = {lat: 40.728, lng: -74.000};
-	var CENTER = { lat: 40.8081, lng: -73.9621 };
+	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
+	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
 	
 	var Map = React.createClass({
 	  displayName: 'Map',
@@ -31909,6 +32018,7 @@
 	    var map = ReactDOM.findDOMNode(this.refs.map);
 	    var mapOptions = {
 	      center: this.centerSpotCoords(),
+	      scrollwheel: false,
 	      zoom: 15
 	    };
 	    this.map = new google.maps.Map(map, mapOptions);
@@ -31980,6 +32090,7 @@
 	        northEast: northEast,
 	        southWest: southWest
 	      };
+	      FilterActions.updateBounds(bounds);
 	    });
 	    google.maps.event.addListener(this.map, 'click', function (event) {
 	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
@@ -32019,17 +32130,58 @@
 	module.exports = Map;
 
 /***/ },
-/* 245 */
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SpotUtil = __webpack_require__(207);
+	var Geosuggest = __webpack_require__(265);
+	//var Geocomplete = require('react-geocomplete');
+	var Map = __webpack_require__(247);
+	
+	var SearchBar = React.createClass({
+	    displayName: 'SearchBar',
+	
+	    componentDidMount: function () {
+	        new google.maps.places.Autocomplete(document.getElementById('searchTextField'));
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    'label',
+	                    { htmlFor: 'searchTextField' },
+	                    'Insert an address'
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                null,
+	                React.createElement('input', { ref: 'searchField', id: 'searchTextField' })
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SearchBar;
+
+/***/ },
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var SpotStore = __webpack_require__(219);
-	var Spot = __webpack_require__(246);
-	var Map = __webpack_require__(244);
+	var Spot = __webpack_require__(250);
+	var Map = __webpack_require__(247);
 	var SpotUtil = __webpack_require__(207);
 	
-	var Review = __webpack_require__(249);
+	var Review = __webpack_require__(253);
 	
 	var SpotShow = React.createClass({
 	    displayName: 'SpotShow',
@@ -32097,7 +32249,7 @@
 	module.exports = SpotShow;
 
 /***/ },
-/* 246 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32106,12 +32258,12 @@
 	var ReactRouter = __webpack_require__(159);
 	var LinkedStateMixin = __webpack_require__(214);
 	
-	var ReviewIndex = __webpack_require__(247);
+	var ReviewIndex = __webpack_require__(251);
 	var ReviewStore = __webpack_require__(240);
-	var Review = __webpack_require__(249);
+	var Review = __webpack_require__(253);
 	
-	var TaggingUtil = __webpack_require__(267);
-	var TagStore = __webpack_require__(268);
+	var TaggingUtil = __webpack_require__(255);
+	var TagStore = __webpack_require__(256);
 	
 	var Spot = React.createClass({
 	  displayName: 'Spot',
@@ -32171,7 +32323,7 @@
 	module.exports = Spot;
 
 /***/ },
-/* 247 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32180,7 +32332,7 @@
 	var ReactRouter = __webpack_require__(159);
 	var ReviewUtil = __webpack_require__(242);
 	var ReviewStore = __webpack_require__(240);
-	var ReviewIndexItem = __webpack_require__(248);
+	var ReviewIndexItem = __webpack_require__(252);
 	
 	var ReviewIndex = React.createClass({
 	    displayName: 'ReviewIndex',
@@ -32232,7 +32384,7 @@
 	module.exports = ReviewIndex;
 
 /***/ },
-/* 248 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32323,14 +32475,14 @@
 	module.exports = ReviewIndexItem;
 
 /***/ },
-/* 249 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
 	var ReviewActions = __webpack_require__(243);
-	var ReviewForm = __webpack_require__(250);
+	var ReviewForm = __webpack_require__(254);
 	var ReviewStore = __webpack_require__(240);
 	var ReviewUtil = __webpack_require__(242);
 	
@@ -32366,7 +32518,7 @@
 	module.exports = Review;
 
 /***/ },
-/* 250 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32439,7 +32591,112 @@
 	module.exports = ReviewForm;
 
 /***/ },
-/* 251 */
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SpotActions = __webpack_require__(208);
+	
+	var TaggingUtil = {
+	    createTagging: function (tagging) {
+	        $.ajax({
+	            url: 'api/taggings',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { tagging: tagging },
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
+	        });
+	    },
+	
+	    deleteTagging: function (taggingId) {
+	        $.ajax({
+	            url: 'api/taggings/' + taggingId,
+	            dataType: 'json',
+	            data: { taggingId: taggingId },
+	            type: 'DELETE',
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = TaggingUtil;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(220).Store;
+	var TagStore = new Store(AppDispatcher);
+	var TagConstants = __webpack_require__(257);
+	
+	var _tags = [];
+	var _queriedTags = [];
+	
+	var resetTags = function (newTags) {
+	    _tags = newTags;
+	};
+	
+	var addTag = function (newTag) {
+	    _tags.push(newTag);
+	};
+	
+	var resetQueriedTags = function (newTags) {
+	    _queriedTags = newTags;
+	};
+	
+	TagStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case TagConstants.TAGS_RECEIVED:
+	            resetTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.TAG_RECEIVED:
+	            addTag(payload.tag);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.QUERIED_TAGS_RECEIVED:
+	            resetQueriedTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	TagStore.find = function (tagName) {
+	    for (var tag in _tags) {
+	        if (tag.name === tagName) {
+	            return tag.id;
+	        }
+	    }
+	};
+	
+	TagStore.all = function () {
+	    return _tags.slice(0);
+	};
+	
+	TagStore.queriedTags = function () {
+	    return _queriedTags.slice(0);
+	};
+	
+	module.exports = TagStore;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports) {
+
+	TagConstants = {
+	    TAGS_RECEIVED: "TAGS_RECEIVED",
+	    TAG_RECEIVED: "TAG_RECEIVED",
+	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
+	};
+	
+	module.exports = TagConstants;
+
+/***/ },
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32509,134 +32766,209 @@
 	module.exports = Home;
 
 /***/ },
-/* 252 */,
-/* 253 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var ReactDOM = __webpack_require__(158);
 	var React = __webpack_require__(1);
+	var ApiUtil = __webpack_require__(260);
 	var ReactRouter = __webpack_require__(159);
-	var StarRating = __webpack_require__(254);
+	var UserInfo = __webpack_require__(263);
+	var SearchBar = __webpack_require__(248);
 	
-	var Rating = React.createClass({
-	    displayName: 'Rating',
-	
-	    componentDidMount: function () {
-	        var options = {
-	            max_value: 5,
-	            step_size: 1,
-	            initial_value: 1
-	        };
-	        $("#spot-rating").rating(options);
-	    },
-	
-	    componentWillReceiveProps: function (newProp) {
-	        $("#spot-rating").rating('update', newProp.rating);
-	    },
+	var NavBar = React.createClass({
+	    displayName: 'NavBar',
 	
 	    render: function () {
 	        return React.createElement(
-	            'div',
-	            null,
+	            'nav',
+	            { className: 'navbar navbar-default' },
 	            React.createElement(
-	                'ul',
-	                null,
+	                'div',
+	                { className: 'container-fluid' },
 	                React.createElement(
-	                    'li',
-	                    null,
-	                    React.createElement('input', { id: 'spot-rating',
-	                        className: 'rating',
-	                        type: 'number',
-	                        min: '1',
-	                        max: '5' })
+	                    'div',
+	                    { className: 'navbar-header' },
+	                    React.createElement(
+	                        'ul',
+	                        { className: 'nav navbar-nav navbar-right' },
+	                        React.createElement(
+	                            'li',
+	                            { className: 'search-bar' },
+	                            React.createElement(SearchBar, { location: this.props.location })
+	                        ),
+	                        React.createElement(
+	                            'li',
+	                            { className: 'dropdown' },
+	                            React.createElement(
+	                                'a',
+	                                { href: '#',
+	                                    className: 'dropdown-toggle user-avatar',
+	                                    'data-toggle': 'dropdown',
+	                                    role: 'button',
+	                                    'aria-haspopup': 'true',
+	                                    'aria-expanded': 'false' },
+	                                'Username',
+	                                React.createElement('span', { className: 'caret' })
+	                            ),
+	                            React.createElement(
+	                                'ul',
+	                                { className: 'dropdown-menu' },
+	                                React.createElement(
+	                                    'li',
+	                                    null,
+	                                    'Sign Out'
+	                                )
+	                            )
+	                        )
+	                    )
 	                )
 	            )
 	        );
 	    }
-	
 	});
 	
-	module.exports = Rating;
+	module.exports = NavBar;
 
 /***/ },
-/* 254 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(255),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
+	var UserActions = __webpack_require__(261);
+	
+	var ApiUtil = {
+	    fetchUser: function (userId) {
+	        $.ajax({
+	            url: "api/users/" + userId,
+	            data: userId,
+	            success: function (user) {
+	                UserActions.receiveCurrentUser(user);
+	            }
+	        });
+	    },
+	
+	    destroySession: function (id) {
+	        $ajax({
+	            url: "/session",
+	            type: "DELETE",
+	            data: id,
+	            success: function () {
+	                window.location = "/";
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = ApiUtil;
 
 /***/ },
-/* 255 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
+	var AppDispatcher = __webpack_require__(209);
+	var UserConstants = __webpack_require__(262);
 	
-	(function () {
-		'use strict';
+	var UserActions = {
+	    receiveCurrentUser: function (user) {
+	        AppDispatcher.dispatch({
+	            actionType: UserConstants.USER_RECEIVED,
+	            user: user
+	        });
+	    }
+	};
 	
-		var hasOwn = {}.hasOwnProperty;
-	
-		function classNames () {
-			var classes = [];
-	
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-	
-				var argType = typeof arg;
-	
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-	
-			return classes.join(' ');
-		}
-	
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
+	module.exports = UserActions;
 
 /***/ },
-/* 256 */
+/* 262 */
+/***/ function(module, exports) {
+
+	UserConstants = {
+	    USER_RECEIVED: "USER_RECEIVED"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SpotUtil = __webpack_require__(207);
-	var Geosuggest = __webpack_require__(257);
+	var ReactRouter = __webpack_require__(159);
+	var UserStore = __webpack_require__(264);
+	var ApiUtil = __webpack_require__(260);
+	var Link = ReactRouter.Link;
 	
-	var SearchBar = React.createClass({
-	    displayName: 'SearchBar',
+	var UserInfo = React.createClass({
+	    displayName: 'UserInfo',
+	
+	    getInitialState: function () {
+	        return {
+	            username: "",
+	            userlink: ""
+	        };
+	    },
+	
+	    componentDidMount: function () {
+	        this.userListener.UserStore.addListener(this.change);
+	        ApiUtil.fetchUser(CURRENT_USER_ID);
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.userListener.remove();
+	    },
+	
+	    change: function () {
+	        this.setState({
+	            username: UserStore.user()[0].username,
+	            userlink: "/#/users" + UserStore.user()[0].id
+	        });
+	    },
 	
 	    render: function () {
-	        return React.createElement(Geosuggest, null);
+	        return React.createElement(
+	            Link,
+	            { to: '' },
+	            this.state.username
+	        );
 	    }
 	});
 	
-	module.exports = SearchBar;
+	module.exports = UserInfo;
 
 /***/ },
-/* 257 */
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(220).Store;
+	var UserStore = new Store(AppDispatcher);
+	var UserConstants = __webpack_require__(262);
+	
+	var currentUser = [];
+	
+	var resetUser = function (newUser) {
+	    currentUser = [];
+	    currentUser.push(newUser);
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case UserConstants.USER_RECEIVED:
+	            resetUser(payload.user);
+	            UserStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	UserStore.user = function () {
+	    return currentUser.slice(0);
+	};
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* global window */
@@ -32651,13 +32983,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _GeosuggestItem = __webpack_require__(258);
+	var _GeosuggestItem = __webpack_require__(266);
 	
 	var _GeosuggestItem2 = _interopRequireDefault(_GeosuggestItem);
 	
 	// eslint-disable-line
 	
-	var _inputAttributes = __webpack_require__(259);
+	var _inputAttributes = __webpack_require__(267);
 	
 	var _inputAttributes2 = _interopRequireDefault(_inputAttributes);
 	
@@ -33091,7 +33423,7 @@
 	module.exports = Geosuggest;
 
 /***/ },
-/* 258 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33161,7 +33493,7 @@
 	module.exports = GeosuggestItem;
 
 /***/ },
-/* 259 */
+/* 267 */
 /***/ function(module, exports) {
 
 	/**
@@ -33176,312 +33508,56 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ReactDOM = __webpack_require__(158);
-	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(262);
-	var ReactRouter = __webpack_require__(159);
-	var UserInfo = __webpack_require__(263);
-	var SearchBar = __webpack_require__(256);
-	
-	var NavBar = React.createClass({
-	    displayName: 'NavBar',
-	
-	    render: function () {
-	        return React.createElement(
-	            'nav',
-	            { className: 'navbar navbar-default' },
-	            React.createElement(
-	                'div',
-	                { className: 'container-fluid' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'navbar-header' },
-	                    React.createElement(
-	                        'ul',
-	                        { className: 'nav navbar-nav navbar-right' },
-	                        React.createElement(
-	                            'li',
-	                            { className: 'search-bar' },
-	                            React.createElement(SearchBar, { location: this.props.location })
-	                        ),
-	                        React.createElement(
-	                            'li',
-	                            { className: 'dropdown' },
-	                            React.createElement(
-	                                'a',
-	                                { href: '#',
-	                                    className: 'dropdown-toggle user-avatar',
-	                                    'data-toggle': 'dropdown',
-	                                    role: 'button',
-	                                    'aria-haspopup': 'true',
-	                                    'aria-expanded': 'false' },
-	                                'Username',
-	                                React.createElement('span', { className: 'caret' })
-	                            ),
-	                            React.createElement(
-	                                'ul',
-	                                { className: 'dropdown-menu' },
-	                                React.createElement(
-	                                    'li',
-	                                    null,
-	                                    'Sign Out'
-	                                )
-	                            )
-	                        )
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = NavBar;
-
-/***/ },
-/* 261 */,
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var UserActions = __webpack_require__(266);
-	
-	var ApiUtil = {
-	    fetchUser: function (userId) {
-	        $.ajax({
-	            url: "api/users/" + userId,
-	            data: userId,
-	            success: function (user) {
-	                UserActions.receiveCurrentUser(user);
-	            }
-	        });
-	    },
-	
-	    destroySession: function (id) {
-	        $ajax({
-	            url: "/session",
-	            type: "DELETE",
-	            data: id,
-	            success: function () {
-	                window.location = "/";
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = ApiUtil;
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var UserStore = __webpack_require__(264);
-	var ApiUtil = __webpack_require__(262);
-	var Link = ReactRouter.Link;
-	
-	var UserInfo = React.createClass({
-	    displayName: 'UserInfo',
-	
-	    getInitialState: function () {
-	        return {
-	            username: "",
-	            userlink: ""
-	        };
-	    },
-	
-	    componentDidMount: function () {
-	        this.userListener.UserStore.addListener(this.change);
-	        ApiUtil.fetchUser(CURRENT_USER_ID);
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.userListener.remove();
-	    },
-	
-	    change: function () {
-	        this.setState({
-	            username: UserStore.user()[0].username,
-	            userlink: "/#/users" + UserStore.user()[0].id
-	        });
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            Link,
-	            { to: '' },
-	            this.state.username
-	        );
-	    }
-	});
-	
-	module.exports = UserInfo;
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(220).Store;
-	var UserStore = new Store(AppDispatcher);
-	var UserConstants = __webpack_require__(265);
-	
-	var currentUser = [];
-	
-	var resetUser = function (newUser) {
-	    currentUser = [];
-	    currentUser.push(newUser);
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case UserConstants.USER_RECEIVED:
-	            resetUser(payload.user);
-	            UserStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	UserStore.user = function () {
-	    return currentUser.slice(0);
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
-/* 265 */
-/***/ function(module, exports) {
-
-	UserConstants = {
-	    USER_RECEIVED: "USER_RECEIVED"
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var UserConstants = __webpack_require__(265);
-	
-	var UserActions = {
-	    receiveCurrentUser: function (user) {
-	        AppDispatcher.dispatch({
-	            actionType: UserConstants.USER_RECEIVED,
-	            user: user
-	        });
-	    }
-	};
-	
-	module.exports = UserActions;
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SpotActions = __webpack_require__(208);
-	
-	var TaggingUtil = {
-	    createTagging: function (tagging) {
-	        $.ajax({
-	            url: 'api/taggings',
-	            dataType: 'json',
-	            type: 'POST',
-	            data: { tagging: tagging },
-	            success: function (spot) {
-	                SpotActions.updateSingleSpot(spot);
-	            }
-	        });
-	    },
-	
-	    deleteTagging: function (taggingId) {
-	        $.ajax({
-	            url: 'api/taggings/' + taggingId,
-	            dataType: 'json',
-	            data: { taggingId: taggingId },
-	            type: 'DELETE',
-	            success: function (spot) {
-	                SpotActions.updateSingleSpot(spot);
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = TaggingUtil;
-
-/***/ },
 /* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(220).Store;
-	var TagStore = new Store(AppDispatcher);
-	var TagConstants = __webpack_require__(269);
+	var FilterConstants = __webpack_require__(269);
 	
-	var _tags = [];
-	var _queriedTags = [];
-	
-	var resetTags = function (newTags) {
-	    _tags = newTags;
+	var FilterActions = {
+	  updateBounds: function (bounds) {
+	    AppDispatcher.dispatch({
+	      actionType: FilterConstants.UPDATE_BOUNDS,
+	      bounds: bounds
+	    });
+	  }
 	};
 	
-	var addTag = function (newTag) {
-	    _tags.push(newTag);
-	};
-	
-	var resetQueriedTags = function (newTags) {
-	    _queriedTags = newTags;
-	};
-	
-	TagStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case TagConstants.TAGS_RECEIVED:
-	            resetTags(payload.tags);
-	            TagStore.__emitChange();
-	            break;
-	        case TagConstants.TAG_RECEIVED:
-	            addTag(payload.tag);
-	            TagStore.__emitChange();
-	            break;
-	        case TagConstants.QUERIED_TAGS_RECEIVED:
-	            resetQueriedTags(payload.tags);
-	            TagStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	TagStore.find = function (tagName) {
-	    for (var tag in _tags) {
-	        if (tag.name === tagName) {
-	            return tag.id;
-	        }
-	    }
-	};
-	
-	TagStore.all = function () {
-	    return _tags.slice(0);
-	};
-	
-	TagStore.queriedTags = function () {
-	    return _queriedTags.slice(0);
-	};
-	
-	module.exports = TagStore;
+	module.exports = FilterActions;
 
 /***/ },
 /* 269 */
 /***/ function(module, exports) {
 
-	TagConstants = {
-	    TAGS_RECEIVED: "TAGS_RECEIVED",
-	    TAG_RECEIVED: "TAG_RECEIVED",
-	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
+	var FilterConstants = {
+	  UPDATE_BOUNDS: "UPDATE_BOUNDS"
 	};
 	
-	module.exports = TagConstants;
+	module.exports = FilterConstants;
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(220).Store;
+	var FilterConstants = __webpack_require__(269);
+	
+	var FilterParamsStore = new Store(AppDispatcher);
+	
+	FilterParamsStore.params = function () {
+	  return Object.assign({});
+	};
+	
+	FilterParamsStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case FilterConstants.UPDATE_BOUNDS:
+	      FilterParamsStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = FilterParamsStore;
 
 /***/ }
 /******/ ]);

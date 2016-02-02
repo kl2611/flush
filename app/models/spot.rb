@@ -11,6 +11,13 @@ class Spot < ActiveRecord::Base
     has_many :pictures, as: :imageable
     has_one :spot_address
 
+    def self.in_bounds(bounds)
+        self.where("lat < ?", bounds[:northEast][:lat])
+        .where("lat > ?", bounds[:southWest][:lat])
+        .where("lng > ?", bounds[:southWest][:lng])
+        .where("lng < ?", bounds[:northEast][:lng])
+    end
+
     def self.find_by_tag_partial(str)
         partial = "%#{str}%"
         Spot.includes(:tags).references(:tags).where("tags.name LIKE ?", partial)

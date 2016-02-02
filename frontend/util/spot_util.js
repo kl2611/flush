@@ -1,12 +1,11 @@
 var SpotActions = require('../actions/spot_actions.js');
+var FilterParamsStore = require('../stores/filter_params');
 
 var SpotUtil = {
     fetchSpots: function() {
-        $.ajax({
-            url: 'api/spots',
-            success: function(spots) {
-                SpotActions.receiveAllSpots(spots);
-            }
+        var filter = FilterParamsStore.params();
+        $.get('api/spots', filter, function(spots){
+          SpotActions.receiveAllSpots(spots);
         });
     },
 

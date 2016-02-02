@@ -4,6 +4,7 @@ var SpotStore = require('../../stores/spot.js');
 var SpotUtil = require('../../util/spot_util.js');
 var SpotsIndex = require('./SpotsIndex');
 var Map = require('./Map');
+var Search = require('../nav/Search');
 
 function _getAllSpots() {
     return SpotStore.all();
@@ -50,6 +51,7 @@ var SpotsSearch = React.createClass({
         return(
                 <div>
                     <h4>Your Next Review Awaits</h4>
+
                     <Map
                         onMapClick={this.handleMapClick}
                         onMarkerClick={this.handleMarkerClick}
