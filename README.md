@@ -8,11 +8,10 @@ Inspired by Yelp, Flush allows users to review and rate restrooms as well as sub
 - [x] Log in/Log out
 - [ ] Sort restrooms based on distance, review ratings, and number of reviews
 - [ ] Create, edit, delete your own reviews
-- [ ] Google Maps API
-- [ ] Submit request for new bathroom location to map (crowdsourced)
+- [x] Google Maps API
+- [x] Add new bathroom location to map (crowdsourced)
 - [ ] Add photos for bathrooms
-- [ ] 'Like' other users' reviews
-- [ ] Read reviews written by other users
+- [x] Read reviews written by other users
 - [ ] Edit personal profile (profile picture and basic details)
 
 ##Design Docs
