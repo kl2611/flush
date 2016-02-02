@@ -57,7 +57,8 @@
 	var SpotShow = __webpack_require__(251);
 	var ReviewForm = __webpack_require__(256);
 	var Review = __webpack_require__(255);
-	var Home = __webpack_require__(260);
+	
+	var SearchIndex = __webpack_require__(264);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -78,7 +79,8 @@
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App },
-	  React.createElement(IndexRoute, { component: SpotsSearch }),
+	  React.createElement(IndexRoute, { component: SearchIndex }),
+	  React.createElement(Route, { path: '/search/:loc', component: SearchIndex }),
 	  React.createElement(Route, { path: 'spots/search', component: SpotsSearch }),
 	  React.createElement(Route, { path: 'spots/new', component: SpotForm }),
 	  React.createElement(
@@ -31306,6 +31308,28 @@
 	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
 	
+	    _geoConverter: function (locStr) {
+	        var _showMaps = this._showMaps;
+	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
+	            if (status === google.maps.GeocoderStatus.OK) {
+	                var latLng = {
+	                    lat: results[0].geometry.location.lat(),
+	                    lng: results[0].geometry.location.lng()
+	                };
+	                _showMaps(latLng);
+	            } else {
+	                console.log('Geocode was not successful for the following reason: ' + status);
+	            }
+	        });
+	    },
+	
+	    _showMaps: function (centerLatLng) {
+	        this.setState({
+	            showResult: true,
+	            centerLatLng: centerLatLng
+	        });
+	    },
+	
 	    render: function () {
 	        return React.createElement(
 	            'div',
@@ -31315,7 +31339,7 @@
 	                null,
 	                'Your Next Review Awaits'
 	            ),
-	            React.createElement(Search, null),
+	            React.createElement(Search, { history: this.props.history }),
 	            ' ',
 	            React.createElement('p', null),
 	            React.createElement(Map, {
@@ -32176,34 +32200,120 @@
 	var SpotUtil = __webpack_require__(207);
 	var Map = __webpack_require__(249);
 	var Geocomplete = __webpack_require__(262);
+	var Dropdown = __webpack_require__(263);
 	
 	var SearchBar = React.createClass({
 	    displayName: 'SearchBar',
 	
-	    componentDidMount: function () {
-	        $("input").geocomplete();
+	    getInitialState: function () {
+	        this.styleSheetShow = document.createElement('style');
+	        this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	
+	        return {
+	            loc: "",
+	            placeholder: "Input address",
+	            showAutocomplete: false,
+	            showSpinner: false
+	        };
 	    },
 	
-	    loadAutocomplete: function () {
-	        $("input").geocomplete(options);
+	    // componentDidMount: function() {
+	    //     var options = {
+	    //     };
+	
+	    //     $("input").geocomplete(options);
+	    // },
+	
+	    searchBarOnClick: function () {
+	        setTimeout(function () {
+	            this.setState({
+	                showAutocomplete: true
+	            });
+	        }.bind(this), 1800);
 	    },
 	
-	    handleSearch: function () {
-	        $("submit").click(function () {
-	            $("input").trigger("geocode");
+	    handleSearch: function (e) {
+	        if (arguments.length > 0) {
+	            e.preventDefault();
+	        }
+	
+	        if (this.state.loc === "") {
+	            this.setState({
+	                placeholder: "Please set location"
+	            });
+	        } else {
+	            this.redirectToSearch();
+	            this.setState({
+	                showSpinner: true
+	            });
+	        }
+	    },
+	
+	    redirectToSearch: function () {
+	        var loc = this.state.loc.replace(/\W+/g, "-");
+	        console.log("pushStatefromsearch");
+	        this.props.history.pushState(null, 'search/' + loc);
+	    },
+	
+	    handleLocChange: function (e) {
+	        this.setState({
+	            loc: this.refs.locinput.value
 	        });
 	    },
 	
 	    render: function () {
-	        return React.createElement(
+	        var buttonSubmit = React.createElement(
+	            'span',
+	            { className: 'input-group-btn' },
+	            React.createElement(
+	                'button',
+	                { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
+	                'Search'
+	            )
+	        );
+	
+	        var buttonProgress = React.createElement(
+	            'span',
+	            { className: 'input-group-btn' },
+	            React.createElement(
+	                'button',
+	                { className: 'btn btn-default', disabled: true },
+	                React.createElement(
+	                    'div',
+	                    { className: 'three-quarters-loader' },
+	                    'Loading…'
+	                )
+	            )
+	        );
+	
+	        var design = React.createElement(
 	            'div',
 	            null,
 	            React.createElement(
 	                'form',
-	                null,
-	                React.createElement('input', { id: 'input', type: 'textbox', placeholder: 'Type in an address' }),
-	                React.createElement('input', { id: 'submit', type: 'button', value: 'Search', onChange: this.handleSearch })
+	                { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
+	                React.createElement('input', {
+	                    type: 'text',
+	                    className: 'form-control center',
+	                    id: 'landing-search-input',
+	                    onChange: this.handleLocChange,
+	                    placeholder: this.state.placeholder,
+	                    ref: 'locinput',
+	                    onFocus: this.searchBarOnClick }),
+	                this.state.showSpinner ? buttonProgress : buttonSubmit
 	            )
+	        );
+	
+	        var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	
+	        return React.createElement(
+	            'div',
+	            { ref: 'searchbar' },
+	            design,
+	            showAutocomplete ? React.createElement(Dropdown, {
+	                locinput: this.refs.locinput,
+	                handleSearch: this.handleSearch,
+	                handleLocChange: this.handleLocChange }) : ""
 	        );
 	    }
 	});
@@ -32736,76 +32846,7 @@
 	module.exports = TagConstants;
 
 /***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var RecentReviews = __webpack_require__(241);
-	var ReviewUtil = __webpack_require__(244);
-	var ReviewStore = __webpack_require__(242);
-	var SpotSearch = __webpack_require__(237);
-	
-	var Home = React.createClass({
-	    displayName: 'Home',
-	
-	    getInitialState: function () {
-	        return { userSpotReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        this.reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchUserReviews(CURRENT_USER_ID);
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        var reviews = ReviewStore.singleUserAllReviews();
-	        var refIds = reviews.map(function (review) {
-	            return { spot_id: review.spot_id,
-	                review_id: review.id };
-	        });
-	        this.setState({ userSpotReviews: refIds });
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            { id: 'homepage-container' },
-	            React.createElement(
-	                'div',
-	                { className: 'left-column' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'map-container' },
-	                    React.createElement(SpotSearch, null)
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'homepage-review-form' },
-	                    React.createElement(
-	                        'h3',
-	                        null,
-	                        'Your Next Review Awaits!'
-	                    )
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'recent-activiy' },
-	                    React.createElement(RecentReviews, null)
-	                )
-	            )
-	        );
-	    }
-	
-	});
-	
-	module.exports = Home;
-
-/***/ },
+/* 260 */,
 /* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -33415,6 +33456,165 @@
 	
 	})( jQuery, window, document );
 
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	    displayName: 'DropDown',
+	
+	    _fillInAddress: function () {
+	        this.props.handleLocChange();
+	        this.props.handleSearch();
+	    },
+	
+	    // componentWillUnmount: function() {
+	    //     document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0])
+	    // },
+	
+	    componentDidMount: function () {
+	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	        this.autofillOptions = {
+	            types: ['geocode']
+	        };
+	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	        this.autofill.addListener('place_changed', this._fillInAddress);
+	    },
+	
+	    render: function () {
+	        return React.createElement('div', null);
+	    }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(238);
+	var SpotUtil = __webpack_require__(207);
+	var Map = __webpack_require__(249);
+	var Search = __webpack_require__(250);
+	var SpotsIndex = __webpack_require__(239);
+	
+	function _getAllSpots() {
+	    return SpotStore.all();
+	}
+	
+	var SearchIndex = React.createClass({
+	    displayName: 'SearchIndex',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    _spotsChanged: function () {
+	        this.setState({ spots: _getAllSpots() });
+	    },
+	
+	    getInitialState: function () {
+	        return {
+	            spots: _getAllSpots(),
+	            //clickedLoc: null
+	            showResult: false
+	        };
+	    },
+	
+	    _onChange: function () {
+	        this.setState({ spots: SpotStore.all() });
+	    },
+	
+	    _updateMapsStatus: function () {
+	        this._startSearchProcess();
+	    },
+	
+	    _startSearchProcess: function () {
+	        this.geocoder = new google.maps.Geocoder();
+	        this._geoConverter(this.props.params.loc);
+	    },
+	
+	    componentDidMount: function () {
+	        this.currentLocStr = this.props.params.loc;
+	        this._startSearchProcess();
+	
+	        this.spotListener = SpotStore.addListener(this._onChange);
+	        SpotUtil.fetchSpots();
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	    },
+	
+	    handleMapClick: function (coords) {
+	        this.props.history.pushState(null, "spots/new", coords);
+	    },
+	
+	    handleMarkerClick: function (spot) {
+	        this.props.history.pushState(null, "spots/" + spot.id);
+	    },
+	
+	    _geoConverter: function (locStr) {
+	        var _showMaps = this._showMaps;
+	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
+	            if (status === google.maps.GeocoderStatus.OK) {
+	                var latLng = {
+	                    lat: results[0].geometry.location.lat(),
+	                    lng: results[0].geometry.location.lng()
+	                };
+	                _showMaps(latLng);
+	            } else {
+	                console.log('Geocode was not successful for the following reason: ' + status);
+	            }
+	        });
+	    },
+	
+	    _showMaps: function (centerLatLng) {
+	        this.setState({
+	            showResult: true,
+	            centerLatLng: centerLatLng
+	        });
+	    },
+	
+	    componentWillReceiveProps: function (newProps) {
+	        var newLocStr = newProps.params.loc;
+	
+	        this._geoConverter(newProps.params.loc);
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Your Next Review Awaits'
+	            ),
+	            React.createElement(Search, { history: this.props.history }),
+	            ' ',
+	            React.createElement('p', null),
+	            React.createElement(Map, {
+	                centerLatLng: this.state.centerLatLng,
+	                onMapClick: this.handleMapClick,
+	                onMarkerClick: this.handleMarkerClick,
+	                spots: this.state.spots }),
+	            React.createElement(
+	                'div',
+	                { className: 'map' },
+	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SearchIndex;
 
 /***/ }
 /******/ ]);
