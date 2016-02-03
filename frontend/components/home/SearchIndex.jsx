@@ -17,18 +17,23 @@ function _getAllSpots() {
 }
 
 var SearchIndex = React.createClass({
+    contextTypes: {
+        router: React.PropTypes.func
+    },
+
     getInitialState: function() {
         return ({
-            spots: SpotStore.all(),
-            showResult: false
+            spots: _getAllSpots(),
+            showResult: false,
+            clickedLoc: null
         });
     },
 
-    _updateSpots: function() {
-        this.setState({
-            spots: SpotStore.all()
-        });
-    },
+    // _updateSpots: function() {
+    //     this.setState({
+    //         spots: SpotStore.all()
+    //     });
+    // },
 
     // _updateFilter: function() {
     //     SpotActions.fetchFilteredSpots();
@@ -38,22 +43,13 @@ var SearchIndex = React.createClass({
         this.setState({spots: _getAllSpots()});
     },
 
-    // getInitialState: function() {
-    //     return ({
-    //         spots: _getAllSpots(),
-    //         //clickedLoc: null
-    //         showResult: false
-    //     });
-    // },
-
-    // _onChange: function() {
-    //     this.setState({ spots: SpotStore.all() })
-    // },
+    _onChange: function() {
+        this.setState({ spots: SpotStore.all() })
+    },
 
     _updateMapsStatus: function() {
         // if (MapStore.isReady('maps')) {
             this.mapsReadyToken.remove();
-            console.log('starting search process')
             this._startSearchProcess();
         // }
     },
@@ -102,11 +98,10 @@ var SearchIndex = React.createClass({
             this._startSearchProcess();
         }
 
-        this.spotToken = SpotStore.addListener(this._updateSpots);
         // this.filterToken = FilterStore.addListener(this._updateFilter);
 
-        // this.spotListener = SpotStore.addListener(this._onChange);
-        // SpotUtil.fetchSpots();
+        this.spotListener = SpotStore.addListener(this._onChange);
+        SpotUtil.fetchSpots();
     },
 
     componentWillReceiveProps: function(newProps) {
@@ -118,8 +113,7 @@ var SearchIndex = React.createClass({
     },
 
     componentWillUnmount: function() {
-        // this.spotListener.remove();
-        this.spotToken.remove();
+        this.spotListener.remove();
         // this.filterToken.remove();
     },
 

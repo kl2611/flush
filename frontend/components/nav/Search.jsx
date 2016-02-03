@@ -54,8 +54,6 @@ var SearchBar = React.createClass({
     },
 
     handleLocChange: function(e) {
-        console.log(this.refs.locinput.value)
-
         this.setState({
             loc: this.refs.locinput.value
         });
