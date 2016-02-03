@@ -17,19 +17,29 @@ var Map = React.createClass({
   _initializeMaps: function(centerLatLng) {
       console.log("map mounted")
       this.currentCenter = centerLatLng;
-      var mapEl = ReactDOM.findDOMNode(this.refs.searchmap);
-      var mapOptions = {
-        center: this.centerSpotCoords(),
-        zoom: 15
+      var mapEl = ReactDOM.findDOMNode(this.refs.map);
+
+      if (centerLatLng) {
+        var mapOptions = {
+          center: this.centerLatLng,
+          zoom: 15
+        };
+      } else {
+        var mapOptions = {
+          center: {lat: 40.8081, lng: -73.9621},
+          zoom: 15
+        }
       };
 
-      this.map = new google.maps.Map(map, mapOptions);
+      this.map = new google.maps.Map(mapEl, mapOptions);
       this.registerListeners();
       this.markers = [];
   },
 
   componentDidMount: function() {
-    this._initializeMaps(this.props.centerLatLng);
+    console.log("mapCompMounted");
+      this._initializeMaps(this.props.centerLatLng);
+
       if (this.props.spots) {
         this.props.spots.forEach(this.createMarkerFromSpot);
       };

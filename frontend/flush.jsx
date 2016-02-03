@@ -13,6 +13,7 @@ var ReviewForm = require('./components/reviews/ReviewsForm');
 var Review = require('./components/reviews/Review');
 
 var SearchIndex= require('./components/home/SearchIndex');
+var LandingPage = require('./components/home/LandingPage');
 
 var App = React.createClass({
   render: function() {
@@ -28,7 +29,7 @@ var App = React.createClass({
 
 var routes = (
   <Route path="/" component={App}>
-    <IndexRoute component={SearchIndex} />
+    <IndexRoute component={LandingPage} />
     <Route path="/search/:loc" component={SearchIndex} />
     <Route path="spots/search" component={SpotsSearch} />
     <Route path="spots/new" component={SpotForm} />

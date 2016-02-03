@@ -2,9 +2,11 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var SpotStore = require('../../stores/spot.js');
 var SpotUtil = require('../../util/spot_util.js');
-var Map = require('../spots/Map');
+var Map = require('../spots/Map2');
 var Search = require('../nav/Search');
 var SpotsIndex = require('../spots/SpotsIndex');
+
+var MapStore = require('../../stores/map');
 
 
 function _getAllSpots() {
@@ -33,7 +35,10 @@ var SearchIndex = React.createClass({
     },
 
     _updateMapsStatus: function() {
-        this._startSearchProcess();
+        if (MapStore.isReady('maps')) {
+            this.mapsReadyToken.remove();
+            this._startSearchProcess();
+        }
     },
 
     _startSearchProcess: function() {
@@ -43,8 +48,12 @@ var SearchIndex = React.createClass({
 
     componentDidMount: function() {
         this.currentLocStr = this.props.params.loc;
-        this._startSearchProcess();
 
+        if (MapStore.isReady('maps')) {
+            this._startSearchProcess();
+        } else {
+            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
+        }
 
         this.spotListener = SpotStore.addListener(this._onChange);
         SpotUtil.fetchSpots();
@@ -63,6 +72,8 @@ var SearchIndex = React.createClass({
     },
 
     _geoConverter: function(locStr) {
+        console.log("geoConverter called");
+
         var _showMaps = this._showMaps;
         this.geocoder.geocode({"address": locStr}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {

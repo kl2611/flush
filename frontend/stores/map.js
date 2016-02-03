@@ -1,6 +1,6 @@
 var Store = require('flux/utils').Store;
 var AppDispatcher = require('../dispatcher/dispatcher.js');
-var MapConstants = require('../constants/map_consants');
+var MapConstants = require('../constants/map_constants');
 
 var MapStore = new Store(AppDispatcher);
 
