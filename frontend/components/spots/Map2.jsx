@@ -57,10 +57,8 @@ var Map = React.createClass({
   componentWillReceiveProps: function(newProps) {
     var newCenter = newProps.centerLatLng;
 
-    if (!this._isSameCoord(this.currentCenter, newCenter)) {
       this.map.setCenter(newCenter);
       this.currentCenter = newCenter;
-    }
   },
 
   _isSameCoord: function(coord1, coord2) {

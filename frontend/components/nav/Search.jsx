@@ -1,15 +1,15 @@
 var React = require('react');
+var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var SpotUtil = require('../../util/spot_util');
-var Map = require('../spots/Map');
-var Geocomplete = require('geocomplete');
+//var Map = require('../spots/Map');
+//var Geocomplete = require('geocomplete');
 var Dropdown = require('./SearchDropdown');
 
 var SearchBar = React.createClass({
 
     getInitialState: function() {
-        this.styleSheetShow = document.createElement('style');
-        this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-
+        // this.styleSheetShow = document.createElement('style');
+        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
         return ({
             loc: "",
             placeholder: "Input address",
@@ -18,16 +18,15 @@ var SearchBar = React.createClass({
         });
     },
 
-    // componentDidMount: function() {
-    //     var options = {
-    //     };
-
-    //     $("input").geocomplete(options);
-    // },
-
     searchBarOnClick: function() {
         this.setState({
             showAutocomplete: true
+        });
+    },
+
+    searchBarOffClick: function() {
+        this.setState({
+            showAutocomplete: false
         });
     },
 
@@ -55,6 +54,8 @@ var SearchBar = React.createClass({
     },
 
     handleLocChange: function(e) {
+        console.log(this.refs.locinput.value)
+
         this.setState({
             loc: this.refs.locinput.value
         });
@@ -87,7 +88,8 @@ var SearchBar = React.createClass({
                        onChange={this.handleLocChange}
                        placeholder={this.state.placeholder}
                        ref="locinput"
-                       onFocus={this.searchBarOnClick} />
+                       onFocus={this.searchBarOnClick}
+                       onBlur={this.searchBarOffClick} />
 
                      {this.state.showSpinner ? buttonProgress : buttonSubmit}
 
@@ -103,7 +105,7 @@ var SearchBar = React.createClass({
             {showAutocomplete ? <Dropdown
                                                         locinput = {this.refs.locinput}
                                                         handleSearch = {this.handleSearch}
-                                                        handleLocChange = {this.handleLocChange}/> : "" }
+                                                        handleLocChange = {this.handleLocChange} /> : "" }
             </div>
         );
     }

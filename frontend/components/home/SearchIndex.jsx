@@ -51,10 +51,11 @@ var SearchIndex = React.createClass({
     // },
 
     _updateMapsStatus: function() {
-        if (MapStore.isReady('maps')) {
+        // if (MapStore.isReady('maps')) {
             this.mapsReadyToken.remove();
+            console.log('starting search process')
             this._startSearchProcess();
-        }
+        // }
     },
 
     _startSearchProcess: function() {
@@ -88,31 +89,38 @@ var SearchIndex = React.createClass({
         });
     },
 
+    componentDidMount: function() {
+        this.currentLocStr = this.props.params.loc;
+        console.log('component mounted')
+
+        if (MapStore.isReady('maps')) {
+            console.log('mapstore ready')
+            this._startSearchProcess();
+        } else {
+            console.log('mapstore added listener')
+            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
+            this._startSearchProcess();
+        }
+
+        this.spotToken = SpotStore.addListener(this._updateSpots);
+        // this.filterToken = FilterStore.addListener(this._updateFilter);
+
+        // this.spotListener = SpotStore.addListener(this._onChange);
+        // SpotUtil.fetchSpots();
+    },
+
     componentWillReceiveProps: function(newProps) {
         var newLocStr = newProps.params.loc;
+        console.log("searchIndexReceivedNewProps" + newLocStr);
 
-        this._geoConverter(newLocStr);
+        this.componentDidMount();
+        //this._geoConverter(newLocStr);
     },
 
     componentWillUnmount: function() {
         // this.spotListener.remove();
         this.spotToken.remove();
         // this.filterToken.remove();
-    },
-
-    componentDidMount: function() {
-        this.currentLocStr = this.props.params.loc;
-
-        if (MapStore.isReady('maps')) {
-            this._startSearchProcess();
-        } else {
-            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
-        }
-        this.spotToken = SpotStore.addListener(this._updateSpots);
-        // this.filterToken = FilterStore.addListener(this._updateFilter);
-
-        // this.spotListener = SpotStore.addListener(this._onChange);
-        // SpotUtil.fetchSpots();
     },
 
     handleMapClick: function(coords) {
