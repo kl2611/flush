@@ -33058,8 +33058,13 @@
 	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
 	
+	    // handleItemClick: function (spot) {
+	    //     this.props.history.pushState(null, "spots/" + spot.id );
+	    // },
+	
 	    render: function () {
 	        var showResult = this.state.showResult;
+	        var handleItemClick = this.handleItemClick;
 	
 	        return React.createElement(
 	            'div',
@@ -33410,6 +33415,10 @@
 	var ReactRouter = __webpack_require__(159);
 	var History = ReactRouter.History;
 	var Link = ReactRouter.Link;
+	
+	String.prototype.capitalizeFirstLetter = function () {
+	    return this.charAt(0).toUpperCase() + this.slice(1);
+	};
 	
 	var ListItemDetail = React.createClass({
 	    displayName: 'ListItemDetail',

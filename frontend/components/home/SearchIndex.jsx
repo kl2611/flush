@@ -128,8 +128,13 @@ var SearchIndex = React.createClass({
         this.props.history.pushState(null, "spots/" + spot.id);
     },
 
+    // handleItemClick: function (spot) {
+    //     this.props.history.pushState(null, "spots/" + spot.id );
+    // },
+
     render: function() {
         var showResult = this.state.showResult;
+        var handleItemClick = this.handleItemClick;
 
         return(
             <div id="results">
