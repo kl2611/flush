@@ -7,6 +7,7 @@ var SpotActions = require('../../actions/spot_actions');
 var Map = require('../spots/Map2');
 var Search = require('../nav/Search');
 var SpotsIndex = require('../spots/SpotsIndex');
+//var List = require('../spots/List');
 
 var MapStore = require('../../stores/map');
 var FilterStore = require('../../stores/filter_params');
@@ -89,6 +90,9 @@ var SearchIndex = React.createClass({
         this.currentLocStr = this.props.params.loc;
         console.log('component mounted')
 
+        this.spotListener = SpotStore.addListener(this._onChange);
+        SpotUtil.fetchSpots();
+
         if (MapStore.isReady('maps')) {
             console.log('mapstore ready')
             this._startSearchProcess();
@@ -100,8 +104,7 @@ var SearchIndex = React.createClass({
 
         // this.filterToken = FilterStore.addListener(this._updateFilter);
 
-        this.spotListener = SpotStore.addListener(this._onChange);
-        SpotUtil.fetchSpots();
+
     },
 
     componentWillReceiveProps: function(newProps) {
@@ -129,14 +132,21 @@ var SearchIndex = React.createClass({
         var showResult = this.state.showResult;
 
         return(
-            <div>
+            <div id="results">
+
+                <div id="results-header">
                 <h4>Results</h4>
                 <Search history={this.props.history} /> <p />
-                <Map
-                    centerLatLng = {this.state.centerLatLng}
-                    onMapClick={this.handleMapClick}
-                    onMarkerClick={this.handleMarkerClick}
-                    spots={this.state.spots}/>
+                </div>
+
+
+                <div id="map">
+                    <Map
+                        centerLatLng = {this.state.centerLatLng}
+                        onMapClick={this.handleMapClick}
+                        onMarkerClick={this.handleMarkerClick}
+                        spots={this.state.spots}/>
+                </div>
             </div>
         );
     }

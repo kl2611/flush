@@ -32937,6 +32937,7 @@
 	var Map = __webpack_require__(267);
 	var Search = __webpack_require__(250);
 	var SpotsIndex = __webpack_require__(239);
+	//var List = require('../spots/List');
 	
 	var MapStore = __webpack_require__(265);
 	var FilterStore = __webpack_require__(214);
@@ -33021,6 +33022,9 @@
 	        this.currentLocStr = this.props.params.loc;
 	        console.log('component mounted');
 	
+	        this.spotListener = SpotStore.addListener(this._onChange);
+	        SpotUtil.fetchSpots();
+	
 	        if (MapStore.isReady('maps')) {
 	            console.log('mapstore ready');
 	            this._startSearchProcess();
@@ -33031,9 +33035,6 @@
 	        }
 	
 	        // this.filterToken = FilterStore.addListener(this._updateFilter);
-	
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
 	    },
 	
 	    componentWillReceiveProps: function (newProps) {
@@ -33062,20 +33063,28 @@
 	
 	        return React.createElement(
 	            'div',
-	            null,
+	            { id: 'results' },
 	            React.createElement(
-	                'h4',
-	                null,
-	                'Results'
+	                'div',
+	                { id: 'results-header' },
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Results'
+	                ),
+	                React.createElement(Search, { history: this.props.history }),
+	                ' ',
+	                React.createElement('p', null)
 	            ),
-	            React.createElement(Search, { history: this.props.history }),
-	            ' ',
-	            React.createElement('p', null),
-	            React.createElement(Map, {
-	                centerLatLng: this.state.centerLatLng,
-	                onMapClick: this.handleMapClick,
-	                onMarkerClick: this.handleMarkerClick,
-	                spots: this.state.spots })
+	            React.createElement(
+	                'div',
+	                { id: 'map' },
+	                React.createElement(Map, {
+	                    centerLatLng: this.state.centerLatLng,
+	                    onMapClick: this.handleMapClick,
+	                    onMarkerClick: this.handleMarkerClick,
+	                    spots: this.state.spots })
+	            )
 	        );
 	    }
 	});
