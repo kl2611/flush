@@ -14,40 +14,55 @@ function _getCoordsObj(latLng) {
 var CENTER = {lat: 40.8081, lng: -73.9621}; // Columbia University campus
 
 var Map = React.createClass({
+  _initializeMaps: function(centerLatLng) {
+      console.log("map mounted")
+      this.currentCenter = centerLatLng;
+      var mapEl = ReactDOM.findDOMNode(this.refs.map);
 
-    componentDidMount: function() {
-        console.log('map mounted');
-        var map = ReactDOM.findDOMNode(this.refs.map);
+      if (centerLatLng) {
         var mapOptions = {
-          center: this.centerSpotCoords(),
+          center: this.centerLatLng,
           zoom: 15
         };
+      } else {
+        var mapOptions = {
+          center: {lat: 40.8081, lng: -73.9621},
+          zoom: 15
+        }
+      };
 
-        this.map = new google.maps.Map(map, mapOptions);
-        this.registerListeners();
-        this.markers = [];
-        if (this.props.spots) {
-          this.props.spots.forEach(this.createMarkerFromSpot);
-        };
-      },
+      this.map = new google.maps.Map(mapEl, mapOptions);
+      this.registerListeners();
+      this.markers = [];
+  },
 
-      centerSpotCoords: function() {
-        if (this.props.spots[0] && this.props.spots[0].lng) {
-          var spot = this.props.spots[0];
-          return { lat: spot.lat, lng: spot.lng };
-        } else {
-          return CENTER;
-      }
+  componentDidMount: function() {
+    console.log("mapCompMounted");
+      this._initializeMaps(this.props.centerLatLng);
+
+      if (this.props.spots) {
+        this.props.spots.forEach(this.createMarkerFromSpot);
+      };
     },
+
+  componentWillUnmount: function(){
+    //this.markerListener.remove();
+    console.log("map UNmounted");
+  },
 
   componentDidUpdate: function (oldProps) {
     this._onChange();
   },
 
   componentWillReceiveProps: function(newProps) {
-    if (this.props.spots) {
-      newProps.spots.forEach(this.createMarkerFromSpot);
-    }
+    var newCenter = newProps.centerLatLng;
+
+      this.map.setCenter(newCenter);
+      this.currentCenter = newCenter;
+  },
+
+  _isSameCoord: function(coord1, coord2) {
+    return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
   },
 
   _onChange: function(){
@@ -75,11 +90,6 @@ var Map = React.createClass({
       this.map.setOptions({draggable: false});
       this.map.setCenter(this.centerSpotCoords());
     }
-  },
-
-  componentWillUnmount: function(){
-    //this.markerListener.remove();
-    console.log("map UNmounted");
   },
 
   registerListeners: function() {

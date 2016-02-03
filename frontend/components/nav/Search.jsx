@@ -40,10 +40,11 @@ var SearchBar = React.createClass({
                 placeholder: "Please set location"
             });
         } else {
-            this.redirectToSearch();
-            // this.setState({
-            //     showSpinner: true
-            // })
+            setTimeout(this.redirectToSearch, 1000);
+
+            this.setState({
+                showSpinner: true
+            });
         }
     },
 
@@ -51,6 +52,11 @@ var SearchBar = React.createClass({
         var loc = this.state.loc.replace(/\W+/g, "-");
         console.log("pushStatefromsearch");
         this.props.history.pushState(null, 'search/' + loc);
+
+        // hmm fix this somehow
+        this.setState({
+            showSpinner: false
+        })
     },
 
     handleLocChange: function(e) {

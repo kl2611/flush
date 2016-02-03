@@ -54,11 +54,11 @@
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(237);
-	var SpotShow = __webpack_require__(251);
-	var ReviewForm = __webpack_require__(256);
-	var Review = __webpack_require__(255);
+	var SpotShow = __webpack_require__(252);
+	var ReviewForm = __webpack_require__(257);
+	var Review = __webpack_require__(256);
 	
-	var SearchIndex = __webpack_require__(264);
+	var SearchIndex = __webpack_require__(262);
 	var LandingPage = __webpack_require__(268);
 	var MapActions = __webpack_require__(269);
 	
@@ -31289,7 +31289,7 @@
 	var SpotUtil = __webpack_require__(207);
 	var SpotsIndex = __webpack_require__(239);
 	var Map = __webpack_require__(249);
-	var Search = __webpack_require__(250);
+	var Search = __webpack_require__(251);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -32084,1071 +32084,8 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var FilterActions = __webpack_require__(261);
-	var Search = __webpack_require__(250);
-	
-	function _getCoordsObj(latLng) {
-	  return {
-	    lat: latLng.lat(),
-	    lng: latLng.lng()
-	  };
-	}
-	
-	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
-	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
-	
-	var Map = React.createClass({
-	  displayName: 'Map',
-	
-	  componentDidMount: function () {
-	    console.log('map mounted');
-	    var map = ReactDOM.findDOMNode(this.refs.map);
-	    var mapOptions = {
-	      center: this.centerSpotCoords(),
-	      zoom: 15
-	    };
-	
-	    this.map = new google.maps.Map(map, mapOptions);
-	    this.registerListeners();
-	    this.markers = [];
-	    if (this.props.spots) {
-	      this.props.spots.forEach(this.createMarkerFromSpot);
-	    };
-	  },
-	
-	  centerSpotCoords: function () {
-	    if (this.props.spots[0] && this.props.spots[0].lng) {
-	      var spot = this.props.spots[0];
-	      return { lat: spot.lat, lng: spot.lng };
-	    } else {
-	      return CENTER;
-	    }
-	  },
-	
-	  componentDidUpdate: function (oldProps) {
-	    this._onChange();
-	  },
-	
-	  componentWillReceiveProps: function (newProps) {
-	    if (this.props.spots) {
-	      newProps.spots.forEach(this.createMarkerFromSpot);
-	    }
-	  },
-	
-	  _onChange: function () {
-	    var spots = this.props.spots;
-	    var toAdd = [],
-	        toRemove = this.markers.slice(0);
-	    spots.forEach(function (spot, idx) {
-	      var idx = -1;
-	
-	      for (var i = 0; i < toRemove.length; i++) {
-	        if (toRemove[i].spotId == spot.id) {
-	          idx = i;
-	          break;
-	        }
-	      }
-	      if (idx === -1) {
-	        toAdd.push(spot);
-	      } else {
-	        toRemove.splice(idx, 1);
-	      }
-	    });
-	    toAdd.forEach(this.createMarkerFromSpot);
-	    toRemove.forEach(this.removeMarker);
-	
-	    if (this.props.singleSpot) {
-	      this.map.setOptions({ draggable: false });
-	      this.map.setCenter(this.centerSpotCoords());
-	    }
-	  },
-	
-	  componentWillUnmount: function () {
-	    //this.markerListener.remove();
-	    console.log("map UNmounted");
-	  },
-	
-	  registerListeners: function () {
-	    var that = this;
-	    google.maps.event.addListener(this.map, 'idle', function () {
-	      var bounds = that.map.getBounds();
-	      var northEast = _getCoordsObj(bounds.getNorthEast());
-	      var southWest = _getCoordsObj(bounds.getSouthWest());
-	      var bounds = {
-	        northEast: northEast,
-	        southWest: southWest
-	      };
-	      FilterActions.updateBounds(bounds);
-	    });
-	    google.maps.event.addListener(this.map, 'click', function (event) {
-	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-	      that.props.onMapClick(coords);
-	    });
-	  },
-	
-	  createMarkerFromSpot: function (spot) {
-	    var that = this;
-	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
-	    var marker = new google.maps.Marker({
-	      position: pos,
-	      map: this.map,
-	      spotId: spot.id
-	    });
-	
-	    this.markerListener = marker.addListener('click', function () {
-	      that.props.onMarkerClick(spot);
-	    });
-	    this.markers.push(marker);
-	  },
-	
-	  removeMarker: function (marker) {
-	    for (var i = 0; i < this.markers.length; i++) {
-	      if (this.markers[i].spotId === marker.spotId) {
-	        this.markers[i].setMap(null);
-	        this.markers.splice(i, 1);
-	        break;
-	      }
-	    }
-	  },
-	
-	  render: function () {
-	    return React.createElement('div', { className: 'map', ref: 'map' });
-	  }
-	});
-	
-	module.exports = Map;
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(233);
-	var SpotUtil = __webpack_require__(207);
-	//var Map = require('../spots/Map');
-	//var Geocomplete = require('geocomplete');
-	var Dropdown = __webpack_require__(263);
-	
-	var SearchBar = React.createClass({
-	    displayName: 'SearchBar',
-	
-	    getInitialState: function () {
-	        // this.styleSheetShow = document.createElement('style');
-	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-	        return {
-	            loc: "",
-	            placeholder: "Input address",
-	            showAutocomplete: false,
-	            showSpinner: false
-	        };
-	    },
-	
-	    searchBarOnClick: function () {
-	        this.setState({
-	            showAutocomplete: true
-	        });
-	    },
-	
-	    searchBarOffClick: function () {
-	        this.setState({
-	            showAutocomplete: false
-	        });
-	    },
-	
-	    handleSearch: function (e) {
-	        if (arguments.length > 0) {
-	            e.preventDefault();
-	        }
-	
-	        if (this.state.loc === "") {
-	            this.setState({
-	                placeholder: "Please set location"
-	            });
-	        } else {
-	            this.redirectToSearch();
-	            // this.setState({
-	            //     showSpinner: true
-	            // })
-	        }
-	    },
-	
-	    redirectToSearch: function () {
-	        var loc = this.state.loc.replace(/\W+/g, "-");
-	        console.log("pushStatefromsearch");
-	        this.props.history.pushState(null, 'search/' + loc);
-	    },
-	
-	    handleLocChange: function (e) {
-	        this.setState({
-	            loc: this.refs.locinput.value
-	        });
-	    },
-	
-	    render: function () {
-	        var buttonSubmit = React.createElement(
-	            'span',
-	            { className: 'input-group-btn' },
-	            React.createElement(
-	                'button',
-	                { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
-	                'Search'
-	            )
-	        );
-	
-	        var buttonProgress = React.createElement(
-	            'span',
-	            { className: 'input-group-btn' },
-	            React.createElement(
-	                'button',
-	                { className: 'btn btn-default', disabled: true },
-	                React.createElement(
-	                    'div',
-	                    { className: 'three-quarters-loader' },
-	                    'Loading…'
-	                )
-	            )
-	        );
-	
-	        var design = React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'form',
-	                { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
-	                React.createElement('input', {
-	                    type: 'text',
-	                    className: 'form-control center',
-	                    id: 'landing-search-input',
-	                    onChange: this.handleLocChange,
-	                    placeholder: this.state.placeholder,
-	                    ref: 'locinput',
-	                    onFocus: this.searchBarOnClick,
-	                    onBlur: this.searchBarOffClick }),
-	                this.state.showSpinner ? buttonProgress : buttonSubmit
-	            )
-	        );
-	
-	        var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
-	
-	        return React.createElement(
-	            'div',
-	            { ref: 'searchbar' },
-	            design,
-	            showAutocomplete ? React.createElement(Dropdown, {
-	                locinput: this.refs.locinput,
-	                handleSearch: this.handleSearch,
-	                handleLocChange: this.handleLocChange }) : ""
-	        );
-	    }
-	});
-	
-	module.exports = SearchBar;
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(238);
-	var Spot = __webpack_require__(252);
-	var Map = __webpack_require__(249);
-	var SpotUtil = __webpack_require__(207);
-	
-	var Review = __webpack_require__(255);
-	
-	var SpotShow = React.createClass({
-	    displayName: 'SpotShow',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    getInitialState: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId) || {};
-	        return { spot: spot };
-	    },
-	    _findSpotById: function (id) {
-	        var res;
-	        SpotStore.all().forEach(function (spot) {
-	            if (id == spot.id) {
-	                res = spot;
-	            }
-	        }.bind(this));
-	        return res;
-	    },
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._spotChanged);
-	        SpotUtil.fetchSpots();
-	    },
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	    _spotChanged: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId);
-	        this.setState({ spot: spot });
-	    },
-	    render: function () {
-	        var spots = [];
-	        if (this.state.spot) {
-	            spots.push(this.state.spot);
-	        }
-	        var Link = ReactRouter.Link;
-	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                Link,
-	                { to: '/' },
-	                'Back to Restrooms Index'
-	            ),
-	            React.createElement(Map, { className: 'map',
-	                singleSpot: true,
-	                spots: spots,
-	                onMapClick: this.handleMapClick }),
-	            React.createElement(Spot, { spot: this.state.spot, className: 'map' }),
-	            this.props.children || React.createElement(
-	                Link,
-	                { to: reviewURL },
-	                'Leave a Review'
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotShow;
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var LinkedStateMixin = __webpack_require__(233);
-	
-	var ReviewIndex = __webpack_require__(253);
-	var ReviewStore = __webpack_require__(242);
-	var Review = __webpack_require__(255);
-	
-	var TaggingUtil = __webpack_require__(257);
-	var TagStore = __webpack_require__(258);
-	
-	var Spot = React.createClass({
-	  displayName: 'Spot',
-	
-	  render: function () {
-	    var spotRating = ReviewStore.averageRating();
-	    var reviews = this.props.spot.reviews || [];
-	    var Link = ReactRouter.Link;
-	
-	    return React.createElement(
-	      'div',
-	      { id: 'spot-detail' },
-	      React.createElement(
-	        'div',
-	        { id: 'spot-name' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          this.props.spot.name
-	        )
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'Rating: ',
-	        this.props.spot.average_rating || "No reviews yet"
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'Description: ',
-	        this.props.spot.description
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'Tags: ',
-	        this.props.spot.taggings
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'reviews' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          'Reviews'
-	        ),
-	        reviews.map(function (review) {
-	          return React.createElement(Review, _extends({ key: review.id }, review));
-	        }),
-	        React.createElement('p', null)
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = Spot;
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewIndexItem = __webpack_require__(254);
-	
-	var ReviewIndex = React.createClass({
-	    displayName: 'ReviewIndex',
-	
-	    getInitialState: function () {
-	        return { allReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchReviews();
-	    },
-	
-	    componentWillUnmount: function () {
-	        reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        this.setState({ allReviews: ReviewStore.all() });
-	    },
-	
-	    render: function () {
-	        var reviews = this.props.reviews;
-	
-	        if (reviews.length === 0) {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                'You are the first to review'
-	            );
-	        } else {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                this.state.reviews.map(function (review) {
-	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
-	                })
-	            );
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            reviewDisplay
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndex;
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var ReviewIndexItem = React.createClass({
-	    displayName: 'ReviewIndexItem',
-	
-	    componentDidMount: function () {
-	        var reviewId = "#review-rating-user-" + this.props.id;
-	        var that = this;
-	        $(reviewId).rating({
-	            min: "0",
-	            max: "5",
-	            step: "1",
-	            showClear: false,
-	            showCaption: false,
-	            readonly: true,
-	            size: "xxs"
-	        });
-	        $(reviewId).rating('update', this.props.rating);
-	    },
-	
-	    render: function () {
-	        var reviewId = "review-rating-user-" + this.props.id;
-	        var name = this.props.username;
-	        var altTag = name + " User Avatar";
-	
-	        var userReviewCount;
-	        if (this.props.reviewCount < 2) {
-	            userReviewCount = this.props.reviewCount + " review";
-	        } else {
-	            userReviewCount = this.props.reviewCount + " reviews";
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'review-index-item-components' },
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-info' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        username
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        userReviewCount
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-review' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        React.createElement('input', { id: reviewId,
-	                            className: 'rating',
-	                            type: 'number',
-	                            min: '1',
-	                            max: '5' }),
-	                        React.createElement(
-	                            'div',
-	                            null,
-	                            this.props.date
-	                        )
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        this.props.comment
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndexItem;
-
-/***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var ReviewActions = __webpack_require__(245);
-	var ReviewForm = __webpack_require__(256);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewUtil = __webpack_require__(244);
-	
-	var Review = React.createClass({
-	  displayName: 'Review',
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'li',
-	        null,
-	        'Rating: ',
-	        this.props.rating
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'by: ',
-	        this.props.username
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        this.props.comment
-	      ),
-	      React.createElement('p', null)
-	    );
-	  }
-	});
-	
-	module.exports = Review;
-
-/***/ },
-/* 256 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(233);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
-	
-	var ReviewForm = React.createClass({
-	    displayName: 'ReviewForm',
-	
-	    mixins: [LinkedStateMixin, ReactRouter.history],
-	    getInitialState: function () {
-	        return { rating: 5, comment: "" };
-	    },
-	
-	    navigateToSpotShow: function () {
-	        var spotUrl = "/spots/" + this.props.params.spotId;
-	        this.props.history.pushState(null, spotUrl);
-	    },
-	
-	    handleCancel: function (event) {
-	        event.preventDefault();
-	        this.navigateToSpotShow();
-	    },
-	
-	    handleSubmit: function (event) {
-	        event.preventDefault();
-	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
-	        ReviewUtil.createReview(review);
-	        this.navigateToSpotShow();
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            { className: 'review-form' },
-	            React.createElement(
-	                'form',
-	                { onSubmit: this.handleSubmit },
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Rating'
-	                ),
-	                React.createElement('br', null),
-	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
-	                React.createElement('br', null),
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Comment'
-	                ),
-	                React.createElement('br', null),
-	                React.createElement('textarea', {
-	                    cols: '30',
-	                    rows: '10',
-	                    valueLink: this.linkState('comment') }),
-	                React.createElement('br', null),
-	                React.createElement('input', { type: 'submit' })
-	            ),
-	            React.createElement(
-	                'button',
-	                { onClick: this.handleCancel },
-	                'Cancel'
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = ReviewForm;
-
-/***/ },
-/* 257 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SpotActions = __webpack_require__(208);
-	
-	var TaggingUtil = {
-	    createTagging: function (tagging) {
-	        $.ajax({
-	            url: 'api/taggings',
-	            dataType: 'json',
-	            type: 'POST',
-	            data: { tagging: tagging },
-	            success: function (spot) {
-	                SpotActions.updateSingleSpot(spot);
-	            }
-	        });
-	    },
-	
-	    deleteTagging: function (taggingId) {
-	        $.ajax({
-	            url: 'api/taggings/' + taggingId,
-	            dataType: 'json',
-	            data: { taggingId: taggingId },
-	            type: 'DELETE',
-	            success: function (spot) {
-	                SpotActions.updateSingleSpot(spot);
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = TaggingUtil;
-
-/***/ },
-/* 258 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(215).Store;
-	var TagStore = new Store(AppDispatcher);
-	var TagConstants = __webpack_require__(259);
-	
-	var _tags = [];
-	var _queriedTags = [];
-	
-	var resetTags = function (newTags) {
-	    _tags = newTags;
-	};
-	
-	var addTag = function (newTag) {
-	    _tags.push(newTag);
-	};
-	
-	var resetQueriedTags = function (newTags) {
-	    _queriedTags = newTags;
-	};
-	
-	TagStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case TagConstants.TAGS_RECEIVED:
-	            resetTags(payload.tags);
-	            TagStore.__emitChange();
-	            break;
-	        case TagConstants.TAG_RECEIVED:
-	            addTag(payload.tag);
-	            TagStore.__emitChange();
-	            break;
-	        case TagConstants.QUERIED_TAGS_RECEIVED:
-	            resetQueriedTags(payload.tags);
-	            TagStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	TagStore.find = function (tagName) {
-	    for (var tag in _tags) {
-	        if (tag.name === tagName) {
-	            return tag.id;
-	        }
-	    }
-	};
-	
-	TagStore.all = function () {
-	    return _tags.slice(0);
-	};
-	
-	TagStore.queriedTags = function () {
-	    return _queriedTags.slice(0);
-	};
-	
-	module.exports = TagStore;
-
-/***/ },
-/* 259 */
-/***/ function(module, exports) {
-
-	TagConstants = {
-	    TAGS_RECEIVED: "TAGS_RECEIVED",
-	    TAG_RECEIVED: "TAG_RECEIVED",
-	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
-	};
-	
-	module.exports = TagConstants;
-
-/***/ },
-/* 260 */,
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var FilterConstants = __webpack_require__(232);
-	
-	var FilterActions = {
-	  updateBounds: function (bounds) {
-	    AppDispatcher.dispatch({
-	      actionType: FilterConstants.UPDATE_BOUNDS,
-	      bounds: bounds
-	    });
-	  }
-	};
-	
-	module.exports = FilterActions;
-
-/***/ },
-/* 262 */,
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	var DropDown = React.createClass({
-	    displayName: 'DropDown',
-	
-	    _fillInAddress: function () {
-	        this.props.handleLocChange();
-	        this.props.handleSearch();
-	    },
-	
-	    componentWillUnmount: function () {
-	        console.log('dropdown unmounted');
-	    },
-	
-	    componentDidMount: function () {
-	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	        this.autofillOptions = {
-	            types: ['geocode']
-	        };
-	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	        this.autofill.addListener('place_changed', this._fillInAddress);
-	    },
-	
-	    render: function () {
-	        return React.createElement('div', null);
-	    }
-	});
-	
-	module.exports = DropDown;
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(238);
-	var SpotUtil = __webpack_require__(207);
-	var SpotActions = __webpack_require__(208);
-	
-	var Map = __webpack_require__(267);
-	var Search = __webpack_require__(250);
-	var SpotsIndex = __webpack_require__(239);
-	var List = __webpack_require__(270);
-	
-	var MapStore = __webpack_require__(265);
-	var FilterStore = __webpack_require__(214);
-	var FilterActions = __webpack_require__(261);
-	
-	function _getAllSpots() {
-	    return SpotStore.all();
-	}
-	
-	var SearchIndex = React.createClass({
-	    displayName: 'SearchIndex',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    getInitialState: function () {
-	        return {
-	            spots: _getAllSpots(),
-	            showResult: false,
-	            clickedLoc: null
-	        };
-	    },
-	
-	    // _updateSpots: function() {
-	    //     this.setState({
-	    //         spots: SpotStore.all()
-	    //     });
-	    // },
-	
-	    // _updateFilter: function() {
-	    //     SpotActions.fetchFilteredSpots();
-	    // },
-	
-	    _spotsChanged: function () {
-	        this.setState({ spots: _getAllSpots() });
-	    },
-	
-	    _onChange: function () {
-	        this.setState({ spots: SpotStore.all() });
-	    },
-	
-	    _updateMapsStatus: function () {
-	        // if (MapStore.isReady('maps')) {
-	        this.mapsReadyToken.remove();
-	        this._startSearchProcess();
-	        // }
-	    },
-	
-	    _startSearchProcess: function () {
-	        console.log('search process started');
-	        this.geocoder = new google.maps.Geocoder();
-	        this._geoConverter(this.props.params.loc);
-	    },
-	
-	    _geoConverter: function (locStr) {
-	        console.log("geoConverter called");
-	
-	        var _showMaps = this._showMaps;
-	
-	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
-	            if (status === google.maps.GeocoderStatus.OK) {
-	                var latLng = {
-	                    lat: results[0].geometry.location.lat(),
-	                    lng: results[0].geometry.location.lng()
-	                };
-	                _showMaps(latLng);
-	            } else {
-	                console.log('Geocode was not successful for the following reason: ' + status);
-	            }
-	        });
-	    },
-	
-	    _showMaps: function (centerLatLng) {
-	        this.setState({
-	            showResult: true,
-	            centerLatLng: centerLatLng
-	        });
-	    },
-	
-	    componentDidMount: function () {
-	        this.currentLocStr = this.props.params.loc;
-	        console.log('component mounted');
-	
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
-	
-	        if (MapStore.isReady('maps')) {
-	            console.log('mapstore ready');
-	            this._startSearchProcess();
-	        } else {
-	            console.log('mapstore added listener');
-	            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
-	            this._startSearchProcess();
-	        }
-	
-	        // this.filterToken = FilterStore.addListener(this._updateFilter);
-	    },
-	
-	    componentWillReceiveProps: function (newProps) {
-	        var newLocStr = newProps.params.loc;
-	        console.log("searchIndexReceivedNewProps" + newLocStr);
-	
-	        this.componentDidMount();
-	        //this._geoConverter(newLocStr);
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	        // this.filterToken.remove();
-	    },
-	
-	    handleMapClick: function (coords) {
-	        this.props.history.pushState(null, "spots/new", coords);
-	    },
-	
-	    handleMarkerClick: function (spot) {
-	        this.props.history.pushState(null, "spots/" + spot.id);
-	    },
-	
-	    // handleItemClick: function (spot) {
-	    //     this.props.history.pushState(null, "spots/" + spot.id );
-	    // },
-	
-	    render: function () {
-	        var showResult = this.state.showResult;
-	        var handleItemClick = this.handleItemClick;
-	
-	        return React.createElement(
-	            'div',
-	            { id: 'results' },
-	            React.createElement(
-	                'div',
-	                { id: 'results-header' },
-	                React.createElement(
-	                    'h4',
-	                    null,
-	                    'Results'
-	                ),
-	                React.createElement(Search, { history: this.props.history }),
-	                ' ',
-	                React.createElement('p', null)
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'list' },
-	                React.createElement(List, { spots: this.state.spots, history: this.props.history })
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'map' },
-	                React.createElement(Map, {
-	                    centerLatLng: this.state.centerLatLng,
-	                    onMapClick: this.handleMapClick,
-	                    onMarkerClick: this.handleMarkerClick,
-	                    spots: this.state.spots })
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SearchIndex;
-
-/***/ },
-/* 265 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(215).Store;
-	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(266);
-	
-	var MapStore = new Store(AppDispatcher);
-	
-	var _extLib = {
-	    maps: false
-	};
-	
-	MapStore.isReady = function (lib) {
-	    return _extLib[lib];
-	};
-	
-	MapStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case MapConstants.MAPS_READY:
-	            _extLib.maps = true;
-	            console.log("google maps is ready");
-	            MapStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	module.exports = MapStore;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports) {
-
-	var MapConstants = {
-	  MAPS_READY: "MAPS_READY"
-	};
-	
-	module.exports = MapConstants;
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	var FilterActions = __webpack_require__(261);
-	var Search = __webpack_require__(250);
+	var FilterActions = __webpack_require__(250);
+	var Search = __webpack_require__(251);
 	
 	function _getCoordsObj(latLng) {
 	  return {
@@ -33293,58 +32230,1014 @@
 	module.exports = Map;
 
 /***/ },
-/* 268 */
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var FilterConstants = __webpack_require__(232);
+	
+	var FilterActions = {
+	  updateBounds: function (bounds) {
+	    AppDispatcher.dispatch({
+	      actionType: FilterConstants.UPDATE_BOUNDS,
+	      bounds: bounds
+	    });
+	  }
+	};
+	
+	module.exports = FilterActions;
+
+/***/ },
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Search = __webpack_require__(250);
-	// var SpotStore = require('../../stores/spot.js');
-	// var SpotUtil = require('../../util/spot_util.js');
-	var RecentReviews = __webpack_require__(241);
+	var LinkedStateMixin = __webpack_require__(233);
+	var SpotUtil = __webpack_require__(207);
+	//var Map = require('../spots/Map');
+	//var Geocomplete = require('geocomplete');
+	var Dropdown = __webpack_require__(270);
 	
-	var LandingPage = React.createClass({
-	    displayName: 'LandingPage',
+	var SearchBar = React.createClass({
+	    displayName: 'SearchBar',
+	
+	    getInitialState: function () {
+	        // this.styleSheetShow = document.createElement('style');
+	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	        return {
+	            loc: "",
+	            placeholder: "Input address",
+	            showAutocomplete: false,
+	            showSpinner: false
+	        };
+	    },
+	
+	    searchBarOnClick: function () {
+	        this.setState({
+	            showAutocomplete: true
+	        });
+	    },
+	
+	    searchBarOffClick: function () {
+	        this.setState({
+	            showAutocomplete: false
+	        });
+	    },
+	
+	    handleSearch: function (e) {
+	        if (arguments.length > 0) {
+	            e.preventDefault();
+	        }
+	
+	        if (this.state.loc === "") {
+	            this.setState({
+	                placeholder: "Please set location"
+	            });
+	        } else {
+	            setTimeout(this.redirectToSearch, 1000);
+	
+	            this.setState({
+	                showSpinner: true
+	            });
+	        }
+	    },
+	
+	    redirectToSearch: function () {
+	        var loc = this.state.loc.replace(/\W+/g, "-");
+	        console.log("pushStatefromsearch");
+	        this.props.history.pushState(null, 'search/' + loc);
+	
+	        // hmm fix this somehow
+	        this.setState({
+	            showSpinner: false
+	        });
+	    },
+	
+	    handleLocChange: function (e) {
+	        this.setState({
+	            loc: this.refs.locinput.value
+	        });
+	    },
 	
 	    render: function () {
+	        var buttonSubmit = React.createElement(
+	            'span',
+	            { className: 'input-group-btn' },
+	            React.createElement(
+	                'button',
+	                { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
+	                'Search'
+	            )
+	        );
+	
+	        var buttonProgress = React.createElement(
+	            'span',
+	            { className: 'input-group-btn' },
+	            React.createElement(
+	                'button',
+	                { className: 'btn btn-default', disabled: true },
+	                React.createElement(
+	                    'div',
+	                    { className: 'three-quarters-loader' },
+	                    'Loading…'
+	                )
+	            )
+	        );
+	
+	        var design = React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'form',
+	                { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
+	                React.createElement('input', {
+	                    type: 'text',
+	                    className: 'form-control center',
+	                    id: 'landing-search-input',
+	                    onChange: this.handleLocChange,
+	                    placeholder: this.state.placeholder,
+	                    ref: 'locinput',
+	                    onFocus: this.searchBarOnClick,
+	                    onBlur: this.searchBarOffClick }),
+	                this.state.showSpinner ? buttonProgress : buttonSubmit
+	            )
+	        );
+	
+	        var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	
 	        return React.createElement(
 	            'div',
-	            { id: 'landing-page' },
-	            React.createElement(
-	                'h4',
-	                null,
-	                'Your Next Review Awaits'
-	            ),
-	            React.createElement(Search, { history: this.props.history }),
-	            React.createElement(RecentReviews, null)
+	            { ref: 'searchbar' },
+	            design,
+	            showAutocomplete ? React.createElement(Dropdown, {
+	                locinput: this.refs.locinput,
+	                handleSearch: this.handleSearch,
+	                handleLocChange: this.handleLocChange }) : ""
 	        );
 	    }
 	});
 	
-	module.exports = LandingPage;
+	module.exports = SearchBar;
 
 /***/ },
-/* 269 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(266);
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(238);
+	var Spot = __webpack_require__(253);
+	var Map = __webpack_require__(261);
+	var SpotUtil = __webpack_require__(207);
 	
-	var MapActions = {
-	    mapsReady: function () {
-	        AppDispatcher.dispatch({
-	            actionType: MapConstants.MAPS_READY
+	var Review = __webpack_require__(256);
+	
+	var SpotShow = React.createClass({
+	    displayName: 'SpotShow',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    getInitialState: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId) || {};
+	        return { spot: spot };
+	    },
+	    _findSpotById: function (id) {
+	        var res;
+	        SpotStore.all().forEach(function (spot) {
+	            if (id == spot.id) {
+	                res = spot;
+	            }
+	        }.bind(this));
+	        return res;
+	    },
+	    componentDidMount: function () {
+	        this.spotListener = SpotStore.addListener(this._spotChanged);
+	        SpotUtil.fetchSpots();
+	    },
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	    },
+	    _spotChanged: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId);
+	        this.setState({ spot: spot });
+	    },
+	    render: function () {
+	        var spots = [];
+	        if (this.state.spot) {
+	            spots.push(this.state.spot);
+	        }
+	        var Link = ReactRouter.Link;
+	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                Link,
+	                { to: '/' },
+	                'Back to Restrooms Index'
+	            ),
+	            React.createElement(Map, { className: 'map',
+	                singleSpot: true,
+	                spots: spots,
+	                onMapClick: this.handleMapClick }),
+	            React.createElement(Spot, { spot: this.state.spot, className: 'map' }),
+	            this.props.children || React.createElement(
+	                Link,
+	                { to: reviewURL },
+	                'Leave a Review'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SpotShow;
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var LinkedStateMixin = __webpack_require__(233);
+	
+	var ReviewIndex = __webpack_require__(254);
+	var ReviewStore = __webpack_require__(242);
+	var Review = __webpack_require__(256);
+	
+	var TaggingUtil = __webpack_require__(258);
+	var TagStore = __webpack_require__(259);
+	
+	var Spot = React.createClass({
+	  displayName: 'Spot',
+	
+	  render: function () {
+	    var spotRating = ReviewStore.averageRating();
+	    var reviews = this.props.spot.reviews || [];
+	    var Link = ReactRouter.Link;
+	
+	    return React.createElement(
+	      'div',
+	      { id: 'spot-detail' },
+	      React.createElement(
+	        'div',
+	        { id: 'spot-name' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          this.props.spot.name
+	        )
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Rating: ',
+	        this.props.spot.average_rating || "No reviews yet"
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Description: ',
+	        this.props.spot.description
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Tags: ',
+	        this.props.spot.taggings
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'reviews' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Reviews'
+	        ),
+	        reviews.map(function (review) {
+	          return React.createElement(Review, _extends({ key: review.id }, review));
+	        }),
+	        React.createElement('p', null)
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Spot;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(242);
+	var ReviewIndexItem = __webpack_require__(255);
+	
+	var ReviewIndex = React.createClass({
+	    displayName: 'ReviewIndex',
+	
+	    getInitialState: function () {
+	        return { allReviews: [] };
+	    },
+	
+	    componentDidMount: function () {
+	        reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchReviews();
+	    },
+	
+	    componentWillUnmount: function () {
+	        reviewListener.remove();
+	    },
+	
+	    onChange: function () {
+	        this.setState({ allReviews: ReviewStore.all() });
+	    },
+	
+	    render: function () {
+	        var reviews = this.props.reviews;
+	
+	        if (reviews.length === 0) {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                'You are the first to review'
+	            );
+	        } else {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                this.state.reviews.map(function (review) {
+	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
+	                })
+	            );
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            reviewDisplay
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndex;
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewIndexItem = React.createClass({
+	    displayName: 'ReviewIndexItem',
+	
+	    componentDidMount: function () {
+	        var reviewId = "#review-rating-user-" + this.props.id;
+	        var that = this;
+	        $(reviewId).rating({
+	            min: "0",
+	            max: "5",
+	            step: "1",
+	            showClear: false,
+	            showCaption: false,
+	            readonly: true,
+	            size: "xxs"
+	        });
+	        $(reviewId).rating('update', this.props.rating);
+	    },
+	
+	    render: function () {
+	        var reviewId = "review-rating-user-" + this.props.id;
+	        var name = this.props.username;
+	        var altTag = name + " User Avatar";
+	
+	        var userReviewCount;
+	        if (this.props.reviewCount < 2) {
+	            userReviewCount = this.props.reviewCount + " review";
+	        } else {
+	            userReviewCount = this.props.reviewCount + " reviews";
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'review-index-item-components' },
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-info' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        username
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        userReviewCount
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'current-user-review' },
+	                React.createElement(
+	                    'ul',
+	                    null,
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        React.createElement('input', { id: reviewId,
+	                            className: 'rating',
+	                            type: 'number',
+	                            min: '1',
+	                            max: '5' }),
+	                        React.createElement(
+	                            'div',
+	                            null,
+	                            this.props.date
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'li',
+	                        null,
+	                        this.props.comment
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndexItem;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ReviewActions = __webpack_require__(245);
+	var ReviewForm = __webpack_require__(257);
+	var ReviewStore = __webpack_require__(242);
+	var ReviewUtil = __webpack_require__(244);
+	
+	var Review = React.createClass({
+	  displayName: 'Review',
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'li',
+	        null,
+	        'Rating: ',
+	        this.props.rating
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'by: ',
+	        this.props.username
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        this.props.comment
+	      ),
+	      React.createElement('p', null)
+	    );
+	  }
+	});
+	
+	module.exports = Review;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(233);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(244);
+	
+	var ReviewForm = React.createClass({
+	    displayName: 'ReviewForm',
+	
+	    mixins: [LinkedStateMixin, ReactRouter.history],
+	    getInitialState: function () {
+	        return { rating: 5, comment: "" };
+	    },
+	
+	    navigateToSpotShow: function () {
+	        var spotUrl = "/spots/" + this.props.params.spotId;
+	        this.props.history.pushState(null, spotUrl);
+	    },
+	
+	    handleCancel: function (event) {
+	        event.preventDefault();
+	        this.navigateToSpotShow();
+	    },
+	
+	    handleSubmit: function (event) {
+	        event.preventDefault();
+	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
+	        ReviewUtil.createReview(review);
+	        this.navigateToSpotShow();
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { className: 'review-form' },
+	            React.createElement(
+	                'form',
+	                { onSubmit: this.handleSubmit },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Rating'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Comment'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement('textarea', {
+	                    cols: '30',
+	                    rows: '10',
+	                    valueLink: this.linkState('comment') }),
+	                React.createElement('br', null),
+	                React.createElement('input', { type: 'submit' })
+	            ),
+	            React.createElement(
+	                'button',
+	                { onClick: this.handleCancel },
+	                'Cancel'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ReviewForm;
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SpotActions = __webpack_require__(208);
+	
+	var TaggingUtil = {
+	    createTagging: function (tagging) {
+	        $.ajax({
+	            url: 'api/taggings',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { tagging: tagging },
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
+	        });
+	    },
+	
+	    deleteTagging: function (taggingId) {
+	        $.ajax({
+	            url: 'api/taggings/' + taggingId,
+	            dataType: 'json',
+	            data: { taggingId: taggingId },
+	            type: 'DELETE',
+	            success: function (spot) {
+	                SpotActions.updateSingleSpot(spot);
+	            }
 	        });
 	    }
 	};
 	
-	module.exports = MapActions;
+	module.exports = TaggingUtil;
 
 /***/ },
-/* 270 */
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(215).Store;
+	var TagStore = new Store(AppDispatcher);
+	var TagConstants = __webpack_require__(260);
+	
+	var _tags = [];
+	var _queriedTags = [];
+	
+	var resetTags = function (newTags) {
+	    _tags = newTags;
+	};
+	
+	var addTag = function (newTag) {
+	    _tags.push(newTag);
+	};
+	
+	var resetQueriedTags = function (newTags) {
+	    _queriedTags = newTags;
+	};
+	
+	TagStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case TagConstants.TAGS_RECEIVED:
+	            resetTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.TAG_RECEIVED:
+	            addTag(payload.tag);
+	            TagStore.__emitChange();
+	            break;
+	        case TagConstants.QUERIED_TAGS_RECEIVED:
+	            resetQueriedTags(payload.tags);
+	            TagStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	TagStore.find = function (tagName) {
+	    for (var tag in _tags) {
+	        if (tag.name === tagName) {
+	            return tag.id;
+	        }
+	    }
+	};
+	
+	TagStore.all = function () {
+	    return _tags.slice(0);
+	};
+	
+	TagStore.queriedTags = function () {
+	    return _queriedTags.slice(0);
+	};
+	
+	module.exports = TagStore;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports) {
+
+	TagConstants = {
+	    TAGS_RECEIVED: "TAGS_RECEIVED",
+	    TAG_RECEIVED: "TAG_RECEIVED",
+	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
+	};
+	
+	module.exports = TagConstants;
+
+/***/ },
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItem = __webpack_require__(271);
+	var ReactDOM = __webpack_require__(158);
+	var FilterActions = __webpack_require__(250);
+	var Search = __webpack_require__(251);
+	
+	function _getCoordsObj(latLng) {
+	  return {
+	    lat: latLng.lat(),
+	    lng: latLng.lng()
+	  };
+	}
+	
+	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
+	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
+	
+	var Map = React.createClass({
+	  displayName: 'Map',
+	
+	  _initializeMaps: function (centerLatLng) {
+	    console.log("map mounted");
+	    this.currentCenter = centerLatLng;
+	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
+	
+	    if (centerLatLng) {
+	      var mapOptions = {
+	        center: this.centerLatLng,
+	        zoom: 15
+	      };
+	    } else {
+	      var mapOptions = {
+	        center: { lat: 40.8081, lng: -73.9621 },
+	        zoom: 15
+	      };
+	    };
+	
+	    this.map = new google.maps.Map(mapEl, mapOptions);
+	    this.registerListeners();
+	    this.markers = [];
+	  },
+	
+	  componentDidMount: function () {
+	    console.log("mapCompMounted");
+	    this._initializeMaps(this.props.centerLatLng);
+	
+	    if (this.props.spots) {
+	      this.props.spots.forEach(this.createMarkerFromSpot);
+	    };
+	  },
+	
+	  componentWillUnmount: function () {
+	    //this.markerListener.remove();
+	    console.log("map UNmounted");
+	  },
+	
+	  componentDidUpdate: function (oldProps) {
+	    this._onChange();
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    var newCenter = newProps.centerLatLng;
+	
+	    this.map.setCenter(newCenter);
+	    this.currentCenter = newCenter;
+	  },
+	
+	  _isSameCoord: function (coord1, coord2) {
+	    return coord1.lat === coord2.lat && coord1.lng === coord2.lng;
+	  },
+	
+	  _onChange: function () {
+	    var spots = this.props.spots;
+	    var toAdd = [],
+	        toRemove = this.markers.slice(0);
+	    spots.forEach(function (spot, idx) {
+	      var idx = -1;
+	
+	      for (var i = 0; i < toRemove.length; i++) {
+	        if (toRemove[i].spotId == spot.id) {
+	          idx = i;
+	          break;
+	        }
+	      }
+	      if (idx === -1) {
+	        toAdd.push(spot);
+	      } else {
+	        toRemove.splice(idx, 1);
+	      }
+	    });
+	    toAdd.forEach(this.createMarkerFromSpot);
+	    toRemove.forEach(this.removeMarker);
+	
+	    if (this.props.singleSpot) {
+	      this.map.setOptions({ draggable: false });
+	      this.map.setCenter(this.centerSpotCoords());
+	    }
+	  },
+	
+	  registerListeners: function () {
+	    var that = this;
+	    google.maps.event.addListener(this.map, 'idle', function () {
+	      var bounds = that.map.getBounds();
+	      var northEast = _getCoordsObj(bounds.getNorthEast());
+	      var southWest = _getCoordsObj(bounds.getSouthWest());
+	      var bounds = {
+	        northEast: northEast,
+	        southWest: southWest
+	      };
+	      FilterActions.updateBounds(bounds);
+	    });
+	    google.maps.event.addListener(this.map, 'click', function (event) {
+	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+	      that.props.onMapClick(coords);
+	    });
+	  },
+	
+	  createMarkerFromSpot: function (spot) {
+	    var that = this;
+	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
+	    var marker = new google.maps.Marker({
+	      position: pos,
+	      map: this.map,
+	      spotId: spot.id
+	    });
+	
+	    this.markerListener = marker.addListener('click', function () {
+	      that.props.onMarkerClick(spot);
+	    });
+	    this.markers.push(marker);
+	  },
+	
+	  removeMarker: function (marker) {
+	    for (var i = 0; i < this.markers.length; i++) {
+	      if (this.markers[i].spotId === marker.spotId) {
+	        this.markers[i].setMap(null);
+	        this.markers.splice(i, 1);
+	        break;
+	      }
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement('div', { className: 'map', ref: 'map' });
+	  }
+	});
+	
+	module.exports = Map;
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(238);
+	var SpotUtil = __webpack_require__(207);
+	var SpotActions = __webpack_require__(208);
+	
+	var Map = __webpack_require__(261);
+	var Search = __webpack_require__(251);
+	var SpotsIndex = __webpack_require__(239);
+	var List = __webpack_require__(263);
+	
+	var MapStore = __webpack_require__(266);
+	var FilterStore = __webpack_require__(214);
+	var FilterActions = __webpack_require__(250);
+	
+	function _getAllSpots() {
+	    return SpotStore.all();
+	}
+	
+	var SearchIndex = React.createClass({
+	    displayName: 'SearchIndex',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    getInitialState: function () {
+	        return {
+	            spots: _getAllSpots(),
+	            showResult: false,
+	            clickedLoc: null
+	        };
+	    },
+	
+	    // _updateSpots: function() {
+	    //     this.setState({
+	    //         spots: SpotStore.all()
+	    //     });
+	    // },
+	
+	    // _updateFilter: function() {
+	    //     SpotActions.fetchFilteredSpots();
+	    // },
+	
+	    _spotsChanged: function () {
+	        this.setState({ spots: _getAllSpots() });
+	    },
+	
+	    _onChange: function () {
+	        this.setState({ spots: SpotStore.all() });
+	    },
+	
+	    _updateMapsStatus: function () {
+	        // if (MapStore.isReady('maps')) {
+	        this.mapsReadyToken.remove();
+	        this._startSearchProcess();
+	        // }
+	    },
+	
+	    _startSearchProcess: function () {
+	        console.log('search process started');
+	        this.geocoder = new google.maps.Geocoder();
+	        this._geoConverter(this.props.params.loc);
+	    },
+	
+	    _geoConverter: function (locStr) {
+	        console.log("geoConverter called");
+	
+	        var _showMaps = this._showMaps;
+	
+	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
+	            if (status === google.maps.GeocoderStatus.OK) {
+	                var latLng = {
+	                    lat: results[0].geometry.location.lat(),
+	                    lng: results[0].geometry.location.lng()
+	                };
+	                _showMaps(latLng);
+	            } else {
+	                console.log('Geocode was not successful for the following reason: ' + status);
+	            }
+	        });
+	    },
+	
+	    _showMaps: function (centerLatLng) {
+	        this.setState({
+	            showResult: true,
+	            centerLatLng: centerLatLng
+	        });
+	    },
+	
+	    componentDidMount: function () {
+	        this.currentLocStr = this.props.params.loc;
+	        console.log('component mounted');
+	
+	        this.spotListener = SpotStore.addListener(this._onChange);
+	        SpotUtil.fetchSpots();
+	
+	        if (MapStore.isReady('maps')) {
+	            console.log('mapstore ready');
+	            this._startSearchProcess();
+	        } else {
+	            console.log('mapstore added listener');
+	            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
+	            this._startSearchProcess();
+	        }
+	
+	        // this.filterToken = FilterStore.addListener(this._updateFilter);
+	    },
+	
+	    componentWillReceiveProps: function (newProps) {
+	        var newLocStr = newProps.params.loc;
+	        console.log("searchIndex Received New Props" + newLocStr);
+	
+	        this.componentDidMount();
+	        //this._geoConverter(newLocStr);
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	        // this.filterToken.remove();
+	    },
+	
+	    handleMapClick: function (coords) {
+	        this.props.history.pushState(null, "spots/new", coords);
+	    },
+	
+	    handleMarkerClick: function (spot) {
+	        this.props.history.pushState(null, "spots/" + spot.id);
+	    },
+	
+	    // handleItemClick: function (spot) {
+	    //     this.props.history.pushState(null, "spots/" + spot.id );
+	    // },
+	
+	    render: function () {
+	        var showResult = this.state.showResult;
+	        var handleItemClick = this.handleItemClick;
+	
+	        return React.createElement(
+	            'div',
+	            { id: 'results' },
+	            React.createElement(
+	                'div',
+	                { id: 'results-header' },
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Results'
+	                ),
+	                React.createElement(Search, { history: this.props.history }),
+	                ' ',
+	                React.createElement('p', null)
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'list' },
+	                React.createElement(List, { spots: this.state.spots, history: this.props.history })
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'map' },
+	                React.createElement(Map, {
+	                    centerLatLng: this.state.centerLatLng,
+	                    onMapClick: this.handleMapClick,
+	                    onMarkerClick: this.handleMarkerClick,
+	                    spots: this.state.spots })
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SearchIndex;
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ListItem = __webpack_require__(264);
 	
 	var List = React.createClass({
 	    displayName: 'List',
@@ -33377,11 +33270,11 @@
 	module.exports = List;
 
 /***/ },
-/* 271 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItemDetail = __webpack_require__(272);
+	var ListItemDetail = __webpack_require__(265);
 	
 	var ListItem = React.createClass({
 	    displayName: 'ListItem',
@@ -33408,7 +33301,7 @@
 	module.exports = ListItem;
 
 /***/ },
-/* 272 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33448,6 +33341,128 @@
 	});
 	
 	module.exports = ListItemDetail;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(215).Store;
+	var AppDispatcher = __webpack_require__(209);
+	var MapConstants = __webpack_require__(267);
+	
+	var MapStore = new Store(AppDispatcher);
+	
+	var _extLib = {
+	    maps: false
+	};
+	
+	MapStore.isReady = function (lib) {
+	    return _extLib[lib];
+	};
+	
+	MapStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case MapConstants.MAPS_READY:
+	            _extLib.maps = true;
+	            console.log("google maps is ready");
+	            MapStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	module.exports = MapStore;
+
+/***/ },
+/* 267 */
+/***/ function(module, exports) {
+
+	var MapConstants = {
+	  MAPS_READY: "MAPS_READY"
+	};
+	
+	module.exports = MapConstants;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Search = __webpack_require__(251);
+	// var SpotStore = require('../../stores/spot.js');
+	// var SpotUtil = require('../../util/spot_util.js');
+	var RecentReviews = __webpack_require__(241);
+	
+	var LandingPage = React.createClass({
+	    displayName: 'LandingPage',
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { id: 'landing-page' },
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Your Next Review Awaits'
+	            ),
+	            React.createElement(Search, { history: this.props.history }),
+	            React.createElement(RecentReviews, null)
+	        );
+	    }
+	});
+	
+	module.exports = LandingPage;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var MapConstants = __webpack_require__(267);
+	
+	var MapActions = {
+	    mapsReady: function () {
+	        AppDispatcher.dispatch({
+	            actionType: MapConstants.MAPS_READY
+	        });
+	    }
+	};
+	
+	module.exports = MapActions;
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	    displayName: 'DropDown',
+	
+	    _fillInAddress: function () {
+	        this.props.handleLocChange();
+	        this.props.handleSearch();
+	    },
+	
+	    componentWillUnmount: function () {
+	        console.log('dropdown unmounted');
+	    },
+	
+	    componentDidMount: function () {
+	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	        this.autofillOptions = {
+	            types: ['geocode']
+	        };
+	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	        this.autofill.addListener('place_changed', this._fillInAddress);
+	    },
+	
+	    render: function () {
+	        return React.createElement('div', null);
+	    }
+	});
+	
+	module.exports = DropDown;
 
 /***/ }
 /******/ ]);

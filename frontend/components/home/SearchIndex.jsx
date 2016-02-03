@@ -56,7 +56,7 @@ var SearchIndex = React.createClass({
     },
 
     _startSearchProcess: function() {
-        console.log('search process started')
+        console.log('search process started');
         this.geocoder = new google.maps.Geocoder();
         this._geoConverter(this.props.params.loc);
     },
@@ -109,7 +109,7 @@ var SearchIndex = React.createClass({
 
     componentWillReceiveProps: function(newProps) {
         var newLocStr = newProps.params.loc;
-        console.log("searchIndexReceivedNewProps" + newLocStr);
+        console.log("searchIndex Received New Props" + newLocStr);
 
         this.componentDidMount();
         //this._geoConverter(newLocStr);
