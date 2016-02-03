@@ -7,7 +7,7 @@ var SpotActions = require('../../actions/spot_actions');
 var Map = require('../spots/Map2');
 var Search = require('../nav/Search');
 var SpotsIndex = require('../spots/SpotsIndex');
-//var List = require('../spots/List');
+var List = require('../spots/List');
 
 var MapStore = require('../../stores/map');
 var FilterStore = require('../../stores/filter_params');
@@ -137,6 +137,10 @@ var SearchIndex = React.createClass({
                 <div id="results-header">
                 <h4>Results</h4>
                 <Search history={this.props.history} /> <p />
+                </div>
+
+                <div id="list">
+                    <List spots={this.state.spots} history={this.props.history} />
                 </div>
 
 

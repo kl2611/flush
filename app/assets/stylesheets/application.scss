@@ -111,11 +111,18 @@ body {
     list-style: none;
 }
 
+#list {
+    width: 500px;
+    float: left;
+    position: relative;
+}
+
 
 /* MAP ************/
 .map {
   width: 600px;
   height: 500px;
+  float: right;
   position: relative;
 }
 

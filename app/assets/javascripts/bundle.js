@@ -32937,7 +32937,7 @@
 	var Map = __webpack_require__(267);
 	var Search = __webpack_require__(250);
 	var SpotsIndex = __webpack_require__(239);
-	//var List = require('../spots/List');
+	var List = __webpack_require__(270);
 	
 	var MapStore = __webpack_require__(265);
 	var FilterStore = __webpack_require__(214);
@@ -33075,6 +33075,11 @@
 	                React.createElement(Search, { history: this.props.history }),
 	                ' ',
 	                React.createElement('p', null)
+	            ),
+	            React.createElement(
+	                'div',
+	                { id: 'list' },
+	                React.createElement(List, { spots: this.state.spots, history: this.props.history })
 	            ),
 	            React.createElement(
 	                'div',
@@ -33328,6 +33333,112 @@
 	};
 	
 	module.exports = MapActions;
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ListItem = __webpack_require__(271);
+	
+	var List = React.createClass({
+	    displayName: 'List',
+	
+	    render: function () {
+	        var spots = this.props.spots;
+	        var history = this.props.history;
+	        var listItems = Object.keys(spots).map(function (spot_id) {
+	            return React.createElement(ListItem, {
+	                key: spot_id,
+	                spot: spots[spot_id],
+	                history: history });
+	        });
+	
+	        var redirectPrompt = React.createElement(
+	            'h4',
+	            null,
+	            'This demo currently only contains sample data in Morningside Heights, NYC'
+	        );
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            listItems.length > 0 ? listItems : redirectPrompt
+	        );
+	    }
+	
+	});
+	
+	module.exports = List;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ListItemDetail = __webpack_require__(272);
+	
+	var ListItem = React.createClass({
+	    displayName: 'ListItem',
+	
+	    handleClick: function () {
+	        var spotId = this.props.spot.id;
+	        this.props.history.pushState(null, "spots/" + spotId);
+	    },
+	
+	    render: function () {
+	        var spot = this.props.spot;
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'div',
+	                { id: "spot-" + spot.id },
+	                React.createElement(ListItemDetail, { handleClick: this.handleClick, spot: spot })
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = ListItem;
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var History = ReactRouter.History;
+	var Link = ReactRouter.Link;
+	
+	var ListItemDetail = React.createClass({
+	    displayName: 'ListItemDetail',
+	
+	    mixins: [History],
+	
+	    render: function () {
+	        var spot = this.props.spot;
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'list-item-detail', onClick: this.props.onClick },
+	            React.createElement(
+	                'b',
+	                null,
+	                spot.name
+	            ),
+	            React.createElement('br', null),
+	            spot.description,
+	            React.createElement('br', null),
+	            'Rating: ',
+	            spot.average_rating || "No reviews yet",
+	            React.createElement('br', null),
+	            React.createElement('img', { src: spot.picture_url })
+	        );
+	    }
+	});
+	
+	module.exports = ListItemDetail;
 
 /***/ }
 /******/ ]);

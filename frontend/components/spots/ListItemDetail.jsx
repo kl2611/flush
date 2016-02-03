@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactRouter = require('react-router');
 var History =ReactRouter.History;
 var Link = ReactRouter.Link;
 
@@ -9,8 +10,8 @@ var ListItemDetail = React.createClass({
         var spot = this.props.spot;
 
         return (
-            <div className="spot-index-item" onClick={this.props.onClick}>
-                {spot.name}
+            <div className="list-item-detail" onClick={this.props.onClick}>
+                <b>{spot.name}</b>
                 <br />
                 {spot.description}
                 <br />
@@ -18,8 +19,8 @@ var ListItemDetail = React.createClass({
                 <br />
                 <img src={spot.picture_url} />
             </div>
+        );
     }
-
 });
 
 module.exports = ListItemDetail;
