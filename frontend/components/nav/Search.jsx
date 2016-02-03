@@ -5,6 +5,7 @@ var Geocomplete = require('geocomplete');
 var Dropdown = require('./SearchDropdown');
 
 var SearchBar = React.createClass({
+
     getInitialState: function() {
         this.styleSheetShow = document.createElement('style');
         this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
@@ -25,11 +26,9 @@ var SearchBar = React.createClass({
     // },
 
     searchBarOnClick: function() {
-        setTimeout(function() {
-            this.setState({
-                showAutocomplete: true
-            });
-        }.bind(this), 1800);
+        this.setState({
+            showAutocomplete: true
+        });
     },
 
     handleSearch: function(e) {
@@ -43,9 +42,9 @@ var SearchBar = React.createClass({
             });
         } else {
             this.redirectToSearch();
-            this.setState({
-                showSpinner: true
-            })
+            // this.setState({
+            //     showSpinner: true
+            // })
         }
     },
 

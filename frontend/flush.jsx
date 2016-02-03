@@ -14,6 +14,7 @@ var Review = require('./components/reviews/Review');
 
 var SearchIndex= require('./components/home/SearchIndex');
 var LandingPage = require('./components/home/LandingPage');
+var MapActions = require('./actions/map_actions');
 
 var App = React.createClass({
   render: function() {
@@ -38,6 +39,14 @@ var routes = (
     </Route>
   </Route>
 );
+
+var checkLibStatus = function() {
+  if (window.MapsStatus) {
+    MapAction.mapsReady();
+  } else {
+    document.getElementById('map').addEventListener('load', MapAction.mapsReady);
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   var root = document.getElementById('root');

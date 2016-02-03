@@ -60,6 +60,7 @@
 	
 	var SearchIndex = __webpack_require__(264);
 	var LandingPage = __webpack_require__(268);
+	var MapActions = __webpack_require__(269);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -90,6 +91,14 @@
 	    React.createElement(Route, { path: 'review', components: ReviewForm })
 	  )
 	);
+	
+	var checkLibStatus = function () {
+	  if (window.MapsStatus) {
+	    MapAction.mapsReady();
+	  } else {
+	    document.getElementById('map').addEventListener('load', MapAction.mapsReady);
+	  }
+	};
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  var root = document.getElementById('root');
@@ -24189,6 +24198,7 @@
 
 	var AppDispatcher = __webpack_require__(209);
 	var SpotConstants = __webpack_require__(213);
+	var SpotUtil = __webpack_require__(207);
 	
 	var SpotActions = {
 	    receiveAllSpots: function (spots) {
@@ -24209,6 +24219,13 @@
 	        AppDispatcher.dispatch({
 	            actionType: SpotConstants.SPOT_UPDATED,
 	            spot: spot
+	        });
+	    },
+	
+	    receiveFilteredSpots: function (spots) {
+	        AppDispatcher.dispatch({
+	            actionType: SpotConstants.SPOTS_RECEIVED,
+	            spots: spots
 	        });
 	    }
 	};
@@ -24552,16 +24569,24 @@
 	
 	var FilterParamsStore = new Store(AppDispatcher);
 	
+	var _currentParams = {
+	    bounds: null
+	};
+	
+	var _updateBounds = function (bounds) {
+	    _currentParams.bounds = bounds;
+	};
+	
 	FilterParamsStore.params = function () {
-	  return Object.assign({});
+	    return Object.assign({});
 	};
 	
 	FilterParamsStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case FilterConstants.UPDATE_BOUNDS:
-	      FilterParamsStore.__emitChange();
-	      break;
-	  }
+	    switch (payload.actionType) {
+	        case FilterConstants.UPDATE_BOUNDS:
+	            FilterParamsStore.__emitChange();
+	            break;
+	    }
 	};
 	
 	module.exports = FilterParamsStore;
@@ -32226,11 +32251,9 @@
 	    // },
 	
 	    searchBarOnClick: function () {
-	        setTimeout(function () {
-	            this.setState({
-	                showAutocomplete: true
-	            });
-	        }.bind(this), 1800);
+	        this.setState({
+	            showAutocomplete: true
+	        });
 	    },
 	
 	    handleSearch: function (e) {
@@ -32244,9 +32267,9 @@
 	            });
 	        } else {
 	            this.redirectToSearch();
-	            this.setState({
-	                showSpinner: true
-	            });
+	            // this.setState({
+	            //     showSpinner: true
+	            // })
 	        }
 	    },
 	
@@ -33473,9 +33496,9 @@
 	        this.props.handleSearch();
 	    },
 	
-	    // componentWillUnmount: function() {
-	    //     document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0])
-	    // },
+	    componentWillUnmount: function () {
+	        console.log('dropdown unmounted');
+	    },
 	
 	    componentDidMount: function () {
 	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
@@ -33501,11 +33524,15 @@
 	var ReactRouter = __webpack_require__(159);
 	var SpotStore = __webpack_require__(238);
 	var SpotUtil = __webpack_require__(207);
+	var SpotActions = __webpack_require__(208);
+	
 	var Map = __webpack_require__(267);
 	var Search = __webpack_require__(250);
 	var SpotsIndex = __webpack_require__(239);
 	
 	var MapStore = __webpack_require__(265);
+	var FilterStore = __webpack_require__(214);
+	var FilterActions = __webpack_require__(261);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -33514,25 +33541,38 @@
 	var SearchIndex = React.createClass({
 	    displayName: 'SearchIndex',
 	
-	    contextTypes: {
-	        router: React.PropTypes.func
+	    getInitialState: function () {
+	        return {
+	            spots: SpotStore.all(),
+	            showResult: false
+	        };
 	    },
+	
+	    _updateSpots: function () {
+	        this.setState({
+	            spots: SpotStore.all()
+	        });
+	    },
+	
+	    // _updateFilter: function() {
+	    //     SpotActions.fetchFilteredSpots();
+	    // },
 	
 	    _spotsChanged: function () {
 	        this.setState({ spots: _getAllSpots() });
 	    },
 	
-	    getInitialState: function () {
-	        return {
-	            spots: _getAllSpots(),
-	            //clickedLoc: null
-	            showResult: false
-	        };
-	    },
+	    // getInitialState: function() {
+	    //     return ({
+	    //         spots: _getAllSpots(),
+	    //         //clickedLoc: null
+	    //         showResult: false
+	    //     });
+	    // },
 	
-	    _onChange: function () {
-	        this.setState({ spots: SpotStore.all() });
-	    },
+	    // _onChange: function() {
+	    //     this.setState({ spots: SpotStore.all() })
+	    // },
 	
 	    _updateMapsStatus: function () {
 	        if (MapStore.isReady('maps')) {
@@ -33542,39 +33582,16 @@
 	    },
 	
 	    _startSearchProcess: function () {
+	        console.log('search process started');
 	        this.geocoder = new google.maps.Geocoder();
 	        this._geoConverter(this.props.params.loc);
-	    },
-	
-	    componentDidMount: function () {
-	        this.currentLocStr = this.props.params.loc;
-	
-	        if (MapStore.isReady('maps')) {
-	            this._startSearchProcess();
-	        } else {
-	            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
-	        }
-	
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	
-	    handleMapClick: function (coords) {
-	        this.props.history.pushState(null, "spots/new", coords);
-	    },
-	
-	    handleMarkerClick: function (spot) {
-	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
 	
 	    _geoConverter: function (locStr) {
 	        console.log("geoConverter called");
 	
 	        var _showMaps = this._showMaps;
+	
 	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
 	            if (status === google.maps.GeocoderStatus.OK) {
 	                var latLng = {
@@ -33598,17 +33615,48 @@
 	    componentWillReceiveProps: function (newProps) {
 	        var newLocStr = newProps.params.loc;
 	
-	        this._geoConverter(newProps.params.loc);
+	        this._geoConverter(newLocStr);
+	    },
+	
+	    componentWillUnmount: function () {
+	        // this.spotListener.remove();
+	        this.spotToken.remove();
+	        // this.filterToken.remove();
+	    },
+	
+	    componentDidMount: function () {
+	        this.currentLocStr = this.props.params.loc;
+	
+	        if (MapStore.isReady('maps')) {
+	            this._startSearchProcess();
+	        } else {
+	            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
+	        }
+	        this.spotToken = SpotStore.addListener(this._updateSpots);
+	        // this.filterToken = FilterStore.addListener(this._updateFilter);
+	
+	        // this.spotListener = SpotStore.addListener(this._onChange);
+	        // SpotUtil.fetchSpots();
+	    },
+	
+	    handleMapClick: function (coords) {
+	        this.props.history.pushState(null, "spots/new", coords);
+	    },
+	
+	    handleMarkerClick: function (spot) {
+	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
 	
 	    render: function () {
+	        var showResult = this.state.showResult;
+	
 	        return React.createElement(
 	            'div',
 	            null,
 	            React.createElement(
 	                'h4',
 	                null,
-	                'Your Next Review Awaits'
+	                'Results'
 	            ),
 	            React.createElement(Search, { history: this.props.history }),
 	            ' ',
@@ -33617,12 +33665,7 @@
 	                centerLatLng: this.state.centerLatLng,
 	                onMapClick: this.handleMapClick,
 	                onMarkerClick: this.handleMarkerClick,
-	                spots: this.state.spots }),
-	            React.createElement(
-	                'div',
-	                { className: 'map' },
-	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
-	            )
+	                spots: this.state.spots })
 	        );
 	    }
 	});
@@ -33828,8 +33871,8 @@
 
 	var React = __webpack_require__(1);
 	var Search = __webpack_require__(250);
-	var SpotStore = __webpack_require__(238);
-	var SpotUtil = __webpack_require__(207);
+	// var SpotStore = require('../../stores/spot.js');
+	// var SpotUtil = require('../../util/spot_util.js');
 	var RecentReviews = __webpack_require__(241);
 	
 	var LandingPage = React.createClass({
@@ -33838,20 +33881,36 @@
 	    render: function () {
 	        return React.createElement(
 	            'div',
-	            null,
+	            { id: 'landing-page' },
 	            React.createElement(
 	                'h4',
 	                null,
 	                'Your Next Review Awaits'
 	            ),
 	            React.createElement(Search, { history: this.props.history }),
-	            React.createElement('p', null),
 	            React.createElement(RecentReviews, null)
 	        );
 	    }
 	});
 	
 	module.exports = LandingPage;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var MapConstants = __webpack_require__(266);
+	
+	var MapActions = {
+	    mapsReady: function () {
+	        AppDispatcher.dispatch({
+	            actionType: MapConstants.MAPS_READY
+	        });
+	    }
+	};
+	
+	module.exports = MapActions;
 
 /***/ }
 /******/ ]);

@@ -18,13 +18,20 @@
 @import "bootstrap";
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700);
 
-body, h1, h2, h3, h4, h5, h6, p, li, span, a {
+html, body, #root, #app, h1, h2, h3, h4, h5, h6, p, li, span, a {
   font-family: "Roboto", sans-serif;
 }
 
 body {
     background-color: #F0F9FE;
 }
+
+/* LANDING PAGE *******/
+.pac-container {
+  -webkit-transition: all 2s, -webkit-transform 2s;
+  transition: all 2s, transform 2s;
+}
+
 
 /* HEADER *************/
 .header-container {

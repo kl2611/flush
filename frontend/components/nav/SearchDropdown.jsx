@@ -7,9 +7,9 @@ var DropDown = React.createClass({
         this.props.handleSearch();
     },
 
-    // componentWillUnmount: function() {
-    //     document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0])
-    // },
+      componentWillUnmount: function() {
+        console.log('dropdown unmounted')
+      },
 
     componentDidMount: function () {
         this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
