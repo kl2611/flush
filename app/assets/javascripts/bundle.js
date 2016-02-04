@@ -32314,9 +32314,9 @@
 	        this.props.history.pushState(null, 'search/' + loc);
 	
 	        // hmm fix this somehow
-	        this.setState({
-	            showSpinner: false
-	        });
+	        // this.setState({
+	        //     showSpinner: false
+	        // })
 	    },
 	
 	    handleLocChange: function (e) {
@@ -32952,7 +32952,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var FilterActions = __webpack_require__(250);
-	var Search = __webpack_require__(251);
+	//var Search =require('../nav/Search');
 	
 	var SpotStore = __webpack_require__(238);
 	
@@ -32974,18 +32974,18 @@
 	    this.currentCenter = centerLatLng;
 	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
 	
-	    if (centerLatLng) {
-	      var mapOptions = {
-	        center: this.centerLatLng,
-	        draggable: true,
-	        zoom: 15
-	      };
-	    } else {
-	      var mapOptions = {
-	        center: this.centerSpotCoords(),
-	        zoom: 15
-	      };
+	    // if (centerLatLng) {
+	    var mapOptions = {
+	      center: this.centerLatLng,
+	      zoom: 15
 	    };
+	    // }
+	    // else {
+	    //   var mapOptions = {
+	    //     center: this.centerSpotCoords(),
+	    //     zoom: 15
+	    //   }
+	    // };
 	
 	    this.map = new google.maps.Map(mapEl, mapOptions);
 	    this.registerListeners();
@@ -32996,13 +32996,13 @@
 	    if (this.props.spots[0] && this.props.spots[0].lng) {
 	      var spot = this.props.spots[0];
 	      return { lat: spot.lat, lng: spot.lng };
-	    };
+	    } else {
+	      return CENTER;
+	    }
 	  },
 	
 	  componentDidMount: function () {
-	    console.log("mapCompMounted");
 	    this._initializeMaps(this.props.centerLatLng);
-	    this.listenForMove();
 	
 	    if (this.props.spots) {
 	      this.props.spots.forEach(this.createMarkerFromSpot);
@@ -33010,7 +33010,7 @@
 	  },
 	
 	  componentWillUnmount: function () {
-	    this.markerListener.remove();
+	    //this.markerListener.remove();
 	    console.log("map UNmounted");
 	  },
 	
@@ -33025,16 +33025,9 @@
 	    this.currentCenter = newCenter;
 	  },
 	
-	  _isSameCoord: function (coord1, coord2) {
-	    return coord1.lat === coord2.lat && coord1.lng === coord2.lng;
-	  },
-	
-	  listenForMove: function () {
-	    var that = this;
-	    google.maps.event.addListener(this.map, 'idle', function () {
-	      var bounds = that.map.getBounds();
-	    });
-	  },
+	  // _isSameCoord: function(coord1, coord2) {
+	  //   return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
+	  // },
 	
 	  _onChange: function () {
 	    var spots = this.props.spots;
@@ -33076,6 +33069,7 @@
 	      };
 	      FilterActions.updateBounds(bounds);
 	    });
+	
 	    google.maps.event.addListener(this.map, 'click', function (event) {
 	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
 	      that.props.onMapClick(coords);
@@ -33091,7 +33085,8 @@
 	      spotId: spot.id
 	    });
 	
-	    this.markerListener = marker.addListener('click', function () {
+	    // this.markerListener =
+	    marker.addListener('click', function () {
 	      that.props.onMarkerClick(spot);
 	    });
 	    this.markers.push(marker);
@@ -33124,9 +33119,8 @@
 	var SpotUtil = __webpack_require__(207);
 	var SpotActions = __webpack_require__(208);
 	
-	var Map = __webpack_require__(262);
+	var Map = __webpack_require__(271);
 	var Search = __webpack_require__(251);
-	var SpotsIndex = __webpack_require__(239);
 	var List = __webpack_require__(264);
 	
 	var MapStore = __webpack_require__(267);
@@ -33150,7 +33144,7 @@
 	    getInitialState: function () {
 	        return {
 	            spots: _getAllSpots(),
-	            showResult: false,
+	            //showResult: false,
 	            clickedLoc: null,
 	            filterParams: _getFilterParams()
 	        };
@@ -33181,10 +33175,10 @@
 	    },
 	
 	    _updateMapsStatus: function () {
-	        // if (MapStore.isReady('maps')) {
-	        this.mapsReadyToken.remove();
-	        this._startSearchProcess();
-	        // }
+	        if (MapStore.isReady('maps')) {
+	            this.mapsReadyToken.remove();
+	            this._startSearchProcess();
+	        }
 	    },
 	
 	    _startSearchProcess: function () {
@@ -33206,7 +33200,7 @@
 	                };
 	                _showMaps(latLng);
 	            } else {
-	                console.log('Geocode was not successful for the following reason: ' + status);
+	                //console.log('Geocode was not successful for the following reason: ' + status);
 	            }
 	        });
 	    },
@@ -33240,8 +33234,8 @@
 	        var newLocStr = newProps.params.loc;
 	        console.log("searchIndex Received New Props" + newLocStr);
 	
-	        this.componentDidMount();
-	        //this._geoConverter(newLocStr);
+	        //this.componentDidMount();
+	        this._geoConverter(newProps.params.loc);
 	    },
 	
 	    componentWillUnmount: function () {
@@ -33453,6 +33447,159 @@
 	};
 	
 	module.exports = MapActions;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	var FilterActions = __webpack_require__(250);
+	var Search = __webpack_require__(251);
+	
+	function _getCoordsObj(latLng) {
+	  return {
+	    lat: latLng.lat(),
+	    lng: latLng.lng()
+	  };
+	}
+	
+	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
+	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
+	
+	var Map = React.createClass({
+	  displayName: 'Map',
+	
+	  _initializeMaps: function (centerLatLng) {
+	    console.log("map mounted");
+	    this.currentCenter = centerLatLng;
+	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
+	
+	    if (centerLatLng) {
+	      var mapOptions = {
+	        center: this.centerLatLng,
+	        zoom: 15
+	      };
+	    } else {
+	      var mapOptions = {
+	        center: { lat: 40.8081, lng: -73.9621 },
+	        zoom: 15
+	      };
+	    };
+	
+	    this.map = new google.maps.Map(mapEl, mapOptions);
+	    this.registerListeners();
+	    this.markers = [];
+	  },
+	
+	  componentDidMount: function () {
+	    console.log("mapCompMounted");
+	    this._initializeMaps(this.props.centerLatLng);
+	
+	    if (this.props.spots) {
+	      this.props.spots.forEach(this.createMarkerFromSpot);
+	    };
+	  },
+	
+	  componentWillUnmount: function () {
+	    //this.markerListener.remove();
+	    console.log("map UNmounted");
+	  },
+	
+	  componentDidUpdate: function (oldProps) {
+	    this._onChange();
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    var newCenter = newProps.centerLatLng;
+	
+	    if (!(this.currentCenter === newCenter)) {
+	      this.map.setCenter(newCenter);
+	      this.currentCenter = newCenter;
+	    }
+	  },
+	
+	  // _isSameCoord: function(coord1, coord2) {
+	  //   return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
+	  // },
+	
+	  _onChange: function () {
+	    var spots = this.props.spots;
+	    var toAdd = [],
+	        toRemove = this.markers.slice(0);
+	    spots.forEach(function (spot, idx) {
+	      var idx = -1;
+	
+	      for (var i = 0; i < toRemove.length; i++) {
+	        if (toRemove[i].spotId == spot.id) {
+	          idx = i;
+	          break;
+	        }
+	      }
+	      if (idx === -1) {
+	        toAdd.push(spot);
+	      } else {
+	        toRemove.splice(idx, 1);
+	      }
+	    });
+	    toAdd.forEach(this.createMarkerFromSpot);
+	    toRemove.forEach(this.removeMarker);
+	
+	    if (this.props.singleSpot) {
+	      this.map.setOptions({ draggable: false });
+	      this.map.setCenter(this.centerSpotCoords());
+	    }
+	  },
+	
+	  registerListeners: function () {
+	    var that = this;
+	    google.maps.event.addListener(this.map, 'idle', function () {
+	      var bounds = that.map.getBounds();
+	      var northEast = _getCoordsObj(bounds.getNorthEast());
+	      var southWest = _getCoordsObj(bounds.getSouthWest());
+	      var bounds = {
+	        northEast: northEast,
+	        southWest: southWest
+	      };
+	      FilterActions.updateBounds(bounds);
+	    });
+	    google.maps.event.addListener(this.map, 'click', function (event) {
+	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+	      that.props.onMapClick(coords);
+	    });
+	  },
+	
+	  createMarkerFromSpot: function (spot) {
+	    var that = this;
+	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
+	    var marker = new google.maps.Marker({
+	      position: pos,
+	      map: this.map,
+	      spotId: spot.id
+	    });
+	
+	    this.markerListener = marker.addListener('click', function () {
+	      that.props.onMarkerClick(spot);
+	    });
+	    this.markers.push(marker);
+	  },
+	
+	  removeMarker: function (marker) {
+	    for (var i = 0; i < this.markers.length; i++) {
+	      if (this.markers[i].spotId === marker.spotId) {
+	        this.markers[i].setMap(null);
+	        this.markers.splice(i, 1);
+	        break;
+	      }
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement('div', { className: 'map', ref: 'map' });
+	  }
+	});
+	
+	module.exports = Map;
 
 /***/ }
 /******/ ]);

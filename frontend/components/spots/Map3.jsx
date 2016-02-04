@@ -1,9 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var FilterActions = require('../../actions/filter_actions.js');
-//var Search =require('../nav/Search');
-
-var SpotStore = require('../../stores/spot');
+var Search =require('../nav/Search');
 
 function _getCoordsObj(latLng) {
   return {
@@ -21,34 +19,25 @@ var Map = React.createClass({
       this.currentCenter = centerLatLng;
       var mapEl = ReactDOM.findDOMNode(this.refs.map);
 
-      // if (centerLatLng) {
+      if (centerLatLng) {
         var mapOptions = {
           center: this.centerLatLng,
           zoom: 15
         };
-      // }
-      // else {
-      //   var mapOptions = {
-      //     center: this.centerSpotCoords(),
-      //     zoom: 15
-      //   }
-      // };
+      } else {
+        var mapOptions = {
+          center: {lat: 40.8081, lng: -73.9621},
+          zoom: 15
+        }
+      };
 
       this.map = new google.maps.Map(mapEl, mapOptions);
       this.registerListeners();
       this.markers = [];
   },
 
-  centerSpotCoords: function () {
-    if (this.props.spots[0] && this.props.spots[0].lng) {
-      var spot = this.props.spots[0];
-      return { lat: spot.lat, lng: spot.lng };
-    } else {
-      return CENTER;
-    }
-  },
-
   componentDidMount: function() {
+    console.log("mapCompMounted");
       this._initializeMaps(this.props.centerLatLng);
 
       if (this.props.spots) {
@@ -68,8 +57,10 @@ var Map = React.createClass({
   componentWillReceiveProps: function(newProps) {
     var newCenter = newProps.centerLatLng;
 
+    if (!(this.currentCenter === newCenter)) {
       this.map.setCenter(newCenter);
       this.currentCenter = newCenter;
+    }
   },
 
   // _isSameCoord: function(coord1, coord2) {
@@ -115,7 +106,6 @@ var Map = React.createClass({
       };
       FilterActions.updateBounds(bounds);
     });
-
     google.maps.event.addListener(this.map, 'click', function(event) {
       var coords = {lat: event.latLng.lat(), lng: event.latLng.lng() };
       that.props.onMapClick(coords);
@@ -131,8 +121,7 @@ var Map = React.createClass({
       spotId: spot.id
     });
 
-    // this.markerListener =
-    marker.addListener('click', function () {
+    this.markerListener = marker.addListener('click', function () {
       that.props.onMarkerClick(spot);
     });
     this.markers.push(marker);

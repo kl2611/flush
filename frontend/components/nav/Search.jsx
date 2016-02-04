@@ -54,9 +54,9 @@ var SearchBar = React.createClass({
         this.props.history.pushState(null, 'search/' + loc);
 
         // hmm fix this somehow
-        this.setState({
-            showSpinner: false
-        })
+        // this.setState({
+        //     showSpinner: false
+        // })
     },
 
     handleLocChange: function(e) {

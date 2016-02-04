@@ -4,9 +4,8 @@ var SpotStore = require('../../stores/spot.js');
 var SpotUtil = require('../../util/spot_util.js');
 var SpotActions = require('../../actions/spot_actions');
 
-var Map = require('../spots/Map2');
+var Map = require('../spots/Map3');
 var Search = require('../nav/Search');
-var SpotsIndex = require('../spots/SpotsIndex');
 var List = require('../spots/List');
 
 var MapStore = require('../../stores/map');
@@ -28,7 +27,7 @@ var SearchIndex = React.createClass({
     getInitialState: function() {
         return ({
             spots: _getAllSpots(),
-            showResult: false,
+            //showResult: false,
             clickedLoc: null,
             filterParams: _getFilterParams(),
         });
@@ -59,10 +58,10 @@ var SearchIndex = React.createClass({
     },
 
     _updateMapsStatus: function() {
-        // if (MapStore.isReady('maps')) {
+        if (MapStore.isReady('maps')) {
             this.mapsReadyToken.remove();
             this._startSearchProcess();
-        // }
+        }
     },
 
     _startSearchProcess: function() {
@@ -84,7 +83,7 @@ var SearchIndex = React.createClass({
                 };
                 _showMaps(latLng);
             } else {
-                console.log('Geocode was not successful for the following reason: ' + status);
+                //console.log('Geocode was not successful for the following reason: ' + status);
             }
         });
     },
@@ -118,8 +117,8 @@ var SearchIndex = React.createClass({
         var newLocStr = newProps.params.loc;
         console.log("searchIndex Received New Props" + newLocStr);
 
-        this.componentDidMount();
-        //this._geoConverter(newLocStr);
+        //this.componentDidMount();
+        this._geoConverter(newProps.params.loc);
     },
 
     componentWillUnmount: function() {
