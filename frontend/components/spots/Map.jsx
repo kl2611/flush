@@ -92,6 +92,15 @@ var Map = React.createClass({
     }
   },
 
+  centerSpotCoords: function () {
+    if (this.props.spots[0] && this.props.spots[0].lng) {
+      var spot = this.props.spots[0];
+      return { lat: spot.lat, lng: spot.lng };
+    } else {
+      return CENTER;
+    }
+  },
+
   registerListeners: function() {
     var that = this;
     google.maps.event.addListener(this.map, 'idle', function() {

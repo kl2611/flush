@@ -2,7 +2,7 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var SpotStore = require('../../stores/spot');
 var Spot = require('./Spot');
-var Map = require('./Map2');
+var Map = require('./Map');
 var SpotUtil = require('../../util/spot_util.js');
 
 var Review = require('../reviews/Review');

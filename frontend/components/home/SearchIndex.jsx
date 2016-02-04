@@ -4,7 +4,7 @@ var SpotStore = require('../../stores/spot.js');
 var SpotUtil = require('../../util/spot_util.js');
 var SpotActions = require('../../actions/spot_actions');
 
-var Map = require('../spots/Map3');
+var Map = require('../spots/Map');
 var Search = require('../nav/Search');
 var List = require('../spots/List');
 
