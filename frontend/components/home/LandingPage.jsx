@@ -8,8 +8,7 @@ var LandingPage = React.createClass({
     render: function() {
         return (
         <div id="landing-page">
-                <h4>Your Next Review Awaits</h4>
-                <Search history={this.props.history} />
+                <h4>Your Next Review Awaits!</h4>
                 <RecentReviews />
         </div>
         );

@@ -32,7 +32,7 @@ var NavBar = React.createClass({
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-        <SearchBar />
+        <SearchBar history={this.props.history} />
 
           <ul className="nav navbar-nav navbar-right">
             <li><a href="#">Link</a></li>

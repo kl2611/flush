@@ -72,7 +72,7 @@
 	    return React.createElement(
 	      'div',
 	      { id: 'index' },
-	      React.createElement(NavBar, { history: this.props.history }),
+	      React.createElement(NavBar, { history: this.props.history, location: this.props.location }),
 	      React.createElement(
 	        'div',
 	        { className: 'container below-nav' },
@@ -33264,9 +33264,8 @@
 	            React.createElement(
 	                'h4',
 	                null,
-	                'Your Next Review Awaits'
+	                'Your Next Review Awaits!'
 	            ),
-	            React.createElement(Search, { history: this.props.history }),
 	            React.createElement(RecentReviews, null)
 	        );
 	    }
@@ -33343,7 +33342,7 @@
 	        React.createElement(
 	          'div',
 	          { className: 'collapse navbar-collapse', id: 'bs-example-navbar-collapse-1' },
-	          React.createElement(SearchBar, null),
+	          React.createElement(SearchBar, { history: this.props.history }),
 	          React.createElement(
 	            'ul',
 	            { className: 'nav navbar-nav navbar-right' },
