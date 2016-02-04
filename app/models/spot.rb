@@ -28,6 +28,10 @@ class Spot < ActiveRecord::Base
         Spot.where("lower(name) LIKE ?", partial)
     end
 
+    def review_count
+        reviews.count
+    end
+
     def average_rating
         reviews.average(:rating)
     end

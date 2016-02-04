@@ -54,13 +54,13 @@
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(237);
-	var SpotShow = __webpack_require__(252);
-	var ReviewForm = __webpack_require__(257);
-	var Review = __webpack_require__(256);
+	var SpotShow = __webpack_require__(253);
+	var ReviewForm = __webpack_require__(258);
+	var Review = __webpack_require__(257);
 	
-	var SearchIndex = __webpack_require__(262);
-	var LandingPage = __webpack_require__(268);
-	var MapActions = __webpack_require__(269);
+	var SearchIndex = __webpack_require__(263);
+	var LandingPage = __webpack_require__(269);
+	var MapActions = __webpack_require__(270);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24177,6 +24177,18 @@
 	        });
 	    },
 	
+	    fetchFilteredSpots: function (receiveFilteredSpots) {
+	        $.ajax({
+	            url: 'api/spots',
+	            method: "get",
+	            dataType: 'json',
+	            data: { filter: FilterParamsStore.params() },
+	            success: function (spots) {
+	                receiveFilteredSpots(spots);
+	            }
+	        });
+	    },
+	
 	    createSpot: function (data) {
 	        $.post('api/spots', { spot: data }, function (spot) {
 	            SpotActions.receiveAllSpots([spot]);
@@ -24206,6 +24218,10 @@
 	            actionType: SpotConstants.SPOTS_RECEIVED,
 	            spots: spots
 	        });
+	    },
+	
+	    fetchFilteredSpots: function () {
+	        SpotUtil.fetchFilteredSpots(this.receiveFilteredSpots);
 	    },
 	
 	    receiveSingleSpot: function (spot) {
@@ -32256,7 +32272,7 @@
 	var SpotUtil = __webpack_require__(207);
 	//var Map = require('../spots/Map');
 	//var Geocomplete = require('geocomplete');
-	var Dropdown = __webpack_require__(270);
+	var Dropdown = __webpack_require__(252);
 	
 	var SearchBar = React.createClass({
 	    displayName: 'SearchBar',
@@ -32384,13 +32400,48 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	    displayName: 'DropDown',
+	
+	    _fillInAddress: function () {
+	        this.props.handleLocChange();
+	        this.props.handleSearch();
+	    },
+	
+	    componentWillUnmount: function () {
+	        console.log('dropdown unmounted');
+	    },
+	
+	    componentDidMount: function () {
+	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	        this.autofillOptions = {
+	            types: ['geocode']
+	        };
+	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	        this.autofill.addListener('place_changed', this._fillInAddress);
+	    },
+	
+	    render: function () {
+	        return React.createElement('div', null);
+	    }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	var SpotStore = __webpack_require__(238);
-	var Spot = __webpack_require__(253);
-	var Map = __webpack_require__(261);
+	var Spot = __webpack_require__(254);
+	var Map = __webpack_require__(262);
 	var SpotUtil = __webpack_require__(207);
 	
-	var Review = __webpack_require__(256);
+	var Review = __webpack_require__(257);
 	
 	var SpotShow = React.createClass({
 	    displayName: 'SpotShow',
@@ -32458,7 +32509,7 @@
 	module.exports = SpotShow;
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32467,12 +32518,12 @@
 	var ReactRouter = __webpack_require__(159);
 	var LinkedStateMixin = __webpack_require__(233);
 	
-	var ReviewIndex = __webpack_require__(254);
+	var ReviewIndex = __webpack_require__(255);
 	var ReviewStore = __webpack_require__(242);
-	var Review = __webpack_require__(256);
+	var Review = __webpack_require__(257);
 	
-	var TaggingUtil = __webpack_require__(258);
-	var TagStore = __webpack_require__(259);
+	var TaggingUtil = __webpack_require__(259);
+	var TagStore = __webpack_require__(260);
 	
 	var Spot = React.createClass({
 	  displayName: 'Spot',
@@ -32532,7 +32583,7 @@
 	module.exports = Spot;
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -32541,7 +32592,7 @@
 	var ReactRouter = __webpack_require__(159);
 	var ReviewUtil = __webpack_require__(244);
 	var ReviewStore = __webpack_require__(242);
-	var ReviewIndexItem = __webpack_require__(255);
+	var ReviewIndexItem = __webpack_require__(256);
 	
 	var ReviewIndex = React.createClass({
 	    displayName: 'ReviewIndex',
@@ -32593,7 +32644,7 @@
 	module.exports = ReviewIndex;
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32684,14 +32735,14 @@
 	module.exports = ReviewIndexItem;
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
 	var ReviewActions = __webpack_require__(245);
-	var ReviewForm = __webpack_require__(257);
+	var ReviewForm = __webpack_require__(258);
 	var ReviewStore = __webpack_require__(242);
 	var ReviewUtil = __webpack_require__(244);
 	
@@ -32727,7 +32778,7 @@
 	module.exports = Review;
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32800,7 +32851,7 @@
 	module.exports = ReviewForm;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SpotActions = __webpack_require__(208);
@@ -32834,13 +32885,13 @@
 	module.exports = TaggingUtil;
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
 	var Store = __webpack_require__(215).Store;
 	var TagStore = new Store(AppDispatcher);
-	var TagConstants = __webpack_require__(260);
+	var TagConstants = __webpack_require__(261);
 	
 	var _tags = [];
 	var _queriedTags = [];
@@ -32893,7 +32944,7 @@
 	module.exports = TagStore;
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports) {
 
 	TagConstants = {
@@ -32905,13 +32956,15 @@
 	module.exports = TagConstants;
 
 /***/ },
-/* 261 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var FilterActions = __webpack_require__(250);
 	var Search = __webpack_require__(251);
+	
+	var SpotStore = __webpack_require__(238);
 	
 	function _getCoordsObj(latLng) {
 	  return {
@@ -32938,7 +32991,7 @@
 	      };
 	    } else {
 	      var mapOptions = {
-	        center: { lat: 40.8081, lng: -73.9621 },
+	        center: this.centerSpotCoords(),
 	        zoom: 15
 	      };
 	    };
@@ -32946,6 +32999,13 @@
 	    this.map = new google.maps.Map(mapEl, mapOptions);
 	    this.registerListeners();
 	    this.markers = [];
+	  },
+	
+	  centerSpotCoords: function () {
+	    if (this.props.spots[0] && this.props.spots[0].lng) {
+	      var spot = this.props.spots[0];
+	      return { lat: spot.lat, lng: spot.lng };
+	    };
 	  },
 	
 	  componentDidMount: function () {
@@ -33056,7 +33116,7 @@
 	module.exports = Map;
 
 /***/ },
-/* 262 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33065,12 +33125,12 @@
 	var SpotUtil = __webpack_require__(207);
 	var SpotActions = __webpack_require__(208);
 	
-	var Map = __webpack_require__(261);
+	var Map = __webpack_require__(262);
 	var Search = __webpack_require__(251);
 	var SpotsIndex = __webpack_require__(239);
-	var List = __webpack_require__(263);
+	var List = __webpack_require__(264);
 	
-	var MapStore = __webpack_require__(266);
+	var MapStore = __webpack_require__(267);
 	var FilterStore = __webpack_require__(214);
 	var FilterActions = __webpack_require__(250);
 	
@@ -33233,11 +33293,11 @@
 	module.exports = SearchIndex;
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItem = __webpack_require__(264);
+	var ListItem = __webpack_require__(265);
 	
 	var List = React.createClass({
 	    displayName: 'List',
@@ -33270,11 +33330,11 @@
 	module.exports = List;
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItemDetail = __webpack_require__(265);
+	var ListItemDetail = __webpack_require__(266);
 	
 	var ListItem = React.createClass({
 	    displayName: 'ListItem',
@@ -33301,7 +33361,7 @@
 	module.exports = ListItem;
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33343,12 +33403,12 @@
 	module.exports = ListItemDetail;
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(215).Store;
 	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(267);
+	var MapConstants = __webpack_require__(268);
 	
 	var MapStore = new Store(AppDispatcher);
 	
@@ -33373,7 +33433,7 @@
 	module.exports = MapStore;
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports) {
 
 	var MapConstants = {
@@ -33383,7 +33443,7 @@
 	module.exports = MapConstants;
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33413,11 +33473,11 @@
 	module.exports = LandingPage;
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(267);
+	var MapConstants = __webpack_require__(268);
 	
 	var MapActions = {
 	    mapsReady: function () {
@@ -33428,41 +33488,6 @@
 	};
 	
 	module.exports = MapActions;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	var DropDown = React.createClass({
-	    displayName: 'DropDown',
-	
-	    _fillInAddress: function () {
-	        this.props.handleLocChange();
-	        this.props.handleSearch();
-	    },
-	
-	    componentWillUnmount: function () {
-	        console.log('dropdown unmounted');
-	    },
-	
-	    componentDidMount: function () {
-	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	        this.autofillOptions = {
-	            types: ['geocode']
-	        };
-	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	        this.autofill.addListener('place_changed', this._fillInAddress);
-	    },
-	
-	    render: function () {
-	        return React.createElement('div', null);
-	    }
-	});
-	
-	module.exports = DropDown;
 
 /***/ }
 /******/ ]);

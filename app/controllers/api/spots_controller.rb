@@ -1,13 +1,14 @@
 class Api::SpotsController < ApplicationController
   def index
-    # spots = Spot.all
+    spots = Spot.all
 
     # @spots= spots.includes(:reviews)
-    get_spots_from_params
+    #get_spots_from_params
 
     if (bounds)
       spots = Spot.in_bounds(bounds)
     end
+    @spots = spots.includes(:reviews)
 
     render 'index'
   end
@@ -36,6 +37,7 @@ class Api::SpotsController < ApplicationController
     params[:bounds]
   end
 
+
   #   def index
   #       get_spots_from_params
   #       render :index
@@ -46,9 +48,6 @@ class Api::SpotsController < ApplicationController
   #       render json: spot
   #   end
 
-
-
-  private
     def get_spots_from_params
         @spots = Spot.all.includes(:tags)
         if params[:tag_search]
@@ -66,8 +65,4 @@ class Api::SpotsController < ApplicationController
   #           :description
   #       )
   #   end
-
-    def bounds
-        params[:bounds]
-    end
 end

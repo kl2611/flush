@@ -10,6 +10,10 @@ var SpotActions = {
         });
     },
 
+    fetchFilteredSpots: function() {
+        SpotUtil.fetchFilteredSpots(this.receiveFilteredSpots);
+    },
+
     receiveSingleSpot: function(spot) {
         AppDispatcher.dispatch({
             actionType: SpotConstants.SPOT_RECEIVED,
