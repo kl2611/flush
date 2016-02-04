@@ -32149,13 +32149,15 @@
 	  componentWillReceiveProps: function (newProps) {
 	    var newCenter = newProps.centerLatLng;
 	
-	    this.map.setCenter(newCenter);
-	    this.currentCenter = newCenter;
+	    if (!(this.currentCenter === newCenter)) {
+	      this.map.setCenter(newCenter);
+	      this.currentCenter = newCenter;
+	    }
 	  },
 	
-	  _isSameCoord: function (coord1, coord2) {
-	    return coord1.lat === coord2.lat && coord1.lng === coord2.lng;
-	  },
+	  // _isSameCoord: function(coord1, coord2) {
+	  //   return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
+	  // },
 	
 	  _onChange: function () {
 	    var spots = this.props.spots;
