@@ -8,9 +8,9 @@ class Api::SpotsController < ApplicationController
     if (bounds)
       spots = Spot.in_bounds(bounds)
     end
-    @spots = spots.includes(:reviews)
 
-    render 'index'
+    @spots = spots.includes(:reviews)
+     render 'index'
   end
 
   def create

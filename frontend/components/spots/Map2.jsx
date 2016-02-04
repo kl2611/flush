@@ -24,6 +24,7 @@ var Map = React.createClass({
       if (centerLatLng) {
         var mapOptions = {
           center: this.centerLatLng,
+          draggable: true,
           zoom: 15
         };
       } else {

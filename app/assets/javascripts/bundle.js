@@ -24569,28 +24569,30 @@
 
 	var AppDispatcher = __webpack_require__(209);
 	var Store = __webpack_require__(215).Store;
+	var _params = {};
 	var FilterConstants = __webpack_require__(232);
 	
 	var FilterParamsStore = new Store(AppDispatcher);
 	
-	var _currentParams = {
-	    bounds: null
-	};
+	// var _currentParams = {
+	//     bounds: null
+	// };
 	
-	var _updateBounds = function (bounds) {
-	    _currentParams.bounds = bounds;
-	};
+	// var _updateBounds = function(bounds) {
+	//     _currentParams.bounds = bounds;
+	// }
 	
 	FilterParamsStore.params = function () {
-	    return Object.assign({});
+	  return Object.assign({}, _params);
 	};
 	
 	FilterParamsStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case FilterConstants.UPDATE_BOUNDS:
-	            FilterParamsStore.__emitChange();
-	            break;
-	    }
+	  switch (payload.actionType) {
+	    case FilterConstants.UPDATE_BOUNDS:
+	      _params.bounds = payload.bounds;
+	      FilterParamsStore.__emitChange();
+	      break;
+	  }
 	};
 	
 	module.exports = FilterParamsStore;
@@ -32975,6 +32977,7 @@
 	    if (centerLatLng) {
 	      var mapOptions = {
 	        center: this.centerLatLng,
+	        draggable: true,
 	        zoom: 15
 	      };
 	    } else {
