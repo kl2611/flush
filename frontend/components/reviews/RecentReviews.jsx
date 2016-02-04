@@ -13,7 +13,7 @@ var RecentReviews = React.createClass({
 
     componentDidMount: function() {
         this.reviewListener = ReviewStore.addListener(this.onChange);
-        ReviewUtil.fetchRecentReviews(5);
+        ReviewUtil.fetchRecentReviews(6);
     },
 
     onChange: function() {
@@ -24,7 +24,13 @@ var RecentReviews = React.createClass({
         this.reviewListener.remove();
     },
 
+    handleItemClick: function (spot) {
+        this.props.history.pushState(null, "spots/" + spot.id );
+    },
+
     render: function() {
+        var handleItemClick = this.handleItemClick;
+
         if (this.state.recentReviews.length === 0) {
               reviews = <div />;
         } else {
@@ -35,11 +41,11 @@ var RecentReviews = React.createClass({
                 var nameDisplay = <strong>{username}</strong>;
                 var status = " wrote a review for ";
 
-                return <ul key={review.id}>
-                            <li>{nameDisplay}{status}<Link to={spotLink}>{review.spot_name.name}:</Link></li>
-                            <li>{review.rating} Stars, {review.date}</li>
-                            <li>{review.comment}</li>
-                </ul>;
+                return (<ul key={review.id}>
+                                <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
+                                <li>{review.rating} Stars, {review.date}</li>
+                                <li>{review.comment}</li>
+                            </ul>);
             });
         }
 

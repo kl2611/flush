@@ -16,10 +16,14 @@ var SearchIndex= require('./components/home/SearchIndex');
 var LandingPage = require('./components/home/LandingPage');
 var MapActions = require('./actions/map_actions');
 
+var NavBar = require('./components/nav/Navbar');
+var SearchBar = require('./components/nav/Search');
+
 var App = React.createClass({
   render: function() {
     return (
         <div id="index">
+          <NavBar history={this.props.history} />
           <div className = "container below-nav">
             {this.props.children}
           </div>
@@ -32,7 +36,6 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={LandingPage} />
     <Route path="/search/:loc" component={SearchIndex} />
-    <Route path="spots/search" component={SpotsSearch} />
     <Route path="spots/new" component={SpotForm} />
     <Route path="spots/:spotId" component={SpotShow}>
         <Route path="review" components={ReviewForm} />

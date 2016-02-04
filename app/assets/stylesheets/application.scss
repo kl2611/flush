@@ -34,10 +34,13 @@ body {
 
 
 /* HEADER *************/
-.header-container {
+.header-wrapper {
     height: 100%;
-    padding-left: 150px;
-    padding-right: 150px
+    margin-top: -10px;
+}
+
+.container-fluid {
+    margin: 0px 150px;
 }
 
 .logo {
@@ -56,16 +59,20 @@ body {
     color: #a3d9ea;
 }
 
-.navbar-right {
-    font-size: 20px;
-    display: inline;
+.navbar .navbar-nav {
+    display: inline-block;
+    float: none;
+    vertical-align: top;
+}
+
+.navbar .navbar-collapse {
+    text-align: center;
 }
 
 .navbar-right li {
-    font-size: 16px;
     font-family: 'Inconsolata';
     list-style: none;
-    display: inline-block;
+    display: inline;
 }
 
 .navbar-right a:link, a:hover, a:active {
@@ -74,7 +81,7 @@ body {
 }
 
 .searchbar {
-
+    width: 60%;
 }
 
 /* CONTENT *************/

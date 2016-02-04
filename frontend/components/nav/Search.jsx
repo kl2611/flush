@@ -67,50 +67,42 @@ var SearchBar = React.createClass({
 
     render: function() {
         var buttonSubmit = (
-          <span className="input-group-btn">
             <button className="btn btn-default" type="button" onClick={this.handleSearch}>Search</button>
-          </span>
         );
 
         var buttonProgress = (
-          <span className="input-group-btn">
             <button className="btn btn-default" disabled>
               <div className="three-quarters-loader">
                 Loading…
               </div>
             </button>
-          </span>
         );
 
         var design = (
-            <div>
-                <form className="input-group" role="form" onSubmit={this.handleSearch}>
-                    <input
-                       type="text"
-                       className="form-control center"
-                       id="landing-search-input"
-                       onChange={this.handleLocChange}
-                       placeholder={this.state.placeholder}
-                       ref="locinput"
-                       onFocus={this.searchBarOnClick}
-                       onBlur={this.searchBarOffClick} />
-
-                     {this.state.showSpinner ? buttonProgress : buttonSubmit}
-
-              </form>
-            </div>
+                <input
+                   type="text"
+                   className="form-control"
+                   id="landing-search-input"
+                   onChange={this.handleLocChange}
+                   placeholder={this.state.placeholder}
+                   ref="locinput"
+                   onFocus={this.searchBarOnClick}
+                   onBlur={this.searchBarOffClick} />
         );
 
         var showAutocomplete = (this.state.loc !== "") && this.state.showAutocomplete;
 
         return (
-            <div ref="searchbar">
-            {design}
-            {showAutocomplete ? <Dropdown
-                                                        locinput = {this.refs.locinput}
-                                                        handleSearch = {this.handleSearch}
-                                                        handleLocChange = {this.handleLocChange} /> : "" }
-            </div>
+            <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
+                <div className="form-group">
+                {design}
+                {showAutocomplete ? <Dropdown
+                                                            locinput = {this.refs.locinput}
+                                                            handleSearch = {this.handleSearch}
+                                                            handleLocChange = {this.handleLocChange} /> : "" }
+                </div>
+                {buttonSubmit}
+            </form>
         );
     }
 });
