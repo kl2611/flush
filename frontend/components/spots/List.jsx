@@ -2,28 +2,26 @@ var React = require('react');
 var ListItem = require('./ListItem');
 
 var List = React.createClass({
-    render: function() {
-        var spots = this.props.spots;
-        var history = this.props.history;
-        var listItems = Object.keys(spots).map(function(spot_id) {
-            return (
-                <ListItem
-                    key={spot_id}
-                    spot={spots[spot_id]}
-                    history={history}/>);
-        });
-
-        var redirectPrompt = (
-            <h4>This demo currently only contains sample data in Morningside Heights, NYC</h4>
-        );
-
-        return (
-            <div>
-                {listItems.length > 0 ? listItems: redirectPrompt}
-            </div>
-        )
-    }
-
+  handleItemClick: function (spot) {
+    this.props.history.pushState(null, "spots/" + spot.id );
+  },
+  render: function(){
+    var handleItemClick = this.handleItemClick;
+    return (
+      <div>
+        <h4>Restrooms near you</h4>
+        {
+          this.props.spots.map(function(spot){
+            var boundClick = handleItemClick.bind(null, spot);
+            return <ListItem
+              onClick={boundClick}
+              spot={spot}
+              key={spot.id} />
+          })
+        }
+      </div>
+    );
+  }
 });
 
 module.exports = List;

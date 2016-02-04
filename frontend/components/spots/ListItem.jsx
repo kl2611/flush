@@ -1,22 +1,22 @@
 var React = require('react');
-var ListItemDetail = require('./ListItemDetail');
+var ReactRouter = require('react-router');
 
 var ListItem = React.createClass({
-    handleClick: function() {
-        var spotId = this.props.spot.id;
-        this.props.history.pushState(null, "spots/" + spotId);
-    },
-
-    render: function() {
-        var spot = this.props.spot;
-        return (
-            <div>
-                <div id={"spot-" + spot.id}>
-                    <ListItemDetail handleClick={this.handleClick} spot={spot} />
-                </div>
-            </div>
-        )
-    }
+  mixins: [ReactRouter.history],
+  render: function(){
+    var spot = this.props.spot;
+    return (
+        <div className="spot-list-item" onClick={this.props.onClick}>
+          <b>{spot.name}</b>
+          <br />
+          {spot.description}
+          <br/>
+          Rating: {spot.average_rating || "No reviews yet"}
+          <br/>
+          <img src={spot.picture_url}/>
+        </div>
+    );
+  }
 });
 
 module.exports = ListItem;

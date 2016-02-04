@@ -27,18 +27,6 @@ var SpotUtil = {
         });
     },
 
-    fetchFilteredSpots: function(receiveFilteredSpots) {
-        $.ajax({
-            url: 'api/spots',
-            method: "get",
-            dataType: 'json',
-            data: {filter: FilterParamsStore.params()},
-            success: function(spots) {
-                receiveFilteredSpots(spots);
-            }
-        });
-    },
-
     createSpot: function(data){
         $.post('api/spots', { spot: data }, function(spot) {
             SpotActions.receiveAllSpots([spot]);

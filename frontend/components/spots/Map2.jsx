@@ -48,6 +48,7 @@ var Map = React.createClass({
   componentDidMount: function() {
     console.log("mapCompMounted");
       this._initializeMaps(this.props.centerLatLng);
+      this.listenForMove();
 
       if (this.props.spots) {
         this.props.spots.forEach(this.createMarkerFromSpot);
@@ -55,7 +56,7 @@ var Map = React.createClass({
     },
 
   componentWillUnmount: function(){
-    //this.markerListener.remove();
+    this.markerListener.remove();
     console.log("map UNmounted");
   },
 
@@ -72,6 +73,13 @@ var Map = React.createClass({
 
   _isSameCoord: function(coord1, coord2) {
     return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
+  },
+
+  listenForMove: function() {
+    var that = this;
+    google.maps.event.addListener(this.map, 'idle', function() {
+      var bounds = that.map.getBounds();
+    })
   },
 
   _onChange: function(){

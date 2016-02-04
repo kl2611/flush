@@ -24177,18 +24177,6 @@
 	        });
 	    },
 	
-	    fetchFilteredSpots: function (receiveFilteredSpots) {
-	        $.ajax({
-	            url: 'api/spots',
-	            method: "get",
-	            dataType: 'json',
-	            data: { filter: FilterParamsStore.params() },
-	            success: function (spots) {
-	                receiveFilteredSpots(spots);
-	            }
-	        });
-	    },
-	
 	    createSpot: function (data) {
 	        $.post('api/spots', { spot: data }, function (spot) {
 	            SpotActions.receiveAllSpots([spot]);
@@ -33011,6 +32999,7 @@
 	  componentDidMount: function () {
 	    console.log("mapCompMounted");
 	    this._initializeMaps(this.props.centerLatLng);
+	    this.listenForMove();
 	
 	    if (this.props.spots) {
 	      this.props.spots.forEach(this.createMarkerFromSpot);
@@ -33018,7 +33007,7 @@
 	  },
 	
 	  componentWillUnmount: function () {
-	    //this.markerListener.remove();
+	    this.markerListener.remove();
 	    console.log("map UNmounted");
 	  },
 	
@@ -33035,6 +33024,13 @@
 	
 	  _isSameCoord: function (coord1, coord2) {
 	    return coord1.lat === coord2.lat && coord1.lng === coord2.lng;
+	  },
+	
+	  listenForMove: function () {
+	    var that = this;
+	    google.maps.event.addListener(this.map, 'idle', function () {
+	      var bounds = that.map.getBounds();
+	    });
 	  },
 	
 	  _onChange: function () {
@@ -33132,10 +33128,13 @@
 	
 	var MapStore = __webpack_require__(267);
 	var FilterStore = __webpack_require__(214);
-	var FilterActions = __webpack_require__(250);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
+	}
+	
+	function _getFilterParams() {
+	    return FilterStore.params();
 	}
 	
 	var SearchIndex = React.createClass({
@@ -33149,7 +33148,8 @@
 	        return {
 	            spots: _getAllSpots(),
 	            showResult: false,
-	            clickedLoc: null
+	            clickedLoc: null,
+	            filterParams: _getFilterParams()
 	        };
 	    },
 	
@@ -33165,6 +33165,12 @@
 	
 	    _spotsChanged: function () {
 	        this.setState({ spots: _getAllSpots() });
+	    },
+	
+	    _filtersChanged: function () {
+	        var newParams = _getFilterParams();
+	        this.setState({ filterParams: newParams });
+	        SpotUtil.fetchSpots();
 	    },
 	
 	    _onChange: function () {
@@ -33213,7 +33219,8 @@
 	        this.currentLocStr = this.props.params.loc;
 	        console.log('component mounted');
 	
-	        this.spotListener = SpotStore.addListener(this._onChange);
+	        this.filterListener = FilterStore.addListener(this._filtersChanged);
+	        this.spotListener = SpotStore.addListener(this._spotsChanged);
 	        SpotUtil.fetchSpots();
 	
 	        if (MapStore.isReady('maps')) {
@@ -33224,8 +33231,6 @@
 	            this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
 	            this._startSearchProcess();
 	        }
-	
-	        // this.filterToken = FilterStore.addListener(this._updateFilter);
 	    },
 	
 	    componentWillReceiveProps: function (newProps) {
@@ -33238,7 +33243,7 @@
 	
 	    componentWillUnmount: function () {
 	        this.spotListener.remove();
-	        // this.filterToken.remove();
+	        this.filterListener.remove();
 	    },
 	
 	    handleMapClick: function (coords) {
@@ -33248,10 +33253,6 @@
 	    handleMarkerClick: function (spot) {
 	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
-	
-	    // handleItemClick: function (spot) {
-	    //     this.props.history.pushState(null, "spots/" + spot.id );
-	    // },
 	
 	    render: function () {
 	        var showResult = this.state.showResult;
@@ -33300,31 +33301,30 @@
 	var ListItem = __webpack_require__(265);
 	
 	var List = React.createClass({
-	    displayName: 'List',
+	  displayName: 'List',
 	
-	    render: function () {
-	        var spots = this.props.spots;
-	        var history = this.props.history;
-	        var listItems = Object.keys(spots).map(function (spot_id) {
-	            return React.createElement(ListItem, {
-	                key: spot_id,
-	                spot: spots[spot_id],
-	                history: history });
-	        });
-	
-	        var redirectPrompt = React.createElement(
-	            'h4',
-	            null,
-	            'This demo currently only contains sample data in Morningside Heights, NYC'
-	        );
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            listItems.length > 0 ? listItems : redirectPrompt
-	        );
-	    }
-	
+	  handleItemClick: function (spot) {
+	    this.props.history.pushState(null, "spots/" + spot.id);
+	  },
+	  render: function () {
+	    var handleItemClick = this.handleItemClick;
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h4',
+	        null,
+	        'Restrooms near you'
+	      ),
+	      this.props.spots.map(function (spot) {
+	        var boundClick = handleItemClick.bind(null, spot);
+	        return React.createElement(ListItem, {
+	          onClick: boundClick,
+	          spot: spot,
+	          key: spot.id });
+	      })
+	    );
+	  }
 	});
 	
 	module.exports = List;
@@ -33334,75 +33334,37 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItemDetail = __webpack_require__(266);
+	var ReactRouter = __webpack_require__(159);
 	
 	var ListItem = React.createClass({
-	    displayName: 'ListItem',
+	  displayName: 'ListItem',
 	
-	    handleClick: function () {
-	        var spotId = this.props.spot.id;
-	        this.props.history.pushState(null, "spots/" + spotId);
-	    },
-	
-	    render: function () {
-	        var spot = this.props.spot;
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'div',
-	                { id: "spot-" + spot.id },
-	                React.createElement(ListItemDetail, { handleClick: this.handleClick, spot: spot })
-	            )
-	        );
-	    }
+	  mixins: [ReactRouter.history],
+	  render: function () {
+	    var spot = this.props.spot;
+	    return React.createElement(
+	      'div',
+	      { className: 'spot-list-item', onClick: this.props.onClick },
+	      React.createElement(
+	        'b',
+	        null,
+	        spot.name
+	      ),
+	      React.createElement('br', null),
+	      spot.description,
+	      React.createElement('br', null),
+	      'Rating: ',
+	      spot.average_rating || "No reviews yet",
+	      React.createElement('br', null),
+	      React.createElement('img', { src: spot.picture_url })
+	    );
+	  }
 	});
 	
 	module.exports = ListItem;
 
 /***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var History = ReactRouter.History;
-	var Link = ReactRouter.Link;
-	
-	String.prototype.capitalizeFirstLetter = function () {
-	    return this.charAt(0).toUpperCase() + this.slice(1);
-	};
-	
-	var ListItemDetail = React.createClass({
-	    displayName: 'ListItemDetail',
-	
-	    mixins: [History],
-	
-	    render: function () {
-	        var spot = this.props.spot;
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'list-item-detail', onClick: this.props.onClick },
-	            React.createElement(
-	                'b',
-	                null,
-	                spot.name
-	            ),
-	            React.createElement('br', null),
-	            spot.description,
-	            React.createElement('br', null),
-	            'Rating: ',
-	            spot.average_rating || "No reviews yet",
-	            React.createElement('br', null),
-	            React.createElement('img', { src: spot.picture_url })
-	        );
-	    }
-	});
-	
-	module.exports = ListItemDetail;
-
-/***/ },
+/* 266 */,
 /* 267 */
 /***/ function(module, exports, __webpack_require__) {
 

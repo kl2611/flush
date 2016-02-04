@@ -11,10 +11,13 @@ var List = require('../spots/List');
 
 var MapStore = require('../../stores/map');
 var FilterStore = require('../../stores/filter_params');
-var FilterActions = require('../../actions/filter_actions');
 
 function _getAllSpots() {
     return SpotStore.all();
+}
+
+function _getFilterParams() {
+    return FilterStore.params();
 }
 
 var SearchIndex = React.createClass({
@@ -26,7 +29,8 @@ var SearchIndex = React.createClass({
         return ({
             spots: _getAllSpots(),
             showResult: false,
-            clickedLoc: null
+            clickedLoc: null,
+            filterParams: _getFilterParams(),
         });
     },
 
@@ -42,6 +46,12 @@ var SearchIndex = React.createClass({
 
     _spotsChanged: function() {
         this.setState({spots: _getAllSpots()});
+    },
+
+    _filtersChanged: function() {
+        var newParams = _getFilterParams();
+        this.setState({ filterParams: newParams });
+        SpotUtil.fetchSpots();
     },
 
     _onChange: function() {
@@ -90,7 +100,8 @@ var SearchIndex = React.createClass({
         this.currentLocStr = this.props.params.loc;
         console.log('component mounted')
 
-        this.spotListener = SpotStore.addListener(this._onChange);
+        this.filterListener = FilterStore.addListener(this._filtersChanged);
+        this.spotListener = SpotStore.addListener(this._spotsChanged);
         SpotUtil.fetchSpots();
 
         if (MapStore.isReady('maps')) {
@@ -101,10 +112,6 @@ var SearchIndex = React.createClass({
             this.mapsReadyToken = MapStore.addListener(this._updateMapsStatus);
             this._startSearchProcess();
         }
-
-        // this.filterToken = FilterStore.addListener(this._updateFilter);
-
-
     },
 
     componentWillReceiveProps: function(newProps) {
@@ -117,7 +124,7 @@ var SearchIndex = React.createClass({
 
     componentWillUnmount: function() {
         this.spotListener.remove();
-        // this.filterToken.remove();
+        this.filterListener.remove();
     },
 
     handleMapClick: function(coords) {
@@ -127,10 +134,6 @@ var SearchIndex = React.createClass({
     handleMarkerClick: function (spot) {
         this.props.history.pushState(null, "spots/" + spot.id);
     },
-
-    // handleItemClick: function (spot) {
-    //     this.props.history.pushState(null, "spots/" + spot.id );
-    // },
 
     render: function() {
         var showResult = this.state.showResult;
