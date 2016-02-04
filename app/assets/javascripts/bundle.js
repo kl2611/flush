@@ -32182,7 +32182,7 @@
 	    toRemove.forEach(this.removeMarker);
 	
 	    if (this.props.singleSpot) {
-	      this.map.setOptions({ draggable: false });
+	      this.map.setOptions({ draggable: false, scrollable: false, zoom: 18 });
 	      this.map.setCenter(this.centerSpotCoords());
 	    }
 	  },
