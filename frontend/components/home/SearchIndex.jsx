@@ -139,6 +139,8 @@ var SearchIndex = React.createClass({
         var handleItemClick = this.handleItemClick;
 
         return(
+        <div id="content-container">
+
             <div id="results">
                 <h4>Results</h4>
                 <List spots={this.state.spots} history={this.props.history} />
@@ -151,6 +153,8 @@ var SearchIndex = React.createClass({
                         spots={this.state.spots}/>
                 </div>
             </div>
+
+        </div>
         );
     }
 });

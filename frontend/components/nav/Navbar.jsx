@@ -5,6 +5,7 @@ var ReactRouter = require('react-router');
 // var UserInfo = require('./UserInfo');
 var SearchBar = require('./Search');
 // var LoggedOut = require("./logged_out");
+var NavUserIndex = require('./NavUserIndex');
 
 var Modal = require('react-bootstrap').Modal;
 var History = require("react-router").History;
@@ -38,13 +39,7 @@ var NavBar = React.createClass({
         <SearchBar history={this.props.history} />
 
           <ul className="nav navbar-nav navbar-right">
-            <li>
-              <a><span className="glyphicon glyphicon-user" />Sign Up</a>
-            </li>
-
-            <li onClick={this.open}>
-              <a><span className="glyphicon glyphicon-log-in" />Log In</a>
-            </li>
+            <NavUserIndex history={this.props.history} />
           </ul>
 
         </div>

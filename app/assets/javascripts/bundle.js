@@ -33101,21 +33101,25 @@
 	
 	        return React.createElement(
 	            'div',
-	            { id: 'results' },
-	            React.createElement(
-	                'h4',
-	                null,
-	                'Results'
-	            ),
-	            React.createElement(List, { spots: this.state.spots, history: this.props.history }),
+	            { id: 'content-container' },
 	            React.createElement(
 	                'div',
-	                { id: 'map' },
-	                React.createElement(Map, {
-	                    centerLatLng: this.state.centerLatLng,
-	                    onMapClick: this.handleMapClick,
-	                    onMarkerClick: this.handleMarkerClick,
-	                    spots: this.state.spots })
+	                { id: 'results' },
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Results'
+	                ),
+	                React.createElement(List, { spots: this.state.spots, history: this.props.history }),
+	                React.createElement(
+	                    'div',
+	                    { id: 'map' },
+	                    React.createElement(Map, {
+	                        centerLatLng: this.state.centerLatLng,
+	                        onMapClick: this.handleMapClick,
+	                        onMarkerClick: this.handleMarkerClick,
+	                        spots: this.state.spots })
+	                )
 	            )
 	        );
 	    }
@@ -33290,6 +33294,7 @@
 	// var UserInfo = require('./UserInfo');
 	var SearchBar = __webpack_require__(251);
 	// var LoggedOut = require("./logged_out");
+	var NavUserIndex = __webpack_require__(514);
 	
 	var Modal = __webpack_require__(273).Modal;
 	var History = __webpack_require__(159).History;
@@ -33338,26 +33343,7 @@
 	          React.createElement(
 	            'ul',
 	            { className: 'nav navbar-nav navbar-right' },
-	            React.createElement(
-	              'li',
-	              null,
-	              React.createElement(
-	                'a',
-	                null,
-	                React.createElement('span', { className: 'glyphicon glyphicon-user' }),
-	                'Sign Up'
-	              )
-	            ),
-	            React.createElement(
-	              'li',
-	              { onClick: this.open },
-	              React.createElement(
-	                'a',
-	                null,
-	                React.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
-	                'Log In'
-	              )
-	            )
+	            React.createElement(NavUserIndex, { history: this.props.history })
 	          )
 	        )
 	      )
@@ -50283,6 +50269,544 @@
 	
 	exports['default'] = Well;
 	module.exports = exports['default'];
+
+/***/ },
+/* 514 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(520);
+	var SessionActions = __webpack_require__(518);
+	var ReviewActions = __webpack_require__(245);
+	var Modal = __webpack_require__(273).Modal;
+	
+	// var AccountButtons = require('./accountButtons.jsx');
+	var Buttons = __webpack_require__(515);
+	
+	var NavUserIndex = React.createClass({
+	    displayName: 'NavUserIndex',
+	
+	    getInitialState: function () {
+	        return {
+	            currentUser: SessionStore.all()
+	        };
+	    },
+	
+	    _updateCurrentUser: function () {
+	        this.setState({
+	            currentUser: SessionStore.all()
+	        });
+	        if (SessionStore.hasCurrentUser()) {
+	            ReviewActions.receiveUserReviews();
+	        }
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.sessionListener.remove();
+	    },
+	
+	    componentDidMount: function () {
+	        this.sessionListener = SessionStore.addListener(this._updateCurrentUser);
+	        SessionActions.fetchSession();
+	    },
+	
+	    render: function () {
+	        var button;
+	        if (Object.keys(this.state.currentUser).length > 0) {
+	            options = React.createElement('div', null);
+	        } else {
+	            options = React.createElement(Buttons, { history: this.props.history });
+	        };
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            options
+	        );
+	    }
+	});
+	
+	module.exports = NavUserIndex;
+
+/***/ },
+/* 515 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Modal = __webpack_require__(273).Modal;
+	var LoginForm = __webpack_require__(516);
+	var SignUpForm = __webpack_require__(517);
+	
+	var Buttons = React.createClass({
+	    displayName: 'Buttons',
+	
+	    getInitialState: function () {
+	        return {
+	            showModal: false,
+	            modalType: ""
+	        };
+	    },
+	
+	    openSignUp: function () {
+	        this.setState({
+	            showModal: true,
+	            modalType: "Sign Up"
+	        });
+	    },
+	
+	    openLogin: function () {
+	        this.setState({
+	            showModal: true,
+	            modalType: "Login"
+	        });
+	    },
+	
+	    closeModal: function () {
+	        this.setState({
+	            showModal: false
+	        });
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.refs.navmodal._onHide();
+	    },
+	
+	    render: function () {
+	        var ModalForm = this.state.modalType === "Login" ? LoginForm : SignUpForm;
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'ul',
+	                { className: 'nav navbar-nav navbar-right' },
+	                React.createElement(
+	                    'li',
+	                    { onClick: this.openSignUp },
+	                    React.createElement(
+	                        'a',
+	                        null,
+	                        React.createElement('span', { className: 'glyphicon glyphicon-user' }),
+	                        '  Sign Up'
+	                    )
+	                ),
+	                React.createElement(
+	                    'li',
+	                    { onClick: this.openLogin },
+	                    React.createElement(
+	                        'a',
+	                        null,
+	                        React.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
+	                        '  Login'
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                Modal,
+	                { className: 'customclass', ref: 'navmodal', show: this.state.showModal, onHide: this.closeModal },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        { id: 'ModalHeader' },
+	                        this.state.modalTitle
+	                    )
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    React.createElement(ModalForm, null)
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = Buttons;
+
+/***/ },
+/* 516 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(233);
+	var SessionActions = __webpack_require__(518);
+	
+	var LoginForm = React.createClass({
+	    displayName: 'LoginForm',
+	
+	    mixins: [LinkedStateMixin],
+	
+	    getInitialState: function () {
+	        return {
+	            username: "",
+	            password: ""
+	        };
+	    },
+	
+	    handleSubmit: function (e) {
+	        e.preventDefault();
+	
+	        SessionActions.logIn({
+	            username: this.state.username,
+	            password: this.state.password
+	        });
+	    },
+	
+	    fillOutLogin: function () {
+	        var username = "guest";
+	        var password = "password";
+	        this.setState({
+	            username: username,
+	            password: password
+	        });
+	    },
+	
+	    componentDidMount: function () {
+	        $("modal-dialog").addClass("user-modal");
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'form',
+	            {
+	                className: 'form-signin modal-form',
+	                autoComplete: 'off',
+	                onSubmit: this.handleSubmit },
+	            React.createElement(
+	                'div',
+	                { className: 'input-group input-group-lg' },
+	                React.createElement(
+	                    'span',
+	                    { className: 'input-group-addon', id: 'sizing-addon1' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-user' })
+	                ),
+	                React.createElement('input', {
+	                    type: 'email',
+	                    id: 'inputEmail',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("username"),
+	                    placeholder: 'Username',
+	                    required: true,
+	                    autofocus: true })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'input-group input-group-lg' },
+	                React.createElement(
+	                    'span',
+	                    { className: 'input-group-addon', id: 'sizing-addon2' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-lock' })
+	                ),
+	                React.createElement('input', {
+	                    type: 'password',
+	                    id: 'inputPassword',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("password"),
+	                    placeholder: 'Password',
+	                    required: true })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'checkbox' },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    React.createElement('input', { type: 'checkbox', value: 'remember-me' }),
+	                    'Remember me'
+	                ),
+	                React.createElement(
+	                    'button',
+	                    {
+	                        className: 'btn btn-success',
+	                        type: 'button',
+	                        style: { float: "right" },
+	                        onClick: this.fillOutLogin },
+	                    'Demo Account'
+	                )
+	            ),
+	            React.createElement(
+	                'button',
+	                {
+	                    className: 'btn btn-lg btn-primary btn-block',
+	                    type: 'submit' },
+	                'Log In'
+	            )
+	        );
+	    }
+	
+	});
+	
+	module.exports = LoginForm;
+
+/***/ },
+/* 517 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(233);
+	var SessionActions = __webpack_require__(518);
+	
+	var SignUpForm = React.createClass({
+	    displayName: 'SignUpForm',
+	
+	    mixins: [LinkedStateMixin],
+	
+	    getInitialState: function () {
+	        return {
+	            username: "",
+	            password: "",
+	            errors: []
+	        };
+	    },
+	
+	    handleSubmit: function (e) {
+	        e.preventDefault();
+	
+	        this.errors = [];
+	        this.validatePassword();
+	
+	        if (this.errors.length > 0) {
+	            this.setState({
+	                errors: this.errors
+	            });
+	        } else {
+	            SessionActions.signUp({
+	                username: this.state.username,
+	                password: this.state.password
+	            });
+	        }
+	    },
+	
+	    validatePassword: function () {
+	        var password = this.state.password;
+	        var passwordConfirmation = this.state.passwordConfirmation;
+	        if (password.length < 6) {
+	            this.errors.push("Password length is too short (minimum: 6 characters)");
+	        }
+	        if (password !== passwordConfirmation) {
+	            this.errors.push("Password confirmation and password do not match");
+	        }
+	    },
+	
+	    componentDidMount: function () {
+	        $(".modal-dialog").addClass("user-modal");
+	    },
+	
+	    render: function () {
+	        var alert = this.state.errors.map(function (error, idx) {
+	            return React.createElement(
+	                'div',
+	                {
+	                    key: "error" + idx,
+	                    className: 'alert alert-danger',
+	                    role: 'alert' },
+	                React.createElement(
+	                    'strong',
+	                    null,
+	                    error
+	                )
+	            );
+	        });
+	
+	        return React.createElement(
+	            'form',
+	            { className: 'form-signup modal-form', onSubmit: this.handleSubmit },
+	            alert,
+	            React.createElement(
+	                'div',
+	                { className: 'input-group input-group-lg' },
+	                React.createElement(
+	                    'span',
+	                    { className: 'input-group-addon', id: 'sizing-addon1' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-envelope' })
+	                ),
+	                React.createElement('input', {
+	                    type: 'email',
+	                    id: 'inputEmail',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("username"),
+	                    placeholder: 'Email Address',
+	                    required: true,
+	                    autoFocus: true
+	                })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'input-group input-group-lg' },
+	                React.createElement(
+	                    'span',
+	                    { className: 'input-group-addon', id: 'sizing-addon2' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-lock' })
+	                ),
+	                React.createElement('input', {
+	                    type: 'password',
+	                    id: 'inputPassword',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("password"),
+	                    placeholder: 'Password',
+	                    required: true }),
+	                React.createElement('input', {
+	                    type: 'password',
+	                    id: 'passwordConfirmation',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("passwordConfirmation"),
+	                    placeholder: 'Confirm Password',
+	                    required: true })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'input-group input-group-lg' },
+	                React.createElement(
+	                    'span',
+	                    { className: 'input-group-addon', id: 'sizing-addon2' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-user' })
+	                ),
+	                React.createElement('input', {
+	                    type: 'text',
+	                    id: 'inputFname',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("fname"),
+	                    placeholder: 'First Name',
+	                    required: true }),
+	                React.createElement('input', {
+	                    type: 'text',
+	                    id: 'inputLname',
+	                    className: 'form-control',
+	                    valueLink: this.linkState("lname"),
+	                    placeholder: 'Last Name',
+	                    required: true })
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'checkbox' },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    React.createElement('input', { type: 'checkbox', value: 'agreement', required: true }),
+	                    'I agree to the terms and conditions.'
+	                )
+	            ),
+	            React.createElement(
+	                'button',
+	                {
+	                    className: 'btn btn-lg btn-primary btn-block',
+	                    type: 'submit' },
+	                'Sign Up'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SignUpForm;
+
+/***/ },
+/* 518 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var SessionConstants = __webpack_require__(519);
+	var ApiUtil = __webpack_require__(270);
+	
+	var SessionActions = {
+	    signUp: function (userInfo) {
+	        ApiUtil.createUserAccount(userInfo, this.receiveNewUser);
+	    },
+	
+	    logIn: function (credentials) {
+	        ApiUtil.createSession(credentials, this.receiveCurrentUser);
+	    },
+	
+	    logOut: function () {
+	        ApiUtil.destroySession(this.removeCurrentUser);
+	    },
+	
+	    fetchSession: function () {
+	        ApiUtil.fetchSession(this.receiveCurrentUser);
+	    },
+	
+	    receiveNewUser: function (user) {
+	        AppDispatcher.dispatch({
+	            actionType: SessionConstants.RECEIVE_NEW_USER,
+	            user: user
+	        });
+	    },
+	
+	    receiveCurrentUser: function (user) {
+	        AppDispatcher.dispatch({
+	            actionType: SessionConstants.RECEIVE_CURRENT_USER,
+	            user: user
+	        });
+	    },
+	
+	    removeCurrentUser: function () {
+	        AppDispatcher.dispatch({
+	            actionType: SessionConstants.REMOVE_CURRENT_USER
+	        });
+	    }
+	};
+	
+	module.exports = SessionActions;
+
+/***/ },
+/* 519 */
+/***/ function(module, exports) {
+
+	var SessionConstants = {
+	  RECEIVE_NEW_USER: "RECEIVE_NEW_USER",
+	  RECEIVE_USER: "RECEIVE_USER",
+	  REMOVE_CURRENT_USER: "REMOVE_CURRENT_USER"
+	};
+	
+	module.exports = SessionConstants;
+
+/***/ },
+/* 520 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(215).Store;
+	var AppDispatcher = __webpack_require__(209);
+	var SessionConstants = __webpack_require__(519);
+	
+	var SessionStore = new Store(AppDispatcher);
+	
+	var _currentUser = {};
+	
+	var receiveUser = function (user) {
+	  _currentUser = user;
+	};
+	
+	var removeUser = function () {
+	  _currentUser = {};
+	};
+	
+	SessionStore.all = function () {
+	  return _currentUser;
+	};
+	
+	SessionStore.hasCurrentUser = function () {
+	  return Object.keys(_currentUser).length > 0;
+	};
+	
+	SessionStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case SessionConstants.RECEIVENEWUSER:
+	      receiveUser(payload.user);
+	      SessionStore.__emitChange();
+	      break;
+	    case SessionConstants.RECEIVEUSER:
+	      receiveUser(payload.user);
+	      SessionStore.__emitChange();
+	      break;
+	    case SessionConstants.REMOVECURRENTUSER:
+	      removeUser();
+	      SessionStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = SessionStore;
 
 /***/ }
 /******/ ]);

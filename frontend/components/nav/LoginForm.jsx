@@ -1,6 +1,6 @@
 var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
-var SessionActions = require('../../actions/sessionAction.js');
+var SessionActions = require('../../actions/session_actions.js');
 
 var LoginForm = React.createClass({
     mixins: [LinkedStateMixin],
