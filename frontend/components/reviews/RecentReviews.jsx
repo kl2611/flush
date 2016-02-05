@@ -13,7 +13,7 @@ var RecentReviews = React.createClass({
 
     componentDidMount: function() {
         this.reviewListener = ReviewStore.addListener(this.onChange);
-        ReviewUtil.fetchRecentReviews(6);
+        setTimeout(ReviewUtil.fetchRecentReviews(6), 3000);
     },
 
     onChange: function() {

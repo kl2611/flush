@@ -1,31 +1,25 @@
-class SessionsController < ApplicationController
-    before_action :require_logged_in!, only: [:destroy]
-    before_action :require_logged_out!, only: [:new, :create]
+class Api::SessionsController < ApplicationController
+  before_action :require_no_user!, only: :create
+  # before_action :require_login!, only: :show
 
-    def new
-        render :new
+  def create
+    user = User.find_by_credentials(
+      params[:user][:username],
+      params[:user][:password])
+    if user.nil?
+      render json: {error: "User not found"}, status: 401
+    else
+      login_user!(user)
+      render json: current_user
     end
+  end
 
-    def create
-        user = User.find_by_credentials(
-            params[:user][:username],
-            params[:user][:password]
-        )
-        if user.nil?
-            flash.now[:errors] = ["Incorrect username and/or password"]
-            render :new
-        else
-            login_user!(user)
-            render json: current_user
-        end
-    end
+  def destroy
+    logout_user!
+    render json: ["Logout successfully"]
+  end
 
-    def destroy
-        logout_user!
-        render json: ["Logged out successfully"]
-    end
-
-    def show
-        render json: current_user
-    end
+  def show
+    render json: current_user
+  end
 end

@@ -31536,7 +31536,7 @@
 	
 	    componentDidMount: function () {
 	        this.reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchRecentReviews(6);
+	        setTimeout(ReviewUtil.fetchRecentReviews(6), 3000);
 	    },
 	
 	    onChange: function () {
@@ -50280,7 +50280,7 @@
 	var ReviewActions = __webpack_require__(245);
 	var Modal = __webpack_require__(273).Modal;
 	
-	// var AccountButtons = require('./accountButtons.jsx');
+	// var UserButtons = require('./UserButtons');
 	var Buttons = __webpack_require__(515);
 	
 	var NavUserIndex = React.createClass({
@@ -50313,7 +50313,11 @@
 	    render: function () {
 	        var button;
 	        if (Object.keys(this.state.currentUser).length > 0) {
-	            options = React.createElement('div', null);
+	            options = React.createElement(
+	                'div',
+	                null,
+	                'Hello'
+	            );
 	        } else {
 	            options = React.createElement(Buttons, { history: this.props.history });
 	        };

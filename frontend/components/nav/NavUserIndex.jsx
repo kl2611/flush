@@ -4,8 +4,8 @@ var SessionActions = require('../../actions/session_actions');
 var ReviewActions = require('../../actions/review_actions');
 var Modal = require('react-bootstrap').Modal;
 
-// var AccountButtons = require('./accountButtons.jsx');
-var Buttons = require('./Buttons.jsx');
+// var UserButtons = require('./UserButtons');
+var Buttons = require('./Buttons');
 
 var NavUserIndex = React.createClass({
     getInitialState: function() {
@@ -36,8 +36,7 @@ var NavUserIndex = React.createClass({
         var button;
         if (Object.keys(this.state.currentUser).length > 0) {
             options = (
-                <div />
-            )
+                <div>Hello</div>);
         } else {
             options = (<Buttons history={this.props.history} />)
         };
