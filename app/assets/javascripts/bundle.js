@@ -32292,7 +32292,7 @@
 	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
 	        return {
 	            loc: "",
-	            placeholder: "Input address",
+	            placeholder: "Input address, neighborhood, city, state or zip",
 	            showAutocomplete: false,
 	            showSpinner: false
 	        };
@@ -32334,9 +32334,9 @@
 	        this.props.history.pushState(null, 'search/' + loc);
 	
 	        // hmm fix this somehow
-	        // this.setState({
-	        //     showSpinner: false
-	        // })
+	        this.setState({
+	            showSpinner: false
+	        });
 	    },
 	
 	    handleLocChange: function (e) {
@@ -33103,22 +33103,11 @@
 	            'div',
 	            { id: 'results' },
 	            React.createElement(
-	                'div',
-	                { id: 'results-header' },
-	                React.createElement(
-	                    'h4',
-	                    null,
-	                    'Results'
-	                ),
-	                React.createElement(Search, { history: this.props.history }),
-	                ' ',
-	                React.createElement('p', null)
+	                'h4',
+	                null,
+	                'Results'
 	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'list' },
-	                React.createElement(List, { spots: this.state.spots, history: this.props.history })
-	            ),
+	            React.createElement(List, { spots: this.state.spots, history: this.props.history }),
 	            React.createElement(
 	                'div',
 	                { id: 'map' },
@@ -33151,7 +33140,7 @@
 	    var handleItemClick = this.handleItemClick;
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'list' },
 	      React.createElement(
 	        'h4',
 	        null,
@@ -33300,7 +33289,10 @@
 	var ReactRouter = __webpack_require__(159);
 	// var UserInfo = require('./UserInfo');
 	var SearchBar = __webpack_require__(251);
+	// var LoggedOut = require("./logged_out");
+	
 	var Modal = __webpack_require__(273).Modal;
+	var History = __webpack_require__(159).History;
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -33351,59 +33343,19 @@
 	              null,
 	              React.createElement(
 	                'a',
-	                { href: '#' },
-	                'Link'
+	                null,
+	                React.createElement('span', { className: 'glyphicon glyphicon-user' }),
+	                'Sign Up'
 	              )
 	            ),
 	            React.createElement(
 	              'li',
-	              { className: 'dropdown' },
+	              { onClick: this.open },
 	              React.createElement(
 	                'a',
-	                { href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown', role: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
-	                'Dropdown ',
-	                React.createElement('span', { className: 'caret' })
-	              ),
-	              React.createElement(
-	                'ul',
-	                { className: 'dropdown-menu' },
-	                React.createElement(
-	                  'li',
-	                  null,
-	                  React.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    'Action'
-	                  )
-	                ),
-	                React.createElement(
-	                  'li',
-	                  null,
-	                  React.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    'Another action'
-	                  )
-	                ),
-	                React.createElement(
-	                  'li',
-	                  null,
-	                  React.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    'Something else here'
-	                  )
-	                ),
-	                React.createElement('li', { role: 'separator', className: 'divider' }),
-	                React.createElement(
-	                  'li',
-	                  null,
-	                  React.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    'Separated link'
-	                  )
-	                )
+	                null,
+	                React.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
+	                'Log In'
 	              )
 	            )
 	          )
@@ -33435,74 +33387,74 @@
 	var UserActions = __webpack_require__(271);
 	
 	var ApiUtil = {
-	    fetchUser: function (userId) {
+	    // fetchUser: function(userId) {
+	    //     $.ajax({
+	    //         url: "api/users/" + userId,
+	    //         data: userId,
+	    //         success: function(user) {
+	    //             UserActions.receiveCurrentUser(user);
+	    //         }
+	    //     })
+	    // },
+	
+	    // destroySession: function(id) {
+	    //     $ajax({
+	    //         url: "/session",
+	    //         type: "DELETE",
+	    //         data: id,
+	    //         success: function () {
+	    //             window.location = "/";
+	    //         }
+	    //     });
+	    // },
+	
+	    createUserAccount: function (credentials, receiveNewUser) {
 	        $.ajax({
-	            url: "api/users/" + userId,
-	            data: userId,
+	            url: 'api/users',
+	            method: "POST",
+	            data: { user: credentials },
 	            success: function (user) {
-	                UserActions.receiveCurrentUser(user);
+	                receiveNewUser(user);
 	            }
 	        });
 	    },
 	
-	    destroySession: function (id) {
-	        $ajax({
-	            url: "/session",
-	            type: "DELETE",
-	            data: id,
+	    createSession: function (credentials, receiveCurrentUser) {
+	        $.ajax({
+	            url: 'api/session',
+	            method: "POST",
+	            data: { user: credentials },
+	            success: function (user) {
+	                receiveCurrentUser(user);
+	            }
+	        });
+	    },
+	
+	    fetchSession: function (receiveCurrentUser) {
+	        $.ajax({
+	            url: 'api/session',
+	            method: "get",
+	            success: function (user) {
+	                if (user !== null) {
+	                    receiveCurrentUser(user);
+	                } else {
+	                    console.log("not logged in");
+	                };
+	            }
+	        });
+	    },
+	
+	    destroySession: function (removeCurrentUser) {
+	        $.ajax({
+	            url: 'api/session',
+	            method: "delete",
 	            success: function () {
-	                window.location = "/";
+	                removeCurrentUser();
 	            }
 	        });
 	    }
-	
 	};
 	
-	// createUserAccount: function(credentials, receiveNewUser) {
-	//     $.ajax({
-	//         url: 'api/users',
-	//         method: "POST",
-	//         data: {user: credentials},
-	//         success: function(user) {
-	//             receiveNewUser(user);
-	//         }
-	//     });
-	// },
-	
-	// createSession: function(credentials, receiveCurrentUser) {
-	//     $.ajax({
-	//         url: 'api/session',
-	//         method: "POST",
-	//         data: {user: credentials},
-	//         success: function(user) {
-	//             receiveCurrentUser(user);
-	//         }
-	//     });
-	// },
-	
-	// fetchSession: function(receiveCurrentUser) {
-	//     $.ajax({
-	//         url: 'api/session',
-	//         method: "get",
-	//         success: function(user) {
-	//             if (user !== null) {
-	//                 receiveCurrentUser(user);
-	//             } else {
-	//                 console.log("not logged in");
-	//             };
-	//         }
-	//     });
-	// },
-	
-	// destroySession: function(removeCurrentUser) {
-	//     $.ajax({
-	//         url: 'api/session',
-	//         method: "delete",
-	//         success: function() {
-	//             removeCurrentUser();
-	//         }
-	//     });
-	// }
 	module.exports = ApiUtil;
 
 /***/ },

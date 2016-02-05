@@ -4,7 +4,10 @@ var ApiUtil = require('../../util/api_util');
 var ReactRouter = require('react-router');
 // var UserInfo = require('./UserInfo');
 var SearchBar = require('./Search');
+// var LoggedOut = require("./logged_out");
+
 var Modal = require('react-bootstrap').Modal;
+var History = require("react-router").History;
 
 
 var NavBar = React.createClass({
@@ -35,18 +38,15 @@ var NavBar = React.createClass({
         <SearchBar history={this.props.history} />
 
           <ul className="nav navbar-nav navbar-right">
-            <li><a href="#">Link</a></li>
-            <li className="dropdown">
-              <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span className="caret"></span></a>
-              <ul className="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" className="divider"></li>
-                <li><a href="#">Separated link</a></li>
-              </ul>
+            <li>
+              <a><span className="glyphicon glyphicon-user" />Sign Up</a>
+            </li>
+
+            <li onClick={this.open}>
+              <a><span className="glyphicon glyphicon-log-in" />Log In</a>
             </li>
           </ul>
+
         </div>
       </div>
     </nav>

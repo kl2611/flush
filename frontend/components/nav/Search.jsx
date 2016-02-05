@@ -12,7 +12,7 @@ var SearchBar = React.createClass({
         // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
         return ({
             loc: "",
-            placeholder: "Input address",
+            placeholder: "Input address, neighborhood, city, state or zip",
             showAutocomplete: false,
             showSpinner: false
         });
@@ -54,9 +54,9 @@ var SearchBar = React.createClass({
         this.props.history.pushState(null, 'search/' + loc);
 
         // hmm fix this somehow
-        // this.setState({
-        //     showSpinner: false
-        // })
+        this.setState({
+            showSpinner: false
+        })
     },
 
     handleLocChange: function(e) {

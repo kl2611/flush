@@ -8,7 +8,7 @@ var List = React.createClass({
   render: function(){
     var handleItemClick = this.handleItemClick;
     return (
-      <div>
+      <div className="list">
         <h4>Restrooms near you</h4>
         {
           this.props.spots.map(function(spot){

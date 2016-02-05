@@ -140,16 +140,8 @@ var SearchIndex = React.createClass({
 
         return(
             <div id="results">
-
-                <div id="results-header">
                 <h4>Results</h4>
-                <Search history={this.props.history} /> <p />
-                </div>
-
-                <div id="list">
-                    <List spots={this.state.spots} history={this.props.history} />
-                </div>
-
+                <List spots={this.state.spots} history={this.props.history} />
 
                 <div id="map">
                     <Map
