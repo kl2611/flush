@@ -20,9 +20,9 @@ var NavUserIndex = React.createClass({
         });
 
         //Dispatch conflicts with fetching session dispatch
-        // if (SessionStore.hasCurrentUser()) {
-        //     ReviewActions.receiveUserReviews();
-        // }
+        if (SessionStore.hasCurrentUser()) {
+            ReviewActions.receiveUserReviews();
+        }
     },
 
     componentWillUnmount: function() {
@@ -37,7 +37,9 @@ var NavUserIndex = React.createClass({
     render: function() {
         var options;
         if (Object.keys(this.state.currentUser).length > 0) {
-            options = (<div />)
+            options = (<UserButtons
+                                    currentUser={this.state.currentUser}
+                                    history={this.props.history} />)
         } else {
             options = (<Buttons history={this.props.history} />)
         };

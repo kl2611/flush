@@ -33478,9 +33478,9 @@
 	        });
 	
 	        //Dispatch conflicts with fetching session dispatch
-	        // if (SessionStore.hasCurrentUser()) {
-	        //     ReviewActions.receiveUserReviews();
-	        // }
+	        if (SessionStore.hasCurrentUser()) {
+	            ReviewActions.receiveUserReviews();
+	        }
 	    },
 	
 	    componentWillUnmount: function () {
@@ -33495,7 +33495,9 @@
 	    render: function () {
 	        var options;
 	        if (Object.keys(this.state.currentUser).length > 0) {
-	            options = React.createElement('div', null);
+	            options = React.createElement(UserButtons, {
+	                currentUser: this.state.currentUser,
+	                history: this.props.history });
 	        } else {
 	            options = React.createElement(Buttons, { history: this.props.history });
 	        };
@@ -50423,68 +50425,35 @@
 	var React = __webpack_require__(1);
 	var SessionActions = __webpack_require__(274);
 	
-	var AccountButtons = React.createClass({
-	  displayName: 'AccountButtons',
+	var UserButtons = React.createClass({
+	    displayName: 'UserButtons',
 	
-	  handleLogOut: function (e) {
-	    e.preventDefault();
-	    this.props.history.pushState(null, '/');
-	    SessionActions.logOut();
-	  },
+	    handleLogOut: function (e) {
+	        e.preventDefault();
+	        this.props.history.pushState(null, '/');
+	        SessionActions.logOut();
+	    },
 	
-	  render: function () {
-	    return React.createElement(
-	      'ul',
-	      { className: 'nav navbar-nav navbar-right' },
-	      React.createElement(
-	        'li',
-	        { className: 'dropdown' },
-	        React.createElement(
-	          'a',
-	          {
-	            className: 'dropdown-toggle',
-	            'data-toggle': 'dropdown',
-	            role: 'button',
-	            'aria-haspopup': 'true',
-	            'aria-expanded': 'false',
-	            style: hasProfilePic ? { paddingTop: "5px", paddingBottom: "5px" } : {} },
-	          userProfile.fname + " ",
-	          hasProfilePic ? React.createElement('img', {
-	            className: 'img-circle',
-	            width: '35px',
-	            height: '35px',
-	            src: profilePicUrl }) : "",
-	          React.createElement('span', { className: 'caret' })
-	        ),
-	        React.createElement(
-	          'ul',
-	          { className: 'dropdown-menu' },
-	          React.createElement(
-	            'li',
-	            null,
+	    render: function () {
+	        return React.createElement(
+	            'ul',
+	            { className: 'nav navbar-nav navbar-right' },
 	            React.createElement(
-	              'a',
-	              { href: '#/trips/' },
-	              'Your Trips'
+	                'li',
+	                { onClick: this.handleLogOut },
+	                React.createElement(
+	                    'a',
+	                    { href: '#' },
+	                    React.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
+	                    ' Log Out'
+	                )
 	            )
-	          ),
-	          React.createElement('li', { role: 'separator', className: 'divider' }),
-	          React.createElement(
-	            'li',
-	            { onClick: this.handleLogOut },
-	            React.createElement(
-	              'a',
-	              { href: '#' },
-	              React.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
-	              ' Log Out'
-	            )
-	          )
-	        )
-	      )
-	    );
-	  }
+	        );
+	    }
 	
 	});
+	
+	module.exports = UserButtons;
 
 /***/ },
 /* 517 */
@@ -50563,15 +50532,6 @@
 	                        null,
 	                        React.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
 	                        '  Login'
-	                    )
-	                ),
-	                React.createElement(
-	                    'li',
-	                    { onClick: this.handleLogOut },
-	                    React.createElement(
-	                        'a',
-	                        { href: '#' },
-	                        'Logout'
 	                    )
 	                )
 	            ),

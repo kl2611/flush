@@ -59,12 +59,6 @@ var Buttons = React.createClass({
                           <span className="glyphicon glyphicon-log-in" />  Login
                         </a>
                     </li>
-
-                    <li onClick={this.handleLogOut}>
-                        <a href="#">
-                        Logout
-                        </a>
-                    </li>
                 </ul>
 
                 <Modal className="customclass" ref='navmodal' show={this.state.showModal} onHide={this.closeModal}>
