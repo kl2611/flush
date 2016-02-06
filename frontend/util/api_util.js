@@ -1,4 +1,6 @@
-var UserActions = require('../actions/user_actions');
+//var UserActions = require('../actions/user_actions');
+
+//var SessionActions = require('../actions/session_actions');
 
 var ApiUtil = {
     // fetchUser: function(userId) {
@@ -41,13 +43,17 @@ var ApiUtil = {
             success: function(user) {
                 receiveCurrentUser(user);
             }
+            // error: function(error, status) {
+            //     debugger;
+            //     console.log(status);
+            // }
         });
     },
 
     fetchSession: function(receiveCurrentUser) {
         $.ajax({
             url: 'api/session',
-            method: "get",
+            method: "GET",
             success: function(user) {
                 if (user !== null) {
                     receiveCurrentUser(user);
@@ -61,7 +67,7 @@ var ApiUtil = {
     destroySession: function(removeCurrentUser) {
         $.ajax({
             url: 'api/session',
-            method: "delete",
+            method: "DELETE",
             success: function() {
                 removeCurrentUser();
             }

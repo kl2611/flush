@@ -45,13 +45,14 @@ var routes = (
 
 var checkLibStatus = function() {
   if (window.MapsStatus) {
-    MapAction.mapsReady();
+    MapActions.mapsReady();
   } else {
-    document.getElementById('map').addEventListener('load', MapAction.mapsReady);
+    document.getElementById('map').addEventListener('load', MapActions.mapsReady);
   }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // checkLibStatus();
   var root = document.getElementById('root');
   ReactDOM.render(<Router>{routes}</Router>, root);
 });

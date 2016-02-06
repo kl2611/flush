@@ -14,16 +14,19 @@ var LoginForm = React.createClass({
 
     handleSubmit: function(e) {
         e.preventDefault();
+        var username = this.state.username.toLowerCase();
+        var password= this.state.password;
 
         SessionActions.logIn({
-            username: this.state.username,
-            password: this.state.password
+            username: username,
+            password: password
         });
     },
 
     fillOutLogin: function() {
-        var username = "guest"
-        var password = "password"
+        var username = "kelly"
+        var password = "kellykelly"
+
         this.setState({
             username: username,
             password: password
@@ -37,6 +40,7 @@ var LoginForm = React.createClass({
     render: function() {
         return (
             <form
+                name="authenticity_token"
                 className="form-signin modal-form"
                 autoComplete="off"
                 onSubmit={this.handleSubmit}>
@@ -46,13 +50,14 @@ var LoginForm = React.createClass({
                         <span className="glyphicon glyphicon-user" />
                     </span>
                     <input
-                        type="email"
-                        id="inputEmail"
+                        type="text"
+                        name="user[username]"
+                        id="user_username"
                         className = "form-control"
                         valueLink={this.linkState("username")}
                         placeholder="Username"
                         required
-                        autofocus />
+                        />
                 </div>
 
                 <div className="input-group input-group-lg">
@@ -61,7 +66,8 @@ var LoginForm = React.createClass({
                     </span>
                     <input
                     type="password"
-                    id="inputPassword"
+                    name="user[password]"
+                    id="user_password"
                     className="form-control"
                     valueLink={this.linkState("password")}
                     placeholder='Password'

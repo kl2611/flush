@@ -63,16 +63,15 @@ var SignUpForm = React.createClass({
             {alert}
             <div className="input-group input-group-lg">
               <span className="input-group-addon" id="sizing-addon1">
-                <span className="glyphicon glyphicon-envelope" />
+                <span className="glyphicon glyphicon-user" />
               </span>
                 <input
-                    type="email"
-                    id="inputEmail"
+                    type="username"
+                    id="inputUsername"
                     className="form-control"
                     valueLink={this.linkState("username")}
-                    placeholder='Email Address'
+                    placeholder='Username'
                     required
-                    autoFocus
                 />
             </div>
 
@@ -80,6 +79,7 @@ var SignUpForm = React.createClass({
                 <span className="input-group-addon" id="sizing-addon2">
                   <span className="glyphicon glyphicon-lock" />
                 </span>
+
                 <input
                   type="password"
                   id="inputPassword"
@@ -87,6 +87,7 @@ var SignUpForm = React.createClass({
                   valueLink={this.linkState("password")}
                   placeholder='Password'
                   required />
+
                 <input
                   type="password"
                   id="passwordConfirmation"
@@ -95,32 +96,14 @@ var SignUpForm = React.createClass({
                   placeholder='Confirm Password'
                   required/>
             </div>
-            <div className="input-group input-group-lg">
-              <span className="input-group-addon" id="sizing-addon2">
-                <span className="glyphicon glyphicon-user" />
-              </span>
-              <input
-                type="text"
-                id="inputFname"
-                className="form-control"
-                valueLink={this.linkState("fname")}
-                placeholder='First Name'
-                required/>
 
-              <input
-                type="text"
-                id="inputLname"
-                className="form-control"
-                valueLink={this.linkState("lname")}
-                placeholder='Last Name'
-                required />
-            </div>
             <div className="checkbox">
               <label>
                 <input type="checkbox" value="agreement" required></input>
                  I agree to the terms and conditions.
               </label>
             </div>
+
             <button
               className="btn btn-lg btn-primary btn-block"
               type="submit">

@@ -2,6 +2,7 @@ var React = require('react');
 var Modal = require('react-bootstrap').Modal;
 var LoginForm = require('./LoginForm');
 var SignUpForm = require('./SignUpForm');
+var SessionActions = require('../../actions/session_actions');
 
 var Buttons = React.createClass({
     getInitialState: function() {
@@ -35,6 +36,12 @@ var Buttons = React.createClass({
         this.refs.navmodal._onHide();
     },
 
+    handleLogOut: function(e) {
+        e.preventDefault();
+        this.props.history.pushState(null, '/');
+        SessionActions.logOut();
+    },
+
     render: function() {
         var ModalForm = this.state.modalType === "Login" ? LoginForm : SignUpForm;
 
@@ -50,6 +57,12 @@ var Buttons = React.createClass({
                     <li onClick={this.openLogin}>
                         <a>
                           <span className="glyphicon glyphicon-log-in" />  Login
+                        </a>
+                    </li>
+
+                    <li onClick={this.handleLogOut}>
+                        <a href="#">
+                        Logout
                         </a>
                     </li>
                 </ul>

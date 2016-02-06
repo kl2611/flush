@@ -25,15 +25,15 @@ SessionStore.hasCurrentUser = function() {
 
 SessionStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
-    case SessionConstants.RECEIVENEWUSER:
+    case SessionConstants.RECEIVE_NEW_USER:
       receiveUser(payload.user);
       SessionStore.__emitChange();
       break;
-    case SessionConstants.RECEIVEUSER:
+    case SessionConstants.RECEIVE_CURRENT_USER:
       receiveUser(payload.user);
       SessionStore.__emitChange();
       break;
-    case SessionConstants.REMOVECURRENTUSER:
+    case SessionConstants.REMOVE_CURRENT_USER:
       removeUser();
       SessionStore.__emitChange();
       break;

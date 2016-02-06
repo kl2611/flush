@@ -4,7 +4,7 @@ var SessionActions = require('../../actions/session_actions');
 var ReviewActions = require('../../actions/review_actions');
 var Modal = require('react-bootstrap').Modal;
 
-// var UserButtons = require('./UserButtons');
+var UserButtons = require('./UserButtons');
 var Buttons = require('./Buttons');
 
 var NavUserIndex = React.createClass({
@@ -18,9 +18,11 @@ var NavUserIndex = React.createClass({
         this.setState({
             currentUser: SessionStore.all()
         });
-        if (SessionStore.hasCurrentUser()) {
-            ReviewActions.receiveUserReviews();
-        }
+
+        //Dispatch conflicts with fetching session dispatch
+        // if (SessionStore.hasCurrentUser()) {
+        //     ReviewActions.receiveUserReviews();
+        // }
     },
 
     componentWillUnmount: function() {
@@ -33,10 +35,9 @@ var NavUserIndex = React.createClass({
     },
 
     render: function() {
-        var button;
+        var options;
         if (Object.keys(this.state.currentUser).length > 0) {
-            options = (
-                <div>Hello</div>);
+            options = (<div />)
         } else {
             options = (<Buttons history={this.props.history} />)
         };

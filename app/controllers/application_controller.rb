@@ -22,12 +22,20 @@ class ApplicationController < ActionController::Base
     end
 
     def logout_user!
-        current_user.reset_session_token!
+        current_user.reset_session_token! unless current_user.nil?
         session[:session_token] = nil
     end
 
     def require_user!
-        redirect_to new_session_url if current_user.nil?
+        render json: ["Not logged in!"] if current_user.nil?
+    end
+
+    def require_no_user!
+        render json: {error: "Already logged in"}, status: 400 if current_user
+    end
+
+    def require_login!
+        render json: {error: "Not logged in"}, status: 401 if current_user.nil?
     end
 
     def require_logged_in!
