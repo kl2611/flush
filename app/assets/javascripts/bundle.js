@@ -31572,6 +31572,7 @@
 	                return React.createElement(
 	                    'ul',
 	                    { key: review.id },
+	                    React.createElement('hr', null),
 	                    React.createElement(
 	                        'li',
 	                        null,
@@ -31604,7 +31605,7 @@
 	            'div',
 	            { className: 'recent-activity-container' },
 	            React.createElement(
-	                'h4',
+	                'h3',
 	                null,
 	                'Recent Activity'
 	            ),
@@ -33271,12 +33272,25 @@
 	            'div',
 	            { id: 'landing-page' },
 	            React.createElement(
-	                'h4',
-	                null,
-	                'Your Next Review Awaits!'
-	            ),
-	            React.createElement(RecentReviews, null),
-	            React.createElement(RandomReview, null)
+	                'div',
+	                { className: 'row' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'col-md-8' },
+	                    React.createElement(
+	                        'h4',
+	                        null,
+	                        'Your Next Review Awaits!'
+	                    ),
+	                    React.createElement(RecentReviews, null)
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'col-md-4' },
+	                    React.createElement('hr', null),
+	                    React.createElement(RandomReview, null)
+	                )
+	            )
 	        );
 	    }
 	});
@@ -33361,7 +33375,7 @@
 	
 	                return React.createElement(
 	                    'div',
-	                    { key: review.user.id, className: 'recent-activity-container' },
+	                    { key: review.id },
 	                    React.createElement(
 	                        'strong',
 	                        null,
@@ -33393,7 +33407,6 @@
 	            });
 	        }
 	
-	        var visitorCount = "Visited by " + ReviewStore.findBySpot().length + "people";
 	        return React.createElement(
 	            'div',
 	            { className: 'review-of-the-day' },
@@ -33406,14 +33419,11 @@
 	                    'Review of the Day'
 	                )
 	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'hot-spot-info' },
-	                reviewList,
-	                React.createElement('img', { src: imgSource,
-	                    alt: name,
-	                    width: '90' })
-	            )
+	            React.createElement('img', { src: imgSource,
+	                alt: name,
+	                width: '90',
+	                align: 'left' }),
+	            reviewList
 	        );
 	    }
 	});

@@ -41,7 +41,9 @@ var RecentReviews = React.createClass({
                 var nameDisplay = <strong>{username}</strong>;
                 var status = " wrote a review for ";
 
-                return (<ul key={review.id}>
+                return (
+                            <ul key={review.id}>
+                            <hr />
                                 <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
                                 <li>{review.rating} Stars, {review.date}</li>
                                 <li>{review.comment}</li>
@@ -51,7 +53,7 @@ var RecentReviews = React.createClass({
 
         return (
             <div className ="recent-activity-container">
-            <h4>Recent Activity</h4>
+            <h3>Recent Activity</h3>
                 {reviews}
             </div>
         );

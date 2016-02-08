@@ -26,10 +26,35 @@ body {
     background-color: #F0F9FE;
 }
 
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}
+
 /* LANDING PAGE *******/
-.pac-container {
-  -webkit-transition: all 2s, -webkit-transform 2s;
-  transition: all 2s, transform 2s;
+
+.landing-page h1, h2, h3, h4, h5 {
+    color: #6075f4;
+    font-weight: bold;
+}
+
+.recent-activity-container {
+    text-decoration: none;
+    padding-bottom: 40px;
+}
+
+.recent-activity-container ul, li {
+    text-decoration: none;
+    list-style: none;
+}
+
+.review-of-the-day {
+    text-decoration: none;
 }
 
 
@@ -39,7 +64,12 @@ body {
 }
 
 .container-fluid {
-    margin: 0px 200px;
+    margin: 0px 170px;
+}
+
+.container {
+    width: 1000px;
+    margin-top: 0px;
 }
 
 .logo {
@@ -86,7 +116,6 @@ body {
 /* CONTENT *************/
 .container {
     background-color: #FFFFFF;
-    margin: 0px 50px;
 }
 
 .content-wrapper {
@@ -108,25 +137,9 @@ body {
     font-size: 20px;
 }
 
-.recent-activity-container {
-    text-decoration: none;
-    float: left;
-}
-
-.recent-activity-container ul, li {
-    text-decoration: none;
-    list-style: none;
-}
-
 .list {
-    width: 500px;
+    width: 400px;
     float: left;
-    position: relative;
-}
-
-
-.review-of-the-day {
-    float: right;
     position: relative;
 }
 

@@ -9,10 +9,19 @@ var LandingPage = React.createClass({
     render: function() {
         return (
         <div id="landing-page">
-                <h4>Your Next Review Awaits!</h4>
-                <RecentReviews />
 
-                <RandomReview />
+            <div className="row">
+                <div className="col-md-8">
+                    <h4>Your Next Review Awaits!</h4>
+                    <RecentReviews />
+                </div>
+
+                <div className="col-md-4">
+                    <hr />
+                    <RandomReview />
+                </div>
+
+            </div>
         </div>
         );
     }

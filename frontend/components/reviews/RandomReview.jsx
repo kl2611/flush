@@ -68,7 +68,7 @@ var RandomReview = React.createClass({
                     comment = review.comment;
                 }
 
-                return (<div key={review.user.id} className="recent-activity-container">
+                return (<div key={review.id}>
                                 <strong>{nameDisplay}</strong>  wrote a <b>review</b> for <strong><Link to={spotLink}>{name}</Link></strong>
                                 <p />
                                 {review.rating} stars, {review.date}
@@ -79,19 +79,16 @@ var RandomReview = React.createClass({
             });
         }
 
-        var visitorCount = "Visited by " + ReviewStore.findBySpot().length + "people";
         return (
                     <div className="review-of-the-day">
                         <h4><strong>Review of the Day</strong></h4>
-                        <div className="hot-spot-info">
-                        {reviewList}
-
                         <img src={imgSource}
                             alt={name}
-                            width="90">
+                            width="90"
+                            align="left">
                         </img>
 
-                    </div>
+                        {reviewList}
                 </div>
             );
     }
