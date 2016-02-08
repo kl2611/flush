@@ -46,6 +46,15 @@ var ReviewUtil = {
         });
     },
 
+     fetchSingleReview: function(id) {
+        $.ajax({
+            url: 'api/reviews/' + id,
+            success: function(id) {
+                ReviewActions.receiveSingleReview(id);
+            }
+        });
+    },
+
     fetchUserReviews: function(userId) {
         $.ajax({
             url: 'api/reviews',

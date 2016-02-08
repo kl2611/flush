@@ -9,10 +9,31 @@ var UserButtons = React.createClass({
     },
 
     render: function() {
+        var username = this.props.currentUser.username;
+
         return (
                 <ul className='nav navbar-nav navbar-right'>
-                    <li onClick={this.handleLogOut}><a href="#">
-                        <span className="glyphicon glyphicon-log-out" /> Log Out</a>
+                    <li className="dropdown">
+                    <a
+                        className="dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        {username}
+                        <span className='caret'></span>
+                    </a>
+
+                    <ul className="dropdown-menu" role="menu">
+                        <li><a href="#">
+                            <span className="glyphicon glyphicon-user" /> About Me</a></li>
+                        <li><a href="#">
+                            <span className="glyphicon glyphicon-cog" /> Account Settings</a></li>
+                        <li className="divider" />
+                        <li onClick={this.handleLogOut}><a href="#">
+                            <span className="glyphicon glyphicon-log-out" /> Log Out</a>
+                        </li>
+                    </ul>
                     </li>
                 </ul>
         );

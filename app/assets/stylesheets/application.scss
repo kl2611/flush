@@ -76,7 +76,7 @@ body {
 
 .navbar-right a:link, a:hover, a:active {
     text-decoration: none;
-    color: #9aa2b0
+    color: #9aa2b0;
 }
 
 .searchbar {
@@ -121,6 +121,12 @@ body {
 .list {
     width: 500px;
     float: left;
+    position: relative;
+}
+
+
+.review-of-the-day {
+    float: right;
     position: relative;
 }
 

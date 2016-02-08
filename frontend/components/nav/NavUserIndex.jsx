@@ -20,9 +20,9 @@ var NavUserIndex = React.createClass({
         });
 
         //Dispatch conflicts with fetching session dispatch
-        if (SessionStore.hasCurrentUser()) {
-            ReviewActions.receiveUserReviews();
-        }
+        // if (SessionStore.hasCurrentUser()) {
+        //     ReviewActions.receiveUserReviews();
+        // }
     },
 
     componentWillUnmount: function() {

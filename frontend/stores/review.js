@@ -5,6 +5,7 @@ var _myReviews = [];
 var _recentReviews = [];
 var _userReviews = [];
 var _spotReviews = [];
+var _randomReview = [];
 var currentReview = null;
 
 var ReviewConstants = require('../constants/review_constants');
@@ -199,6 +200,10 @@ ReviewStore.averageRating = function() {
 ReviewStore.recentReviews = function() {
     return _recentReviews.slice(0);
 };
+
+ReviewStore.randomReview = function() {
+    return _randomReview.slice(0);
+}
 
 module.exports = ReviewStore;
 
