@@ -4,6 +4,7 @@ var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
+var browserHistory = ReactRouter.browserHistory;
 
 // components
 var SpotForm = require('./components/spots/SpotsForm');
@@ -36,10 +37,10 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={LandingPage} />
     <Route path="/search/:loc" component={SearchIndex} />
-    <Route path="spots/new" component={SpotForm} />
     <Route path="spots/:spotId" component={SpotShow}>
-        <Route path="review" components={ReviewForm} />
+      <Route path="review" components={ReviewForm} />
     </Route>
+    <Route path="spots/new" component={SpotForm} />
   </Route>
 );
 
@@ -54,5 +55,5 @@ var checkLibStatus = function() {
 document.addEventListener('DOMContentLoaded', function() {
   // checkLibStatus();
   var root = document.getElementById('root');
-  ReactDOM.render(<Router>{routes}</Router>, root);
+  ReactDOM.render(<Router history={browserHistory}>{routes}</Router>, root);
 });

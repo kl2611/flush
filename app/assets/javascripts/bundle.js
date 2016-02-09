@@ -50,6 +50,7 @@
 	var Router = ReactRouter.Router;
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
+	var browserHistory = ReactRouter.browserHistory;
 	
 	// components
 	var SpotForm = __webpack_require__(206);
@@ -87,12 +88,12 @@
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: LandingPage }),
 	  React.createElement(Route, { path: '/search/:loc', component: SearchIndex }),
-	  React.createElement(Route, { path: 'spots/new', component: SpotForm }),
 	  React.createElement(
 	    Route,
 	    { path: 'spots/:spotId', component: SpotShow },
 	    React.createElement(Route, { path: 'review', components: ReviewForm })
-	  )
+	  ),
+	  React.createElement(Route, { path: 'spots/new', component: SpotForm })
 	);
 	
 	var checkLibStatus = function () {
@@ -108,7 +109,7 @@
 	  var root = document.getElementById('root');
 	  ReactDOM.render(React.createElement(
 	    Router,
-	    null,
+	    { history: browserHistory },
 	    routes
 	  ), root);
 	});
