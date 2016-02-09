@@ -1,6 +1,5 @@
 class Api::UsersController < ApplicationController
-    before_action :require_no_user!
-
+    before_action :require_no_user!, only: [:create]
 
     def create
         @user = User.new(user_params)
@@ -13,10 +12,10 @@ class Api::UsersController < ApplicationController
         end
     end
 
-    # def show
-    #     @user = User.find(params[:id])
-    #     render :show
-    # end
+    def show
+        @user = User.find(params[:id])
+        render :show
+    end
 
     private
     def user_params

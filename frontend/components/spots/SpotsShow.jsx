@@ -17,6 +17,7 @@ var SpotShow = React.createClass({
         var spot = this._findSpotById(spotId) || {} ;
         return { spot: spot };
     },
+
     _findSpotById: function(id) {
         var res;
             SpotStore.all().forEach(function (spot) {
@@ -26,23 +27,28 @@ var SpotShow = React.createClass({
             }.bind(this));
               return res;
     },
+
     componentDidMount: function() {
         this.spotListener = SpotStore.addListener(this._spotChanged);
         SpotUtil.fetchSpots();
     },
+
     componentWillUnmount: function () {
         this.spotListener.remove();
     },
+
     _spotChanged: function () {
         var spotId = this.props.params.spotId;
         var spot = this._findSpotById(spotId);
         this.setState({ spot: spot });
     },
+
     render: function () {
         var spots = [];
         if (this.state.spot) {
             spots.push(this.state.spot);
         }
+
         var Link = ReactRouter.Link;
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
 
@@ -55,7 +61,6 @@ var SpotShow = React.createClass({
                     singleSpot={true}
                     spots={spots}
                     onMapClick={this.handleMapClick} />
-
                 <Spot spot={this.state.spot} className="map"/>
 
                 <div className="review-form">

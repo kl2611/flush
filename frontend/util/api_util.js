@@ -1,6 +1,4 @@
-//var UserActions = require('../actions/user_actions');
-
-//var SessionActions = require('../actions/session_actions');
+var UserActions = require('../actions/user_actions');
 
 var ApiUtil = {
     fetchUser: function(userId) {
@@ -70,6 +68,7 @@ var ApiUtil = {
             method: "DELETE",
             success: function() {
                 removeCurrentUser();
+                window.location = "/";
             }
         });
     }

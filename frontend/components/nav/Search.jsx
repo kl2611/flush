@@ -51,7 +51,7 @@ var SearchBar = React.createClass({
     redirectToSearch: function() {
         var loc = this.state.loc.replace(/\W+/g, "-");
         console.log("pushStatefromsearch");
-        this.props.history.pushState(null, 'search/' + loc);
+        this.props.history.pushState(null, '/search/' + loc);
 
         // hmm fix this somehow
         this.setState({

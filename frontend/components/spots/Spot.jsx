@@ -10,6 +10,8 @@ var Review = require('../reviews/Review');
 var TaggingUtil = require('../../util/tagging_util');
 var TagStore = require('../../stores/tag');
 
+var StarRating = require('./StarRating');
+
 var Spot = React.createClass({
   mixins: [History],
 

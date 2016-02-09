@@ -7,7 +7,11 @@ var UserActions = {
             actionType: UserConstants.USER_RECEIVED,
             user: user
         });
-    }
+    },
+
+
 };
+
+
 
 module.exports = UserActions;

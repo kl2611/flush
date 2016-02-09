@@ -24092,7 +24092,7 @@
 	            lng = this._coords().lng;
 	        return React.createElement(
 	            'div',
-	            null,
+	            { className: 'form' },
 	            React.createElement(
 	                'h3',
 	                null,
@@ -24102,45 +24102,57 @@
 	                'form',
 	                { onSubmit: this.handleSubmit },
 	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Name'
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Name of Restroom'
+	                    ),
+	                    React.createElement('input', { type: 'name', className: 'form-control', placeholder: 'e.g. Times Square', valueLink: this.linkState('name') })
 	                ),
-	                React.createElement('input', { type: 'text', valueLink: this.linkState('name') }),
-	                React.createElement('br', null),
 	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Description'
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Description'
+	                    ),
+	                    React.createElement('input', { type: 'description', className: 'form-control', placeholder: 'e.g. Located on the second floor of the buildling', valueLink: this.linkState('description') })
 	                ),
-	                React.createElement('input', { type: 'text', valueLink: this.linkState('description') }),
-	                React.createElement('br', null),
 	                React.createElement(
-	                    'label',
-	                    null,
-	                    'City'
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'City'
+	                    ),
+	                    React.createElement('input', { type: 'city', className: 'form-control', placeholder: 'New York', valueLink: this.linkState('city') })
 	                ),
-	                React.createElement('input', { type: 'text', valueLink: this.linkState('city') }),
-	                React.createElement('br', null),
 	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Latitude'
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Latitude'
+	                    ),
+	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lat }),
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Longitude'
+	                    ),
+	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lng })
 	                ),
-	                React.createElement('input', { type: 'text', disabled: 'true', value: lat }),
-	                React.createElement('br', null),
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Longitude'
-	                ),
-	                React.createElement('input', { type: 'text', disabled: 'true', value: lng }),
-	                React.createElement('br', null),
-	                React.createElement('input', { type: 'submit', value: 'create spot' })
+	                React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Create spot' })
 	            ),
+	            React.createElement('p', null),
 	            React.createElement(
 	                'button',
-	                { onClick: this.handleCancel },
+	                { type: 'submit', className: 'btn btn-primary', onClick: this.handleCancel },
 	                'Cancel'
 	            )
 	        );
@@ -32352,7 +32364,7 @@
 	    redirectToSearch: function () {
 	        var loc = this.state.loc.replace(/\W+/g, "-");
 	        console.log("pushStatefromsearch");
-	        this.props.history.pushState(null, 'search/' + loc);
+	        this.props.history.pushState(null, '/search/' + loc);
 	
 	        // hmm fix this somehow
 	        this.setState({
@@ -32471,6 +32483,7 @@
 	        var spot = this._findSpotById(spotId) || {};
 	        return { spot: spot };
 	    },
+	
 	    _findSpotById: function (id) {
 	        var res;
 	        SpotStore.all().forEach(function (spot) {
@@ -32480,23 +32493,28 @@
 	        }.bind(this));
 	        return res;
 	    },
+	
 	    componentDidMount: function () {
 	        this.spotListener = SpotStore.addListener(this._spotChanged);
 	        SpotUtil.fetchSpots();
 	    },
+	
 	    componentWillUnmount: function () {
 	        this.spotListener.remove();
 	    },
+	
 	    _spotChanged: function () {
 	        var spotId = this.props.params.spotId;
 	        var spot = this._findSpotById(spotId);
 	        this.setState({ spot: spot });
 	    },
+	
 	    render: function () {
 	        var spots = [];
 	        if (this.state.spot) {
 	            spots.push(this.state.spot);
 	        }
+	
 	        var Link = ReactRouter.Link;
 	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
 	
@@ -32545,6 +32563,8 @@
 	
 	var TaggingUtil = __webpack_require__(259);
 	var TagStore = __webpack_require__(260);
+	
+	var StarRating = __webpack_require__(525);
 	
 	var Spot = React.createClass({
 	  displayName: 'Spot',
@@ -32816,13 +32836,15 @@
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(233);
+	var History = __webpack_require__(159).History;
 	var ReactRouter = __webpack_require__(159);
 	var ReviewUtil = __webpack_require__(244);
 	
 	var ReviewForm = React.createClass({
 	    displayName: 'ReviewForm',
 	
-	    mixins: [LinkedStateMixin, ReactRouter.history],
+	    mixins: [LinkedStateMixin, History],
+	
 	    getInitialState: function () {
 	        return { rating: 5, comment: "" };
 	    },
@@ -33388,7 +33410,7 @@
 	// var SpotUtil = require('../../util/spot_util.js');
 	var RecentReviews = __webpack_require__(241);
 	var RandomReview = __webpack_require__(269);
-	var UserInfo = __webpack_require__(522);
+	// var UserInfo = require('../nav/UserInfo');
 	
 	var LandingPage = React.createClass({
 	    displayName: 'LandingPage',
@@ -33666,11 +33688,9 @@
 
 /***/ },
 /* 272 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	//var UserActions = require('../actions/user_actions');
-	
-	//var SessionActions = require('../actions/session_actions');
+	var UserActions = __webpack_require__(526);
 	
 	var ApiUtil = {
 	    fetchUser: function (userId) {
@@ -33740,6 +33760,7 @@
 	            method: "DELETE",
 	            success: function () {
 	                removeCurrentUser();
+	                window.location = "/";
 	            }
 	        });
 	    }
@@ -51158,84 +51179,8 @@
 	module.exports = SignUpForm;
 
 /***/ },
-/* 522 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var UserStore = __webpack_require__(523);
-	var ApiUtil = __webpack_require__(272);
-	var Link = ReactRouter.Link;
-	
-	var UserInfo = React.createClass({
-	  displayName: 'UserInfo',
-	
-	  getInitialState: function () {
-	    return {
-	      username: "",
-	      userlink: ""
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    this.userListener = UserStore.addListener(this.change);
-	    ApiUtil.fetchUser(CURRENT_USER);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.userListener.remove();
-	  },
-	
-	  change: function () {
-	    this.setState({
-	      username: UserStore.user()[0].username,
-	      userlink: "/#/users" + UserStore.user()[0].id
-	    });
-	  },
-	
-	  render: function () {
-	    return React.createElement(
-	      Link,
-	      { to: '' },
-	      this.state.username
-	    );
-	  }
-	});
-	
-	module.exports = UserInfo;
-
-/***/ },
-/* 523 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var Store = __webpack_require__(215).Store;
-	var UserStore = new Store(AppDispatcher);
-	var UserConstants = __webpack_require__(524);
-	
-	var currentUser = [];
-	
-	var resetUser = function (newUser) {
-	    currentUser = [];
-	    currentUser.push(newUser);
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	    switch (payload.actionType) {
-	        case UserConstants.USER_RECEIVED:
-	            resetUser(payload.user);
-	            UserStore.__emitChange();
-	            break;
-	    }
-	};
-	
-	UserStore.user = function () {
-	    return currentUser.slice(0);
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
+/* 522 */,
+/* 523 */,
 /* 524 */
 /***/ function(module, exports) {
 
@@ -51244,6 +51189,115 @@
 	};
 	
 	module.exports = UserConstants;
+
+/***/ },
+/* 525 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var StarRating = React.createClass({
+	  displayName: 'StarRating',
+	
+	  componentDidMount: function () {
+	    $("#star-rating").rating({ min: "0",
+	      max: "5",
+	      step: "1",
+	      showClear: false,
+	      showCaption: false,
+	      readonly: true,
+	      size: "xs" });
+	  },
+	
+	  // componentWillReceiveProps: function(newProp) {
+	  //   $("#star-rating").rating('update', newProp.rating);
+	  // },
+	
+	  render: function () {
+	    if (isNaN(this.props.rating)) {
+	      ratingCount = "No rating yet!";
+	    } else {
+	      if (this.props.reviewCount === 1) {
+	        ratingCount = this.props.reviewCount + " review";
+	      } else {
+	        ratingCount = this.props.reviewCount + " reviews";
+	      }
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        { className: 'list-unstyled' },
+	        React.createElement(
+	          'table',
+	          null,
+	          React.createElement(
+	            'tbody',
+	            null,
+	            React.createElement(
+	              'tr',
+	              null,
+	              React.createElement(
+	                'td',
+	                { className: 'col' },
+	                React.createElement(
+	                  'ul',
+	                  { className: 'list-unstyled' },
+	                  React.createElement(
+	                    'li',
+	                    null,
+	                    React.createElement('input', { id: 'star-rating',
+	                      className: 'rating',
+	                      type: 'number',
+	                      min: '1',
+	                      max: '5' })
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                'td',
+	                { className: 'col' },
+	                React.createElement(
+	                  'ul',
+	                  { className: 'list-unstyled' },
+	                  React.createElement(
+	                    'li',
+	                    null,
+	                    ratingCount
+	                  )
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = StarRating;
+
+/***/ },
+/* 526 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var UserConstants = __webpack_require__(524);
+	
+	var UserActions = {
+	    receiveCurrentUser: function (user) {
+	        AppDispatcher.dispatch({
+	            actionType: UserConstants.USER_RECEIVED,
+	            user: user
+	        });
+	    }
+	
+	};
+	
+	module.exports = UserActions;
 
 /***/ }
 /******/ ]);

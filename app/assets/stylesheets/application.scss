@@ -10,8 +10,9 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
  *= require_self
+ *= require jquery-ui
+ *= require star-rating.css
  */
 
 @import 'bootstrap-sprockets';
@@ -72,6 +73,31 @@ img {
     border-right: 1px solid #d8e0e4;
     height: 100%;
     margin-bottom: 40px;
+}
+
+.user-info {
+    border: 1px solid #d8e0e4;
+    border-radius: 7px;
+    margin-top: 20px;
+    padding: 7px;
+    width: 300px;
+    height: 150px;
+    align: center;
+}
+
+.user-info-top {
+    background-color: #F0F9FE;
+    margin: -7px;
+    border-radius: 7px;
+    width: 298px;
+    height: 85px;
+    position: fixed;
+}
+
+.user-info-name {
+    clear: right;
+    position: relative;
+    padding: 20px;
 }
 
 
@@ -215,6 +241,13 @@ img {
     position: relative;
     float: right;
 }
+
+/* FORMS **************/
+.form {
+    padding-bottom: 15px;
+    width: 400px;
+}
+
 
 /* FOOTER *************/
 

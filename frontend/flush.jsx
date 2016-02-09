@@ -41,7 +41,6 @@ var routes = (
     <Route path="spots/:spotId" component={SpotShow}>
       <Route path="review" components={ReviewForm} />
     </Route>
-
   </Route>
 );
 

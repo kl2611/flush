@@ -1,10 +1,12 @@
 var React = require('react');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
+var History = require('react-router').History;
 var ReactRouter = require('react-router');
 var ReviewUtil = require('../../util/review_util');
 
 var ReviewForm = React.createClass({
-    mixins: [LinkedStateMixin, ReactRouter.history],
+    mixins: [LinkedStateMixin, History],
+
     getInitialState: function () {
         return { rating: 5, comment: "" };
     },

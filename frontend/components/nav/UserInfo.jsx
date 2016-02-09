@@ -14,7 +14,10 @@ var UserInfo = React.createClass({
 
   componentDidMount: function(){
     this.userListener = UserStore.addListener(this.change);
-    ApiUtil.fetchUser(CURRENT_USER);
+
+    if (CURRENT_USER_ID) {
+      ApiUtil.fetchUser(CURRENT_USER_ID);
+    }
   },
 
   componentWillUnmount: function(){
@@ -29,10 +32,25 @@ var UserInfo = React.createClass({
   },
 
   render: function(){
-    return(<Link to="">
-              {this.state.username}
-           </Link>
-          );
+    var userInfo;
+    userinfo = <div />
+
+    if (!CURRENT_USER_ID) {
+      userInfo = <div />
+    } else {
+      userInfo = <div className="user-info">
+          <div className="user-info-top">
+            <div id="user-info-name">
+              <h4><Link to="">{this.state.username}</Link></h4>
+            </div>
+          </div>
+
+      </div>
+    }
+
+    return(
+      <div>{userInfo}</div>
+    );
   }
 });
 
