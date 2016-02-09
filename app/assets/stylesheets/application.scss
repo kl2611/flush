@@ -155,6 +155,10 @@ img {
     font-size: 20px;
 }
 
+.container-spots-show {
+    width: 300px;
+}
+
 .list {
     width: 300px;
     float: left;
@@ -181,6 +185,20 @@ img {
     clear: left;
 }
 
+.spot-reviews {
+    list-style: none;
+    display: inline-block;
+    padding-right: 10px;
+    float: left;
+    width: 300px;
+}
+
+.review-form {
+    float: left;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
 /* MAP ************/
 .map {
@@ -188,6 +206,13 @@ img {
   height: 500px;
   position: relative;
   float: right;
+}
+
+.map-detail {
+    width: 300px;
+    height: 200px;
+    position: relative;
+    float: right;
 }
 
 /* FOOTER *************/

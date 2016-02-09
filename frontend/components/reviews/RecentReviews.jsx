@@ -6,6 +6,10 @@ var ReviewStore = require('../../stores/review');
 var ReviewUtil = require('../../util/review_util');
 var Rating = require('./Rating');
 
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 var RecentReviews = React.createClass({
     getInitialState: function() {
         return { recentReviews: [] };

@@ -28,7 +28,8 @@ var Spot = React.createClass({
               <div className="reviews">
                   <h3>Reviews</h3>
                   {reviews.map(function (review) {
-                    return <Review key={review.id} {...review} />;
+                    return (
+                        <Review key={review.id} {...review} />);
                  })}
                   <p />
               </div>

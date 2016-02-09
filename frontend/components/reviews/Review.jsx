@@ -9,12 +9,20 @@ var ReviewUtil = require('../../util/review_util');
 var Review = React.createClass({
   render: function () {
     return (
-      <div>
+      <div className="spot-reviews">
 
-        <li>Rating: {this.props.rating}</li>
-        <li>by: {this.props.username}</li>
-        <li>{this.props.comment}</li>
-        <p />
+        <div className="row">
+          <hr />
+            <div className="col-md-4"><strong>{this.props.username}</strong></div>
+
+            <div className="col-md-8">
+            <ul>
+              <li>Rating: {this.props.rating}</li>
+              <li>{this.props.date}</li>
+              <li>{this.props.comment}</li>
+            </ul>
+            </div>
+          </div>
       </div>
     );
   }
