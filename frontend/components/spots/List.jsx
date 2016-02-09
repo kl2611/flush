@@ -3,13 +3,14 @@ var ListItem = require('./ListItem');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
 
+
 var List = React.createClass({
   handleItemClick: function (spot) {
-    this.props.history.pushState(null, "spots/" + spot.id );
+    this.props.history.pushState(null, "/spots/" + spot.id );
   },
+
   render: function(){
     var handleItemClick = this.handleItemClick;
-
     return (
       <div className="list">
         <h4>Restrooms near you</h4>
@@ -22,6 +23,7 @@ var List = React.createClass({
               key={spot.id} />
           })
         }
+
       </div>
     );
   }

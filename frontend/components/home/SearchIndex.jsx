@@ -127,22 +127,23 @@ var SearchIndex = React.createClass({
     },
 
     handleMapClick: function(coords) {
-        this.props.history.pushState(null, "spots/new", coords);
+        this.props.history.pushState(null, "/spots/new", coords);
     },
 
     handleMarkerClick: function (spot) {
-        this.props.history.pushState(null, "spots/" + spot.id);
+        this.props.history.pushState(null, "/spots/" + spot.id);
     },
 
     render: function() {
         var showResult = this.state.showResult;
         var handleItemClick = this.handleItemClick;
+        var locStr = this.props.params.loc;
 
         return(
         <div id="content-container">
 
             <div id="results">
-                <h4>Results</h4>
+                <h4>Restrooms in {locStr}</h4>
                 <List spots={this.state.spots} history={this.props.history} />
 
                 <div id="map" className="map">

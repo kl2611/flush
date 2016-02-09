@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactRouter = require('react-router');
+var History = ReactRouter.History;
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 
 var ReviewIndex = require('../reviews/ReviewsIndex');
@@ -10,6 +11,8 @@ var TaggingUtil = require('../../util/tagging_util');
 var TagStore = require('../../stores/tag');
 
 var Spot = React.createClass({
+  mixins: [History],
+
   render: function () {
     var spotRating = ReviewStore.averageRating();
     var reviews = this.props.spot.reviews || [];
@@ -17,10 +20,9 @@ var Spot = React.createClass({
 
       return (
           <div id="spot-detail">
-                  <div id="spot-name"><h3>{this.props.spot.name}</h3></div>
+                  <h3>{this.props.spot.name}</h3>
                   <li>Rating: {this.props.spot.average_rating || "No reviews yet"}</li>
                   <li>Description: {this.props.spot.description}</li>
-                  <li>Tags: {this.props.spot.taggings}</li>
 
 
               <div className="reviews">

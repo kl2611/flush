@@ -12,10 +12,10 @@ String.prototype.capitalizeFirstLetter = function() {
 };
 
 var ListItem = React.createClass({
-  mixins: [ReactRouter.history],
+  mixins: [ReactRouter.History],
 
   handleItemClick: function (spot) {
-    this.props.history.pushState(null, "spots/" + spot.id );
+    this.history.pushState(null, "spots/" + spot.id);
   },
 
   getInitialState: function() {
@@ -71,14 +71,13 @@ var ListItem = React.createClass({
     }
 
     var reviewCount = this.state.reviewCount;
-    // var imgSource = spot.pictures[0].source;
 
     return (
       <div>
           <hr />
           <div>
               {spotImg}
-              <li><b><Link to={null, "spots/" + spot.id}>{spot.name}</Link></b></li>
+              <li><b><Link to={null, "/spots/" + spot.id}>{spot.name}</Link></b></li>
               <li>Rating: {spot.average_rating || "No reviews yet"} {reviewCount} Reviews</li>
               <li><ul className="list-unstyled list-inline tag-list">{taggingList}</ul></li>
           </div>
