@@ -54,6 +54,8 @@ var ListItem = React.createClass({
       if (mainPic) {
         var imgSource = mainPic.source;
         spotImg = <img key={mainPic.id} src={imgSource} width="100" height="100" />
+      } else {
+        spotImg = <img src="https://res.cloudinary.com/kellyliu/image/upload/v1455005227/icon-default2_hxc6mt.jpg" width="100" height="100" />
       }
     }
 

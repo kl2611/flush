@@ -37,10 +37,11 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={LandingPage} />
     <Route path="/search/:loc" component={SearchIndex} />
+    <Route path="spots/new" component={SpotForm} />
     <Route path="spots/:spotId" component={SpotShow}>
       <Route path="review" components={ReviewForm} />
     </Route>
-    <Route path="spots/new" component={SpotForm} />
+
   </Route>
 );
 

@@ -161,6 +161,7 @@ img {
 
 .list {
     width: 300px;
+    padding-bottom: 10px;
     float: left;
     position: relative;
 }
@@ -208,9 +209,9 @@ img {
   float: right;
 }
 
-.map-detail {
-    width: 300px;
-    height: 200px;
+#map-detail {
+    width: 350px;
+    height: 250px;
     position: relative;
     float: right;
 }

@@ -56,7 +56,7 @@ var SpotShow = React.createClass({
                     spots={spots}
                     onMapClick={this.handleMapClick} />
 
-                <Spot spot={this.state.spot} className="map" />
+                <Spot spot={this.state.spot} className="map"/>
 
                 <div className="review-form">
                 {

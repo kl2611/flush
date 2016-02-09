@@ -20,8 +20,7 @@ var UserButtons = React.createClass({
                         role="button"
                         aria-haspopup="true"
                         aria-expanded="false">
-                        {username}
-                        <span className='caret'></span>
+                        {username}  <span className='caret' />
                     </a>
 
                     <ul className="dropdown-menu" role="menu">
@@ -29,7 +28,7 @@ var UserButtons = React.createClass({
                             <span className="glyphicon glyphicon-user" /> About Me</a></li>
                         <li><a href="#">
                             <span className="glyphicon glyphicon-cog" /> Account Settings</a></li>
-                        <li className="divider" />
+                        <div className="divider" />
                         <li onClick={this.handleLogOut}><a href="#">
                             <span className="glyphicon glyphicon-log-out" /> Log Out</a>
                         </li>

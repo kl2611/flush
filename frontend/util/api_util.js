@@ -3,15 +3,15 @@
 //var SessionActions = require('../actions/session_actions');
 
 var ApiUtil = {
-    // fetchUser: function(userId) {
-    //     $.ajax({
-    //         url: "api/users/" + userId,
-    //         data: userId,
-    //         success: function(user) {
-    //             UserActions.receiveCurrentUser(user);
-    //         }
-    //     })
-    // },
+    fetchUser: function(userId) {
+        $.ajax({
+            url: "api/users/" + userId,
+            data: userId,
+            success: function(user) {
+                UserActions.receiveCurrentUser(user);
+            }
+        })
+    },
 
     // destroySession: function(id) {
     //     $ajax({
