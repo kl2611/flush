@@ -12,8 +12,10 @@ var LandingPage = React.createClass({
 
             <div className="row">
                 <div className="col-md-8">
+                    <div className="vertical-hr">
                     <h4>Your Next Review Awaits!</h4>
                     <RecentReviews />
+                    </div>
                 </div>
 
                 <div className="col-md-4">

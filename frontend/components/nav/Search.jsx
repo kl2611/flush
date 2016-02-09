@@ -67,7 +67,9 @@ var SearchBar = React.createClass({
 
     render: function() {
         var buttonSubmit = (
-            <button className="btn btn-default" type="button" onClick={this.handleSearch}>Search</button>
+            <button className="btn btn-default" onClick={this.handleSearch}>
+            <span className="glyphicon glyphicon-search" />
+            </button>
         );
 
         var buttonProgress = (
@@ -81,6 +83,7 @@ var SearchBar = React.createClass({
         var design = (
                 <input
                    type="text"
+                   size="40"
                    className="form-control"
                    id="landing-search-input"
                    onChange={this.handleLocChange}
@@ -93,16 +96,14 @@ var SearchBar = React.createClass({
         var showAutocomplete = (this.state.loc !== "") && this.state.showAutocomplete;
 
         return (
-            <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
-                <div className="form-group">
-                {design}
-                {showAutocomplete ? <Dropdown
-                                                            locinput = {this.refs.locinput}
-                                                            handleSearch = {this.handleSearch}
-                                                            handleLocChange = {this.handleLocChange} /> : "" }
-                </div>
-                {buttonSubmit}
-            </form>
+                    <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
+                            {design}
+                            {showAutocomplete ? <Dropdown
+                                                                        locinput = {this.refs.locinput}
+                                                                        handleSearch = {this.handleSearch}
+                                                                        handleLocChange = {this.handleLocChange} /> : "" }
+                            {buttonSubmit}
+                    </form>
         );
     }
 });

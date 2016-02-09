@@ -46,6 +46,7 @@ li {
 .recent-activity-container {
     text-decoration: none;
     padding-bottom: 40px;
+    padding-right: 25px;
 }
 
 .recent-activity-container ul, li {
@@ -55,6 +56,12 @@ li {
 
 .review-of-the-day {
     text-decoration: none;
+}
+
+.vertical-hr {
+    border-right: 1px solid #d8e0e4;
+    height: 100%;
+    margin-bottom: 40px;
 }
 
 
@@ -70,6 +77,8 @@ li {
 .container {
     width: 1000px;
     margin-top: 0px;
+    border: 1px solid #d8e0e4;
+    border-top: 0;
 }
 
 .logo {
@@ -110,8 +119,9 @@ li {
 }
 
 .searchbar {
-    width: 60%;
+    width: 500px;
 }
+
 
 /* CONTENT *************/
 .container {
@@ -138,7 +148,7 @@ li {
 }
 
 .list {
-    width: 400px;
+    width: 300px;
     float: left;
     position: relative;
 }
@@ -148,8 +158,8 @@ li {
 .map {
   width: 600px;
   height: 500px;
-  float: right;
-  position: relative;
+  // float: right;
+  position: fixed;
 }
 
 /* FOOTER *************/
