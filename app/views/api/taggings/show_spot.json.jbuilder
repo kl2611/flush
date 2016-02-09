@@ -12,7 +12,3 @@ json.pictures do
         json.extract! picture, :id, :source
     end
 end
-
-json.address do
-    json.extract! @spot.spot_address, :street_address, :city, :state, :zip, :neighborhood
-end

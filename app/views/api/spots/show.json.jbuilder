@@ -6,6 +6,7 @@ json.taggings do
     json.extract! tagging.tag, :name
   end
 end
+
 json.pictures do
   json.array! @spot.pictures do |picture|
     json.extract! picture, :id, :source

@@ -152,6 +152,23 @@ li {
     position: relative;
 }
 
+.spot-list-item ul, li {
+    list-style: none;
+    display: inline;
+}
+
+.list-inline {
+    display: inline;
+}
+
+.list-inline li:last-child:after {
+    content: "";
+}
+
+.list-inline li:after {
+    content: ",";
+}
+
 
 /* MAP ************/
 .map {
