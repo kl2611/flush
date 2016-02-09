@@ -33111,6 +33111,8 @@
 
 	var React = __webpack_require__(1);
 	var ListItem = __webpack_require__(263);
+	var ReactRouter = __webpack_require__(159);
+	var Link = ReactRouter.Link;
 	
 	var List = React.createClass({
 	  displayName: 'List',
@@ -33147,26 +33149,37 @@
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
+	var Link = ReactRouter.Link;
 	
 	var ListItem = React.createClass({
 	  displayName: 'ListItem',
 	
 	  mixins: [ReactRouter.history],
+	
+	  handleItemClick: function (spot) {
+	    this.props.history.pushState(null, "spots/" + spot.id);
+	  },
+	
 	  render: function () {
 	    var spot = this.props.spot;
 	    return React.createElement(
 	      'div',
-	      { className: 'spot-list-item', onClick: this.props.onClick },
+	      { className: 'spot-list-item' },
+	      React.createElement('hr', null),
 	      React.createElement(
 	        'b',
 	        null,
-	        spot.name
+	        React.createElement(
+	          Link,
+	          { to: (null, "spots/" + spot.id) },
+	          spot.name
+	        )
 	      ),
-	      React.createElement('br', null),
-	      spot.description,
 	      React.createElement('br', null),
 	      'Rating: ',
 	      spot.average_rating || "No reviews yet",
+	      React.createElement('br', null),
+	      spot.description,
 	      React.createElement('br', null),
 	      React.createElement('img', { src: spot.picture_url })
 	    );

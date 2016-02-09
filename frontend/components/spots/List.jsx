@@ -1,5 +1,7 @@
 var React = require('react');
 var ListItem = require('./ListItem');
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
 
 var List = React.createClass({
   handleItemClick: function (spot) {
