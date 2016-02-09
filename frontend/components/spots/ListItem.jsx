@@ -47,21 +47,21 @@ var ListItem = React.createClass({
     var spot = this.props.spot;
 
     var spotImg;
-    if (!this.props.spot) {
-      spotImg = <div />
-    } else {
+
+    if (this.props.spot.pictures[0] === null) {
+      spotImg = <img src="https://res.cloudinary.com/kellyliu/image/upload/v1455005227/icon-default2_hxc6mt.jpg" width="100" height="100" />
+    } else if (this.props.spot.pictures[0]) {
       var mainPic = this.props.spot.pictures[0];
-      if (mainPic) {
-        var imgSource = mainPic.source;
-        spotImg = <img key={mainPic.id} src={imgSource} width="100" height="100" />
-      } else {
-        spotImg = <img src="https://res.cloudinary.com/kellyliu/image/upload/v1455005227/icon-default2_hxc6mt.jpg" width="100" height="100" />
-      }
+      var imgSource = mainPic.source;
+      spotImg = <img key={mainPic.id} src={imgSource} width="100" height="100" />
+    } else {
+      spotImg = <img src="https://res.cloudinary.com/kellyliu/image/upload/v1455005227/icon-default2_hxc6mt.jpg" width="100" height="100" />
     }
+
 
     var taggings = this.props.spot.taggings;
 
-    if(taggings.length === 0) {
+    if(taggings === undefined || taggings.length === 0) {
       taggingList = <li></li>;
     } else {
       taggingList = taggings.map(function(tagging, idx){
