@@ -67,9 +67,9 @@ var SearchBar = React.createClass({
 
     render: function() {
         var buttonSubmit = (
-            <button className="btn btn-default" onClick={this.handleSearch}>
-            <span className="glyphicon glyphicon-search" />
-            </button>
+                <button className="btn btn-default" onClick={this.handleSearch}>
+                <span className="glyphicon glyphicon-search" />
+                </button>
         );
 
         var buttonProgress = (
@@ -96,14 +96,14 @@ var SearchBar = React.createClass({
         var showAutocomplete = (this.state.loc !== "") && this.state.showAutocomplete;
 
         return (
-                    <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
-                            {design}
-                            {showAutocomplete ? <Dropdown
-                                                                        locinput = {this.refs.locinput}
-                                                                        handleSearch = {this.handleSearch}
-                                                                        handleLocChange = {this.handleLocChange} /> : "" }
-                            {buttonSubmit}
-                    </form>
+                <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
+                        {design}
+                        {buttonSubmit}
+                        {showAutocomplete ? <Dropdown
+                                                                    locinput = {this.refs.locinput}
+                                                                    handleSearch = {this.handleSearch}
+                                                                    handleLocChange = {this.handleLocChange} /> : "" }
+                </form>
         );
     }
 });

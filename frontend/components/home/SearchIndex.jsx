@@ -145,7 +145,7 @@ var SearchIndex = React.createClass({
                 <h4>Results</h4>
                 <List spots={this.state.spots} history={this.props.history} />
 
-                <div id="map">
+                <div id="map" className="map">
                     <Map
                         centerLatLng = {this.state.centerLatLng}
                         onMapClick={this.handleMapClick}

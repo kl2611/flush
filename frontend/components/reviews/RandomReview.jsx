@@ -11,7 +11,7 @@ var Rating = require('./Rating');
 var RandomReview = React.createClass({
     getInitialState: function() {
         return({
-                    hotSpot: null,
+                    randSpot: null,
                     reviews: null
                     });
     },
@@ -26,7 +26,7 @@ var RandomReview = React.createClass({
 
     onChange: function() {
         this.setState({
-            hotSpot: SpotStore.current(),
+            randSpot: SpotStore.current(),
             reviews: ReviewStore.findBySpotLimit()
         });
     },
@@ -41,18 +41,18 @@ var RandomReview = React.createClass({
     },
 
     render: function() {
-        var hotSpot = this.state.hotSpot;
+        var randSpot = this.state.randSpot;
         var name;
         var rating = ReviewStore.averageRating();
         var spotLink="";
         var imgSource="";
 
-        if (!hotSpot || isNaN(rating) || rating === 0) {
-            hotSpotRating = "No rating yet!";
+        if (!randSpot || isNaN(rating) || rating === 0) {
+            randSpotRating = "No rating yet!";
         } else {
-            spotLink = "/spots/" + hotSpot.id;
-            imgSource = hotSpot.pictures[0].source;
-            name = hotSpot.name;
+            spotLink = "/spots/" + randSpot.id;
+            imgSource = randSpot.pictures[0].source;
+            name = randSpot.name;
         }
 
         reviews = this.state.reviews;
@@ -73,7 +73,7 @@ var RandomReview = React.createClass({
                                 <p />
                                 {review.rating} stars, {review.date}
                                 <p />
-                                {comment}
+                                <div className="list-item-description">{comment}</div>
                             </div>
                 );
             });
@@ -84,7 +84,7 @@ var RandomReview = React.createClass({
                         <h4><strong>Review of the Day</strong></h4>
                         <img src={imgSource}
                             alt={name}
-                            width="90"
+                            height="100"
                             align="left">
                         </img>
 

@@ -32395,11 +32395,11 @@
 	            'form',
 	            { className: 'navbar-form navbar-nav', role: 'search', onSubmit: this.handleSearch },
 	            design,
+	            buttonSubmit,
 	            showAutocomplete ? React.createElement(Dropdown, {
 	                locinput: this.refs.locinput,
 	                handleSearch: this.handleSearch,
-	                handleLocChange: this.handleLocChange }) : "",
-	            buttonSubmit
+	                handleLocChange: this.handleLocChange }) : ""
 	        );
 	    }
 	});
@@ -33126,7 +33126,7 @@
 	                React.createElement(List, { spots: this.state.spots, history: this.props.history }),
 	                React.createElement(
 	                    'div',
-	                    { id: 'map' },
+	                    { id: 'map', className: 'map' },
 	                    React.createElement(Map, {
 	                        centerLatLng: this.state.centerLatLng,
 	                        onMapClick: this.handleMapClick,
@@ -33263,35 +33263,49 @@
 	
 	    return React.createElement(
 	      'div',
-	      { className: 'spot-list-item' },
+	      null,
 	      React.createElement('hr', null),
 	      React.createElement(
 	        'div',
 	        null,
 	        spotImg,
 	        React.createElement(
-	          'b',
+	          'li',
 	          null,
 	          React.createElement(
-	            Link,
-	            { to: (null, "spots/" + spot.id) },
-	            spot.name
+	            'b',
+	            null,
+	            React.createElement(
+	              Link,
+	              { to: (null, "spots/" + spot.id) },
+	              spot.name
+	            )
 	          )
 	        ),
-	        React.createElement('br', null),
-	        'Rating: ',
-	        spot.average_rating || "No reviews yet",
-	        ' ',
-	        reviewCount,
-	        ' Reviews',
-	        React.createElement('br', null),
 	        React.createElement(
-	          'ul',
-	          { className: 'list-unstyled list-inline tag-list' },
-	          taggingList
+	          'li',
+	          null,
+	          'Rating: ',
+	          spot.average_rating || "No reviews yet",
+	          ' ',
+	          reviewCount,
+	          ' Reviews'
+	        ),
+	        React.createElement(
+	          'li',
+	          null,
+	          React.createElement(
+	            'ul',
+	            { className: 'list-unstyled list-inline tag-list' },
+	            taggingList
+	          )
 	        )
 	      ),
-	      spot.description
+	      React.createElement(
+	        'div',
+	        { className: 'list-item-description' },
+	        spot.description
+	      )
 	    );
 	  }
 	});
@@ -33405,7 +33419,7 @@
 	
 	    getInitialState: function () {
 	        return {
-	            hotSpot: null,
+	            randSpot: null,
 	            reviews: null
 	        };
 	    },
@@ -33420,7 +33434,7 @@
 	
 	    onChange: function () {
 	        this.setState({
-	            hotSpot: SpotStore.current(),
+	            randSpot: SpotStore.current(),
 	            reviews: ReviewStore.findBySpotLimit()
 	        });
 	    },
@@ -33435,18 +33449,18 @@
 	    },
 	
 	    render: function () {
-	        var hotSpot = this.state.hotSpot;
+	        var randSpot = this.state.randSpot;
 	        var name;
 	        var rating = ReviewStore.averageRating();
 	        var spotLink = "";
 	        var imgSource = "";
 	
-	        if (!hotSpot || isNaN(rating) || rating === 0) {
-	            hotSpotRating = "No rating yet!";
+	        if (!randSpot || isNaN(rating) || rating === 0) {
+	            randSpotRating = "No rating yet!";
 	        } else {
-	            spotLink = "/spots/" + hotSpot.id;
-	            imgSource = hotSpot.pictures[0].source;
-	            name = hotSpot.name;
+	            spotLink = "/spots/" + randSpot.id;
+	            imgSource = randSpot.pictures[0].source;
+	            name = randSpot.name;
 	        }
 	
 	        reviews = this.state.reviews;
@@ -33491,7 +33505,11 @@
 	                    ' stars, ',
 	                    review.date,
 	                    React.createElement('p', null),
-	                    comment
+	                    React.createElement(
+	                        'div',
+	                        { className: 'list-item-description' },
+	                        comment
+	                    )
 	                );
 	            });
 	        }
@@ -33510,7 +33528,7 @@
 	            ),
 	            React.createElement('img', { src: imgSource,
 	                alt: name,
-	                width: '90',
+	                height: '100',
 	                align: 'left' }),
 	            reviewList
 	        );

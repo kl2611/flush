@@ -74,18 +74,16 @@ var ListItem = React.createClass({
     // var imgSource = spot.pictures[0].source;
 
     return (
-        <div className="spot-list-item">
+      <div>
           <hr />
           <div>
-            {spotImg}
-            <b><Link to={null, "spots/" + spot.id}>{spot.name}</Link></b>
-            <br />
-            Rating: {spot.average_rating || "No reviews yet"} {reviewCount} Reviews
-            <br/>
-            <ul className="list-unstyled list-inline tag-list">{taggingList}</ul>
+              {spotImg}
+              <li><b><Link to={null, "spots/" + spot.id}>{spot.name}</Link></b></li>
+              <li>Rating: {spot.average_rating || "No reviews yet"} {reviewCount} Reviews</li>
+              <li><ul className="list-unstyled list-inline tag-list">{taggingList}</ul></li>
           </div>
-          {spot.description}
-        </div>
+      <div className="list-item-description">{spot.description}</div>
+      </div>
     );
   }
 });

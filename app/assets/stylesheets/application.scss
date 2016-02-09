@@ -36,6 +36,16 @@ li {
     padding: 0;
 }
 
+img {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.clearfix {
+    overflow: auto;
+}
+
 /* LANDING PAGE *******/
 
 .landing-page h1, h2, h3, h4, h5 {
@@ -105,6 +115,8 @@ li {
 
 .navbar .navbar-collapse {
     text-align: center;
+    text-transform: none;
+    display: inline;
 }
 
 .navbar-right li {
@@ -118,9 +130,6 @@ li {
     color: #9aa2b0;
 }
 
-.searchbar {
-    width: 500px;
-}
 
 
 /* CONTENT *************/
@@ -154,7 +163,6 @@ li {
 
 .spot-list-item ul, li {
     list-style: none;
-    display: inline;
 }
 
 .list-inline {
@@ -169,13 +177,17 @@ li {
     content: ",";
 }
 
+.list-item-description {
+    clear: left;
+}
+
 
 /* MAP ************/
 .map {
   width: 600px;
   height: 500px;
+  position: relative;
   float: right;
-  position: fixed;
 }
 
 /* FOOTER *************/
