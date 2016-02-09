@@ -17,7 +17,7 @@ var RecentReviews = React.createClass({
 
     componentDidMount: function() {
         this.reviewListener = ReviewStore.addListener(this.onChange);
-        ReviewUtil.fetchRecentReviews(6);
+        ReviewUtil.fetchRecentReviews(8);
     },
 
     onChange: function() {
@@ -48,6 +48,9 @@ var RecentReviews = React.createClass({
                 return (
                             <ul key={review.id}>
                             <hr />
+                            <img src={review.user.avatar.source}
+                              height="90"
+                              width="90" />
                                 <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
                                 <li>{review.rating} Stars, {review.date}</li>
                                 <li>{review.comment}</li>

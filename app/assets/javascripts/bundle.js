@@ -31554,7 +31554,7 @@
 	
 	    componentDidMount: function () {
 	        this.reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchRecentReviews(6);
+	        ReviewUtil.fetchRecentReviews(8);
 	    },
 	
 	    onChange: function () {
@@ -31590,6 +31590,9 @@
 	                    'ul',
 	                    { key: review.id },
 	                    React.createElement('hr', null),
+	                    React.createElement('img', { src: review.user.avatar.source,
+	                        height: '90',
+	                        width: '90' }),
 	                    React.createElement(
 	                        'li',
 	                        null,
@@ -32792,16 +32795,24 @@
 	        React.createElement('hr', null),
 	        React.createElement(
 	          'div',
-	          { className: 'col-md-4' },
+	          { className: 'col-md-3' },
 	          React.createElement(
-	            'strong',
-	            null,
-	            this.props.username
+	            'div',
+	            { className: 'user-info-center' },
+	            React.createElement('img', { src: this.props.avatar.source,
+	              height: '90',
+	              width: '90' }),
+	            React.createElement('br', null),
+	            React.createElement(
+	              'div',
+	              { className: 'username' },
+	              this.props.username
+	            )
 	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'col-md-8' },
+	          { className: 'col-md-9' },
 	          React.createElement(
 	            'ul',
 	            null,
@@ -32810,11 +32821,6 @@
 	              null,
 	              'Rating: ',
 	              this.props.rating
-	            ),
-	            React.createElement(
-	              'li',
-	              null,
-	              this.props.date
 	            ),
 	            React.createElement(
 	              'li',
@@ -33527,6 +33533,7 @@
 	                return React.createElement(
 	                    'div',
 	                    { key: review.id },
+	                    React.createElement('hr', null),
 	                    React.createElement(
 	                        'strong',
 	                        null,
@@ -33571,13 +33578,16 @@
 	                React.createElement(
 	                    'strong',
 	                    null,
-	                    'Review of the Day'
+	                    'Reviews of the Day'
 	                )
 	            ),
-	            React.createElement('img', { src: imgSource,
-	                alt: name,
-	                height: '100',
-	                align: 'left' }),
+	            React.createElement(
+	                'div',
+	                { className: 'wrapper' },
+	                React.createElement('img', { src: imgSource,
+	                    alt: name,
+	                    height: '150' })
+	            ),
 	            reviewList
 	        );
 	    }
@@ -50768,9 +50778,13 @@
 	                        role: 'button',
 	                        'aria-haspopup': 'true',
 	                        'aria-expanded': 'false' },
-	                    username,
-	                    '  ',
-	                    React.createElement('span', { className: 'caret' })
+	                    React.createElement(
+	                        'div',
+	                        { className: 'username' },
+	                        username,
+	                        '  ',
+	                        React.createElement('span', { className: 'caret' })
+	                    )
 	                ),
 	                React.createElement(
 	                    'ul',

@@ -13,12 +13,20 @@ var Review = React.createClass({
 
         <div className="row">
           <hr />
-            <div className="col-md-4"><strong>{this.props.username}</strong></div>
+            <div className="col-md-3">
+              <div className="user-info-center">
+                <img src={this.props.avatar.source}
+                  height="90"
+                  width="90">
+                </img>
+                <br />
+                <div className="username">{this.props.username}</div>
+                </div>
+            </div>
 
-            <div className="col-md-8">
+            <div className="col-md-9">
             <ul>
               <li>Rating: {this.props.rating}</li>
-              <li>{this.props.date}</li>
               <li>{this.props.comment}</li>
             </ul>
             </div>

@@ -13,38 +13,92 @@ Tag.delete_all
 Tagging.delete_all
 Picture.delete_all
 
-User.create ( {username: "Guest",
-                        password: "password"} )
+User.create ([ {username: "kelly",
+                        password: "password"},
+
+                        {username: "jibanyan",
+                          password: "jibanyan"},
+
+                        {username: "komasan",
+                         password: "komasan"},
+
+                        {username: "pikachu",
+                          password: "pikachu"}
+])
+
+Picture.create([
+    {name: "Guest Picture",
+        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455058190/fumichan.jpg",
+        imageable_id: 1,
+        imageable_type: "User"},
+
+    {name: "Jibanyan Picture",
+        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057847/Jibanyan.png",
+        imageable_id: 2,
+        imageable_type: "User"},
+
+    {name: "Komasan Picture",
+        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057804/Komasan.jpg",
+        imageable_id: 3,
+        imageable_type: "User"},
+
+    {name: "Pikachu Picture",
+        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057764/pikachu.jpg",
+        imageable_id: 4,
+        imageable_type: "User"}
+])
 
 Review.create ([ {spot_id: 1,
                             user_id: 1,
                             rating: 5,
-                            comment: "This bathroom is AMAZING!"},
+                            comment: "This bathroom is GREAT!"},
+
+                            {spot_id: 1,
+                            user_id: 2,
+                            rating: 3,
+                            comment: "It's okay. Too crowded and busy all the time."},
+
+                            {spot_id: 1,
+                            user_id: 3,
+                            rating: 4,
+                            comment: "Very clean and plenty of amenities"},
 
                             {spot_id: 2,
-                            user_id: 1,
+                            user_id: 3,
                             rating: 2,
-                            comment: "Meh"
+                            comment: "Meh, I've been to better bathrooms out there."
+                            },
+
+                            {spot_id: 2,
+                            user_id: 4,
+                            rating: 5,
+                            comment: "It's so pretty inside!"
                             },
 
                             {spot_id: 3,
                             user_id: 1,
                             rating: 3,
-                            comment: "Average"
+                            comment: "Totally ordinary bathroom"
+                            },
+
+                            {spot_id: 3,
+                            user_id: 2,
+                            rating: 4,
+                            comment: "Nice place"
                             },
 
                             {spot_id: 4,
                             user_id: 1,
                             rating: 5,
-                            comment: "very clean!"
+                            comment: "Very clean!"
                             },
 
-                            {spot_id: 5,
-                            user_id: 1,
-                            rating: 4,
-                            comment: "nice"
+                            {spot_id: 4,
+                            user_id: 3,
+                            rating: 5,
+                            comment: "Wow, they have seat warmers here!"
                             }
-                        ])
+])
 
 Spot.create ([{
                         name: "Lerner Hall",
@@ -116,11 +170,11 @@ Picture.create([{
                            },
                            {
                              name: "Northwest Corner Building 2",
-                             source: "",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1455059106/columbia_noco_2.jpg",
                              imageable_id: 4,
                              imageable_type: "Spot"
                            }
-                           ])
+])
 
 Tag.create([
                     { name: "clean" },

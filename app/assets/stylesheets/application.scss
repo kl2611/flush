@@ -43,8 +43,18 @@ img {
     padding-bottom: 10px;
 }
 
+.wrapper {
+    clear: both;
+    overflow: hidden;
+}
+
 .clearfix {
     overflow: auto;
+}
+
+.username {
+    text-transform: capitalize;
+    font-weight: bold;
 }
 
 /* LANDING PAGE *******/
@@ -214,10 +224,9 @@ img {
 
 .spot-reviews {
     list-style: none;
-    display: inline-block;
     padding-right: 10px;
     float: left;
-    width: 300px;
+    width: 350px;
 }
 
 .review-form {
@@ -225,6 +234,10 @@ img {
     position: relative;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.user-info-center {
+    text-align: center;
 }
 
 /* MAP ************/

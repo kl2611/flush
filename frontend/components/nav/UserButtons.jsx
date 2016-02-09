@@ -12,6 +12,7 @@ var UserButtons = React.createClass({
         var username = this.props.currentUser.username;
 
         return (
+
                 <ul className='nav navbar-nav navbar-right'>
                     <li className="dropdown">
                     <a
@@ -20,7 +21,7 @@ var UserButtons = React.createClass({
                         role="button"
                         aria-haspopup="true"
                         aria-expanded="false">
-                        {username}  <span className='caret' />
+                        <div className="username">{username}  <span className='caret' /></div>
                     </a>
 
                     <ul className="dropdown-menu" role="menu">
