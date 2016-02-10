@@ -117,7 +117,7 @@ img {
 }
 
 .container-fluid {
-    margin: 0px 170px;
+    margin: 0px 150px;
 }
 
 .container {
@@ -127,44 +127,37 @@ img {
     border-top: 0;
 }
 
-.logo {
-    float: left;
+/* BOOTSTRAP NAVBAR *******/
+
+.navbar-default {
+    background-color: #6faccf;
+    padding-top: 5px;
 }
 
-.logo h1 {
-    text-transform: uppercase;
-    font-family: 'Inconsolata';
-    letter-spacing: 4px;
-    font-size: 40px;
-}
+// .navbar-header {
+//     margin-top: 50px;
+// }
 
-.logo h3 a:link, a:hover, a:active,  {
-    text-decoration: none;
-    color: #a3d9ea;
-}
+// .navbar-inner {
+//     min-height: 0px;
+// }
 
-.navbar .navbar-nav {
-    display: inline-block;
-    float: none;
-    vertical-align: top;
-}
-
-.navbar .navbar-collapse {
+.navbar-collapse {
     text-align: center;
     text-transform: none;
-    display: inline;
+    margin-top: 15px;
 }
 
-.navbar-right li {
-    font-family: 'Inconsolata';
-    list-style: none;
-    display: inline;
-}
+// .navbar-right li {
+//     font-family: 'Inconsolata';
+//     list-style: none;
+//     display: inline;
+// }
 
-.navbar-right a:link, a:hover, a:active {
-    text-decoration: none;
-    color: #9aa2b0;
-}
+// .navbar-right a:link, a:hover, a:active {
+//     text-decoration: none;
+//     color: #9aa2b0;
+// }
 
 
 

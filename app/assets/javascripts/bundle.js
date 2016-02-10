@@ -33766,8 +33766,9 @@
 	          ),
 	          React.createElement(
 	            'a',
-	            { className: 'navbar-brand', href: '#' },
-	            'Flush'
+	            { href: '#', className: 'pull-left' },
+	            React.createElement('img', { src: 'http://res.cloudinary.com/kellyliu/image/upload/v1455066768/flushr-logo_copy_ltm8na.png',
+	              height: '80' })
 	          )
 	        ),
 	        React.createElement(
@@ -33782,13 +33783,13 @@
 	        )
 	      )
 	    );
-	    var signUp = React.createElement(
-	      'li',
-	      null,
-	      React.createElement('a', { href: '' })
-	    );
+	    // var signUp = (
+	    //   <li><a href="" /></li>
+	    // );
 	
-	    var logIn = React.createElement('li', null);
+	    // var logIn = (
+	    //   <li />
+	    // );
 	
 	    return React.createElement(
 	      'div',

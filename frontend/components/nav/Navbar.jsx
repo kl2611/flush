@@ -30,7 +30,11 @@ var NavBar = React.createClass({
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
-          <a className="navbar-brand" href="#">Flush</a>
+
+          <a href="#" className="pull-left">
+            <img src="http://res.cloudinary.com/kellyliu/image/upload/v1455066768/flushr-logo_copy_ltm8na.png"
+                      height="80" />
+          </a>
         </div>
 
 
@@ -47,13 +51,13 @@ var NavBar = React.createClass({
     </nav>
 
     );
-    var signUp = (
-      <li><a href="" /></li>
-    );
+    // var signUp = (
+    //   <li><a href="" /></li>
+    // );
 
-    var logIn = (
-      <li />
-    );
+    // var logIn = (
+    //   <li />
+    // );
 
     return (
       <div className = "header-wrapper">
