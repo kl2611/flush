@@ -19,11 +19,12 @@ var MapActions = require('./actions/map_actions');
 
 var NavBar = require('./components/nav/Navbar');
 var SearchBar = require('./components/nav/Search');
+var Home = require('./components/home/Home');
 
 var App = React.createClass({
   render: function() {
     return (
-        <div id="index">
+        <div>
           <NavBar history={this.props.history} location={this.props.location} />
           <div className = "container below-nav">
             {this.props.children}

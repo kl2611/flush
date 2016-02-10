@@ -26,7 +26,7 @@ var Map = React.createClass({
         };
       } else {
         var mapOptions = {
-          center: {lat: 40.8081, lng: -73.9621},
+          center: {lat: 40.728, lng: -74.000},
           zoom: 15
         }
       };

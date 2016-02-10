@@ -41,7 +41,8 @@ var UserAvatar = React.createClass({
       imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
     }
 
-    return(<img src={imgSrc}
+    return(
+          <img src={imgSrc}
                 alt="User Avatar"
                 height="40"
                 width="40" />

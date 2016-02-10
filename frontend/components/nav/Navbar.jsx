@@ -42,7 +42,7 @@ var NavBar = React.createClass({
 
         <form className="navbar-form navbar-nav" role="search">
           <div className="form-group">
-            <strong>Find   </strong> <input type="text" className="form-control" value="Restrooms" readOnly />
+            <strong>Find   </strong> <input type="text" className="form-control" size="15" value="Restrooms" readOnly />
           </div>
         </form>
 
@@ -55,7 +55,6 @@ var NavBar = React.createClass({
         </div>
       </div>
     </nav>
-
     );
     // var signUp = (
     //   <li><a href="" /></li>
@@ -67,7 +66,9 @@ var NavBar = React.createClass({
 
     return (
       <div className = "header-wrapper">
-         {navBar}
+        <div className="shadow">
+           {navBar}
+        </div>
       </div>
     );
 

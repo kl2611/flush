@@ -65,6 +65,7 @@
 	
 	var NavBar = __webpack_require__(271);
 	var SearchBar = __webpack_require__(244);
+	var Home = __webpack_require__(526);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -72,7 +73,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { id: 'index' },
+	      null,
 	      React.createElement(NavBar, { history: this.props.history, location: this.props.location }),
 	      React.createElement(
 	        'div',
@@ -31681,7 +31682,7 @@
 	      };
 	    } else {
 	      var mapOptions = {
-	        center: { lat: 40.8081, lng: -73.9621 },
+	        center: { lat: 40.728, lng: -74.000 },
 	        zoom: 15
 	      };
 	    };
@@ -33216,6 +33217,27 @@
 	
 	  render: function () {
 	    var handleItemClick = this.handleItemClick;
+	
+	    if (this.props.spots.length === 0) {
+	      results = React.createElement(
+	        'div',
+	        null,
+	        'No public restrooms near you. Click on the map to place a new location!'
+	      );
+	    } else {
+	      results = React.createElement(
+	        'div',
+	        null,
+	        this.props.spots.map(function (spot) {
+	          var boundClick = handleItemClick.bind(null, spot);
+	          return React.createElement(ListItem, {
+	            onClick: boundClick,
+	            spot: spot,
+	            key: spot.id });
+	        })
+	      );
+	    }
+	
 	    return React.createElement(
 	      'div',
 	      { className: 'list' },
@@ -33224,13 +33246,7 @@
 	        null,
 	        'Restrooms near you'
 	      ),
-	      this.props.spots.map(function (spot) {
-	        var boundClick = handleItemClick.bind(null, spot);
-	        return React.createElement(ListItem, {
-	          onClick: boundClick,
-	          spot: spot,
-	          key: spot.id });
-	      })
+	      results
 	    );
 	  }
 	});
@@ -33794,7 +33810,7 @@
 	                'Find   '
 	              ),
 	              ' ',
-	              React.createElement('input', { type: 'text', className: 'form-control', value: 'Restrooms', readOnly: true })
+	              React.createElement('input', { type: 'text', className: 'form-control', size: '15', value: 'Restrooms', readOnly: true })
 	            )
 	          ),
 	          React.createElement(SearchBar, { history: this.props.history }),
@@ -33817,7 +33833,11 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'header-wrapper' },
-	      navBar
+	      React.createElement(
+	        'div',
+	        { className: 'shadow' },
+	        navBar
+	      )
 	    );
 	  }
 	});
@@ -51038,7 +51058,7 @@
 	
 	        return React.createElement(
 	            'div',
-	            null,
+	            { className: 'buttons' },
 	            React.createElement(
 	                'ul',
 	                { className: 'nav navbar-nav navbar-right' },
@@ -51130,6 +51150,10 @@
 	
 	    componentDidMount: function () {
 	        $("modal-dialog").addClass("user-modal");
+	    },
+	
+	    componentWillUnmount: function () {
+	        location.reload();
 	    },
 	
 	    render: function () {
@@ -51433,6 +51457,45 @@
 	};
 	
 	module.exports = UserStore;
+
+/***/ },
+/* 526 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Searchbar = __webpack_require__(244);
+	
+	var Home = React.createClass({
+	    displayName: 'Home',
+	
+	    render: function () {
+	        var bgImage = React.createElement('img', { src: 'http://res.cloudinary.com/kellyliu/image/upload/v1455076699/homeimage.jpg', width: '1000' });
+	
+	        var bgImageDiv = React.createElement(
+	            'div',
+	            { className: 'full-bg animated animated-alternate animated-infinite fadeIn' },
+	            bgImage
+	        );
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'jumbotron', id: 'landing-page' },
+	            React.createElement(
+	                'h1',
+	                null,
+	                'FIND PUBLIC RESTROOMS'
+	            ),
+	            React.createElement(
+	                'h4',
+	                null,
+	                'Wherever in the world you may be'
+	            ),
+	            React.createElement(Searchbar, { history: this.props.history })
+	        );
+	    }
+	});
+	
+	module.exports = Home;
 
 /***/ }
 /******/ ]);

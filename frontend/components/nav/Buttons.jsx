@@ -46,7 +46,7 @@ var Buttons = React.createClass({
         var ModalForm = this.state.modalType === "Login" ? LoginForm : SignUpForm;
 
         return (
-            <div>
+            <div className="buttons">
                 <ul className="nav navbar-nav navbar-right">
                     <li onClick={this.openSignUp}>
                         <a>

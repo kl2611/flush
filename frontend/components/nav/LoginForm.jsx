@@ -37,6 +37,10 @@ var LoginForm = React.createClass({
         $("modal-dialog").addClass("user-modal");
     },
 
+    componentWillUnmount: function() {
+        location.reload();
+    },
+
     render: function() {
         return (
             <form

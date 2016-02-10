@@ -11,21 +11,27 @@ var List = React.createClass({
 
   render: function(){
     var handleItemClick = this.handleItemClick;
+
+    if (this.props.spots.length === 0) {
+      results = <div>No public restrooms near you. Click on the map to place a new location!</div>
+    } else {
+        results = <div>{this.props.spots.map(function(spot){
+            var boundClick = handleItemClick.bind(null, spot);
+            return (<ListItem
+                          onClick={boundClick}
+                          spot={spot}
+                          key={spot.id} />)
+          })
+      }</div>
+    }
+
     return (
       <div className="list">
         <h4>Restrooms near you</h4>
-        {
-          this.props.spots.map(function(spot){
-            var boundClick = handleItemClick.bind(null, spot);
-            return <ListItem
-              onClick={boundClick}
-              spot={spot}
-              key={spot.id} />
-          })
-        }
-
+          {results}
       </div>
     );
+
   }
 });
 
