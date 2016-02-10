@@ -1,5 +1,6 @@
 var React = require('react');
 var SessionActions = require('../../actions/session_actions');
+var UserAvatar = require('./UserAvatar');
 
 var UserButtons = React.createClass({
     handleLogOut: function(e) {
@@ -21,7 +22,7 @@ var UserButtons = React.createClass({
                         role="button"
                         aria-haspopup="true"
                         aria-expanded="false">
-                        <div className="username">{username}  <span className='caret' /></div>
+                        <UserAvatar /><span className='caret' />
                     </a>
 
                     <ul className="dropdown-menu" role="menu">

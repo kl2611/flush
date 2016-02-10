@@ -58,10 +58,12 @@ var RecentReviews = React.createClass({
                             <hr />
                             <img src={imgSrc}
                               height="90"
-                              width="90" />
+                              width="90"
+                              className="img" />
                                 <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
                                 <li>{review.rating} Stars, {review.date}</li>
                                 <li>{review.comment}</li>
+                                <br /><br />
                             </ul>);
             });
         }

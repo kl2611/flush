@@ -12,7 +12,7 @@ var SearchBar = React.createClass({
         // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
         return ({
             loc: "",
-            placeholder: "Input address, neighborhood, city, state or zip",
+            placeholder: "Address, neighborhood, city, state or zip",
             showAutocomplete: false,
             showSpinner: false
         });
@@ -97,6 +97,7 @@ var SearchBar = React.createClass({
 
         return (
                 <form className="navbar-form navbar-nav" role="search" onSubmit={this.handleSearch}>
+                        <strong>Near  </strong>
                         {design}
                         {buttonSubmit}
                         {showAutocomplete ? <Dropdown

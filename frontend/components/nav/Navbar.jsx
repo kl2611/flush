@@ -40,6 +40,12 @@ var NavBar = React.createClass({
 
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
+        <form className="navbar-form navbar-nav" role="search">
+          <div className="form-group">
+            <strong>Find   </strong> <input type="text" className="form-control" value="Restrooms" readOnly />
+          </div>
+        </form>
+
         <SearchBar history={this.props.history} />
 
           <ul className="nav navbar-nav navbar-right">

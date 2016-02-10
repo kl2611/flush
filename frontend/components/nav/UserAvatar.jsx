@@ -21,17 +21,30 @@ var UserAvatar = React.createClass({
   },
 
   change: function(){
-    this.setState({
-      avatar: UserStore.user()[0].avatar.source,
-    });
+    if (UserStore.user()[0].avatar === undefined) {
+      this.setState({
+        avatar: "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+      })
+    } else {
+      this.setState({
+          avatar: UserStore.user()[0].avatar.source,
+      });
+    }
   },
 
   render: function(){
-    return(<img src={this.state.avatar}
+    if (this.state.avatar === undefined) {
+      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+    } else if (this.state.avatar) {
+      imgSrc = this.state.avatar
+    } else {
+      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+    }
+
+    return(<img src={imgSrc}
                 alt="User Avatar"
-                height="60"
-                width="60">
-           </img>
+                height="40"
+                width="40" />
           );
   }
 });

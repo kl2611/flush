@@ -31600,7 +31600,8 @@
 	                    React.createElement('hr', null),
 	                    React.createElement('img', { src: imgSrc,
 	                        height: '90',
-	                        width: '90' }),
+	                        width: '90',
+	                        className: 'img' }),
 	                    React.createElement(
 	                        'li',
 	                        null,
@@ -31624,7 +31625,9 @@
 	                        'li',
 	                        null,
 	                        review.comment
-	                    )
+	                    ),
+	                    React.createElement('br', null),
+	                    React.createElement('br', null)
 	                );
 	            });
 	        }
@@ -31843,7 +31846,7 @@
 	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
 	        return {
 	            loc: "",
-	            placeholder: "Input address, neighborhood, city, state or zip",
+	            placeholder: "Address, neighborhood, city, state or zip",
 	            showAutocomplete: false,
 	            showSpinner: false
 	        };
@@ -31929,6 +31932,11 @@
 	        return React.createElement(
 	            'form',
 	            { className: 'navbar-form navbar-nav', role: 'search', onSubmit: this.handleSearch },
+	            React.createElement(
+	                'strong',
+	                null,
+	                'Near  '
+	            ),
 	            design,
 	            buttonSubmit,
 	            showAutocomplete ? React.createElement(Dropdown, {
@@ -32706,7 +32714,7 @@
 	          { className: 'col-md-3' },
 	          React.createElement(
 	            'div',
-	            { className: 'user-info-center' },
+	            { className: 'img' },
 	            React.createElement('img', { src: imgSrc,
 	              height: '90',
 	              width: '90' }),
@@ -33774,6 +33782,21 @@
 	        React.createElement(
 	          'div',
 	          { className: 'collapse navbar-collapse', id: 'bs-example-navbar-collapse-1' },
+	          React.createElement(
+	            'form',
+	            { className: 'navbar-form navbar-nav', role: 'search' },
+	            React.createElement(
+	              'div',
+	              { className: 'form-group' },
+	              React.createElement(
+	                'strong',
+	                null,
+	                'Find   '
+	              ),
+	              ' ',
+	              React.createElement('input', { type: 'text', className: 'form-control', value: 'Restrooms', readOnly: true })
+	            )
+	          ),
 	          React.createElement(SearchBar, { history: this.props.history }),
 	          React.createElement(
 	            'ul',
@@ -50886,6 +50909,7 @@
 
 	var React = __webpack_require__(1);
 	var SessionActions = __webpack_require__(278);
+	var UserAvatar = __webpack_require__(524);
 	
 	var UserButtons = React.createClass({
 	    displayName: 'UserButtons',
@@ -50913,13 +50937,8 @@
 	                        role: 'button',
 	                        'aria-haspopup': 'true',
 	                        'aria-expanded': 'false' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'username' },
-	                        username,
-	                        '  ',
-	                        React.createElement('span', { className: 'caret' })
-	                    )
+	                    React.createElement(UserAvatar, null),
+	                    React.createElement('span', { className: 'caret' })
 	                ),
 	                React.createElement(
 	                    'ul',
@@ -51325,6 +51344,95 @@
 	});
 	
 	module.exports = SignUpForm;
+
+/***/ },
+/* 524 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var UserStore = __webpack_require__(525);
+	var ApiUtil = __webpack_require__(272);
+	var Link = ReactRouter.Link;
+	
+	var UserAvatar = React.createClass({
+	  displayName: 'UserAvatar',
+	
+	  getInitialState: function () {
+	    return {
+	      avatar: ""
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.userListener = UserStore.addListener(this.change);
+	    ApiUtil.fetchUser(CURRENT_USER_ID);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.userListener.remove();
+	  },
+	
+	  change: function () {
+	    if (UserStore.user()[0].avatar === undefined) {
+	      this.setState({
+	        avatar: "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+	      });
+	    } else {
+	      this.setState({
+	        avatar: UserStore.user()[0].avatar.source
+	      });
+	    }
+	  },
+	
+	  render: function () {
+	    if (this.state.avatar === undefined) {
+	      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	    } else if (this.state.avatar) {
+	      imgSrc = this.state.avatar;
+	    } else {
+	      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	    }
+	
+	    return React.createElement('img', { src: imgSrc,
+	      alt: 'User Avatar',
+	      height: '40',
+	      width: '40' });
+	  }
+	});
+	
+	module.exports = UserAvatar;
+
+/***/ },
+/* 525 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var Store = __webpack_require__(215).Store;
+	var UserStore = new Store(AppDispatcher);
+	var UserConstants = __webpack_require__(274);
+	
+	var currentUser = [];
+	
+	var resetUser = function (newUser) {
+	    currentUser = [];
+	    currentUser.push(newUser);
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	    switch (payload.actionType) {
+	        case UserConstants.USER_RECEIVED:
+	            resetUser(payload.user);
+	            UserStore.__emitChange();
+	            break;
+	    }
+	};
+	
+	UserStore.user = function () {
+	    return currentUser.slice(0);
+	};
+	
+	module.exports = UserStore;
 
 /***/ }
 /******/ ]);
