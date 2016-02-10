@@ -13,16 +13,16 @@ Tag.delete_all
 Tagging.delete_all
 Picture.delete_all
 
-User.create ([ {username: "kelly",
+User.create ([ {username: "Kelly",
                         password: "password"},
 
-                        {username: "jibanyan",
+                        {username: "Jibanyan",
                           password: "jibanyan"},
 
-                        {username: "komasan",
+                        {username: "Komasan",
                          password: "komasan"},
 
-                        {username: "pikachu",
+                        {username: "Pikachu",
                           password: "pikachu"}
 ])
 

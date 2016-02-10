@@ -25,7 +25,7 @@ var LoginForm = React.createClass({
 
     fillOutLogin: function() {
         var username = "kelly"
-        var password = "kellykelly"
+        var password = "password"
 
         this.setState({
             username: username,

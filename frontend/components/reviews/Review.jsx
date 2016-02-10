@@ -8,6 +8,14 @@ var ReviewUtil = require('../../util/review_util');
 
 var Review = React.createClass({
   render: function () {
+      if (this.props.avatar === undefined) {
+          imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+      } else if (this.props.avatar.source) {
+          imgSrc = this.props.avatar.source
+      } else {
+          imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+      }
+
     return (
       <div className="spot-reviews">
 
@@ -15,7 +23,7 @@ var Review = React.createClass({
           <hr />
             <div className="col-md-3">
               <div className="user-info-center">
-                <img src={this.props.avatar.source}
+                <img src={imgSrc}
                   height="90"
                   width="90">
                 </img>

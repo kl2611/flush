@@ -45,10 +45,18 @@ var RecentReviews = React.createClass({
                 var nameDisplay = <strong>{username}</strong>;
                 var status = " wrote a review for ";
 
+                if (review.user.avatar === undefined) {
+                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+                } else if (review.user.avatar.source) {
+                    imgSrc = review.user.avatar.source
+                } else {
+                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+                }
+
                 return (
                             <ul key={review.id}>
                             <hr />
-                            <img src={review.user.avatar.source}
+                            <img src={imgSrc}
                               height="90"
                               width="90" />
                                 <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
