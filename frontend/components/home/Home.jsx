@@ -6,7 +6,7 @@ var LandingPage = require('./LandingPage');
 
 var Home = React.createClass({
     componentDidMount: function() {
-        window.scroll(0, 100);
+        window.scroll(0, 85);
     },
 
     render: function() {

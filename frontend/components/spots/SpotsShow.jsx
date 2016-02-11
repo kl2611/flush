@@ -44,6 +44,9 @@ var SpotShow = React.createClass({
     },
 
     render: function () {
+        console.log(this.state.spot.id);
+        console.log(this.props.params.spotId);
+
         var spots = [];
         if (this.state.spot) {
             spots.push(this.state.spot);
@@ -51,6 +54,7 @@ var SpotShow = React.createClass({
 
         var Link = ReactRouter.Link;
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
+        var locStr = this.props.params.loc;
 
         return (
         <div className="container-fluid">
@@ -58,7 +62,8 @@ var SpotShow = React.createClass({
 
                 <div className="row">
                     <div className="col-md-8">
-                        <Link to = "/">Back to Restrooms Index</Link>
+                        <p />
+                        <h5><Link to = "/search/">Back to Search Results</Link></h5>
 
                         <Spot spot={this.state.spot} className="map"/>
                     </div>

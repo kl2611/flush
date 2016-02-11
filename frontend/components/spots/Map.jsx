@@ -37,7 +37,7 @@ var Map = React.createClass({
   },
 
   componentDidMount: function() {
-    console.log("mapCompMounted");
+    console.log("Map mounted");
       this._initializeMaps(this.props.centerLatLng);
 
       if (this.props.spots) {

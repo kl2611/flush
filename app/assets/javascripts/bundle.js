@@ -31692,7 +31692,7 @@
 	  },
 	
 	  componentDidMount: function () {
-	    console.log("mapCompMounted");
+	    console.log("Map mounted");
 	    this._initializeMaps(this.props.centerLatLng);
 	
 	    if (this.props.spots) {
@@ -32036,6 +32036,9 @@
 	    },
 	
 	    render: function () {
+	        console.log(this.state.spot.id);
+	        console.log(this.props.params.spotId);
+	
 	        var spots = [];
 	        if (this.state.spot) {
 	            spots.push(this.state.spot);
@@ -32043,6 +32046,7 @@
 	
 	        var Link = ReactRouter.Link;
 	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
+	        var locStr = this.props.params.loc;
 	
 	        return React.createElement(
 	            'div',
@@ -32056,10 +32060,15 @@
 	                    React.createElement(
 	                        'div',
 	                        { className: 'col-md-8' },
+	                        React.createElement('p', null),
 	                        React.createElement(
-	                            Link,
-	                            { to: '/' },
-	                            'Back to Restrooms Index'
+	                            'h5',
+	                            null,
+	                            React.createElement(
+	                                Link,
+	                                { to: '/search/' },
+	                                'Back to Search Results'
+	                            )
 	                        ),
 	                        React.createElement(Spot, { spot: this.state.spot, className: 'map' })
 	                    ),
@@ -51511,7 +51520,7 @@
 	    displayName: 'Home',
 	
 	    componentDidMount: function () {
-	        window.scroll(0, 100);
+	        window.scroll(0, 85);
 	    },
 	
 	    render: function () {
