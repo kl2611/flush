@@ -68,7 +68,8 @@ var RandomReview = React.createClass({
                     comment = review.comment;
                 }
 
-                return (<div key={review.id}>
+                return (
+                            <div key={review.id}>
                                 <hr />
                                 <strong>{nameDisplay}</strong>  wrote a <b>review</b> for <strong><Link to={spotLink}>{name}</Link></strong>
                                 <p />
@@ -82,7 +83,8 @@ var RandomReview = React.createClass({
 
         return (
                 <div className="review-of-the-day">
-                    <h4><strong>Reviews of the Day</strong></h4>
+                    <h2>Reviews of the Day</h2>
+                    <hr />
                     <div className="wrapper">
                         <img src={imgSource}
                             alt={name}

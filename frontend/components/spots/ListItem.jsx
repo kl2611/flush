@@ -77,12 +77,13 @@ var ListItem = React.createClass({
     return (
       <div>
           <hr />
-          <div>
+          <div className="list-img">
               {spotImg}
+          </div>
               <li><b><Link to={null, "/spots/" + spot.id}>{spot.name}</Link></b></li>
               <li>Rating: {spot.average_rating || "No reviews yet"} {reviewCount} Reviews</li>
               <li><ul className="list-unstyled list-inline tag-list">{taggingList}</ul></li>
-          </div>
+
       <div className="list-item-description">{spot.description}</div>
       </div>
     );

@@ -17,7 +17,7 @@ var RecentReviews = React.createClass({
 
     componentDidMount: function() {
         this.reviewListener = ReviewStore.addListener(this.onChange);
-        ReviewUtil.fetchRecentReviews(8);
+        ReviewUtil.fetchRecentReviews(5);
     },
 
     onChange: function() {
@@ -63,14 +63,14 @@ var RecentReviews = React.createClass({
                                 <li>{nameDisplay}{status}<Link to={null, "/spots/" + review.spot_name.id}>{review.spot_name.name}:</Link></li>
                                 <li>{review.rating} Stars, {review.date}</li>
                                 <li>{review.comment}</li>
-                                <br /><br />
+                                <br />
                             </ul>);
             });
         }
 
         return (
-            <div className ="recent-activity-container">
-            <h3>Recent Activity</h3>
+            <div className ="recent-reviews">
+            <h2 className="recent-reviews">Recent Activity</h2>
                 {reviews}
             </div>
         );

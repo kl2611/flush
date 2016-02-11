@@ -33,7 +33,7 @@ var NavBar = React.createClass({
 
           <a href="#" className="pull-left">
             <img src="http://res.cloudinary.com/kellyliu/image/upload/v1455066768/flushr-logo_copy_ltm8na.png"
-                      height="80" />
+                      height="60" />
           </a>
         </div>
 
@@ -65,11 +65,9 @@ var NavBar = React.createClass({
     // );
 
     return (
-      <div className = "header-wrapper">
         <div className="shadow">
            {navBar}
         </div>
-      </div>
     );
 
   }

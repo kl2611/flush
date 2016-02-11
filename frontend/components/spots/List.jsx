@@ -13,7 +13,9 @@ var List = React.createClass({
     var handleItemClick = this.handleItemClick;
 
     if (this.props.spots.length === 0) {
-      results = <div>No public restrooms near you. Click on the map to place a new location!</div>
+      results = <div><h3>No public restrooms near you. Click on the map to place a new location!</h3>
+      <h4>Or, check out the demo at Morningside Heights</h4>
+      </div>
     } else {
         results = <div>{this.props.spots.map(function(spot){
             var boundClick = handleItemClick.bind(null, spot);
@@ -27,7 +29,6 @@ var List = React.createClass({
 
     return (
       <div className="list">
-        <h4>Restrooms near you</h4>
           {results}
       </div>
     );

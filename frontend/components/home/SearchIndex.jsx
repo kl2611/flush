@@ -140,22 +140,29 @@ var SearchIndex = React.createClass({
         var locStr = this.props.params.loc;
 
         return(
-        <div id="content-container">
+            <div className="container-fluid">
+                <div className="search-index-container">
+                    <div className="row">
 
-            <div id="results">
-                <h4>Restrooms in {locStr}</h4>
-                <List spots={this.state.spots} history={this.props.history} />
+                        <h4>Restrooms in {locStr}</h4>
 
-                <div id="map" className="map">
-                    <Map
-                        centerLatLng = {this.state.centerLatLng}
-                        onMapClick={this.handleMapClick}
-                        onMarkerClick={this.handleMarkerClick}
-                        spots={this.state.spots}/>
+                        <div className="col-md-8">
+                            <List spots={this.state.spots} history={this.props.history} />
+                        </div>
+
+                        <div className="col-md-4">
+                            <div className="map">
+                            <Map
+                                centerLatLng = {this.state.centerLatLng}
+                                onMapClick={this.handleMapClick}
+                                onMarkerClick={this.handleMarkerClick}
+                                spots={this.state.spots}/>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-
-        </div>
         );
     }
 });

@@ -1,24 +1,33 @@
 var React = require('react');
-var Searchbar = require('../nav/Search');
+var Grid = require('react-bootstrap').Grid;
+var HomeSearchbar = require('./HomeSearchbar');
+var RecentReviews = require('../reviews/RecentReviews');
+var LandingPage = require('./LandingPage');
 
 var Home = React.createClass({
+
+
     render: function() {
-        var bgImage= <img src="http://res.cloudinary.com/kellyliu/image/upload/v1455076699/homeimage.jpg" width="1000"/>
-
-        var bgImageDiv = (
-            <div className="full-bg animated animated-alternate animated-infinite fadeIn">
-                {bgImage}
-            </div>
-        );
-
         return (
-            <div className="jumbotron" id="landing-page">
+        <div>
+            <div className="jumbotron">
+                <div className="jumbotron-container">
+                    <div className="jumbotron-header">
+                        <h1>FIND PUBLIC RESTROOMS</h1>
+                        <h2>Wherever in the world you may be.</h2>
 
-                <h1>FIND PUBLIC RESTROOMS</h1>
-                <h4>Wherever in the world you may be</h4>
-
-                <Searchbar history={this.props.history}/>
+                        <div className="jumbotron-searchbar">
+                            <HomeSearchbar history={this.props.history}/>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div className="landing-page">
+                    <LandingPage />
+            </div>
+        </div>
+
         );
     }
 });

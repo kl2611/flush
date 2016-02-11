@@ -44,6 +44,12 @@ li {
     text-align: center;
 }
 
+.list-img {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
 .wrapper {
     clear: both;
     overflow: hidden;
@@ -59,10 +65,22 @@ li {
 }
 
 /* LANDING PAGE *******/
+.landing-page {
+    margin-top: -22%;
+    // margin-left: 7%;
+    // margin-right: 7%;
+    padding-right: 8%;
+    padding-left: 8%;
+    margin-bottom: 2%;
+    background-color: #FFFFFF;
+}
 
-.landing-page h1, h2, h3, h4, h5 {
-    color: #6075f4;
-    font-weight: bold;
+.recent-reviews {
+
+}
+
+.recent-reviews h2 {
+    font-weight: strong;
 }
 
 .recent-activity-container {
@@ -113,25 +131,66 @@ li {
 
 
 /* HEADER *************/
-.header-wrapper {
-    height: 100%;
+// .header-wrapper {
+//     height: 100%;
+// }
+
+// .container {
+//     width: 1000px;
+//     margin-top: -17px;
+//     border: 1px solid #d8e0e4;
+//     border-top: 0;
+// }
+
+.jumbotron {
+    position: relative;
+    background: url("https://res.cloudinary.com/kellyliu/image/upload/v1455146649/home-img2.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 0%;
+    padding-top: 66.64%;
 }
 
-.container-fluid {
-    margin: 0px 110px;
+.jumbotron-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
-.container {
-    width: 1000px;
-    margin-top: -17px;
-    border: 1px solid #d8e0e4;
-    border-top: 0;
+.jumbotron-search {
+
 }
+
+.jumbotron-header {
+    padding-top: 18%;
+    padding-left: 5%;
+    padding-right: 5%;
+    text-align: center;
+}
+
+.jumbotron-header h1 {
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 0px 0 black, 0 1px black, 0px 0 black, 0 0px black;
+}
+
+.jumbotron-searchbar {
+    margin-bottom: 0px;
+}
+
 
 /* BOOTSTRAP NAVBAR *******/
+.navbar {
+    margin-bottom: -1px;
+    border-radius: 0 !important;
+}
+
 
 .navbar-default {
-    background-color: #6faccf;
+    background-color: #F0F9FE;
     padding-top: 5px;
     padding-bottom: 8px;
 }
@@ -147,7 +206,7 @@ li {
 .navbar-collapse {
     text-align: center;
     text-transform: none;
-    margin-top: 27px;
+    margin-top: 10px;
 }
 
 // .navbar-right li {
@@ -162,17 +221,14 @@ li {
 // }
 
 /* NAVBAR *******/
-.shadow {
-    -webkit-box-shadow: 0 2px 10px -6px black;
-       -moz-box-shadow: 0 2px 10px -6px black;
-            box-shadow: 0 2px 10px -6px black;
-}
+// .shadow {
+//     -webkit-box-shadow: 0 1px 10px -6px black;
+//        -moz-box-shadow: 0 1px 10px -6px black;
+//             box-shadow: 0 1px 10px -6px black;
+// }
 
 
 /* CONTENT *************/
-.container {
-    background-color: #FFFFFF;
-}
 
 .content-wrapper {
     width: 100%;
@@ -197,7 +253,7 @@ li {
 }
 
 .list {
-    width: 300px;
+    width: 400px;
     padding-bottom: 10px;
     float: left;
     position: relative;
@@ -241,12 +297,27 @@ li {
     text-align: center;
 }
 
+/* SEARCH INDEX ************/
+
+.search-index-container {
+    margin: 0% 10%;
+    width: 1000px;
+    display: flex;
+    height: 100%;
+    padding-left: 20px;
+    border: 1px solid #d8e0e4;
+    border-top: 0;
+    background-color: #FFFFFF;
+}
+
 /* MAP ************/
 .map {
-  width: 600px;
-  height: 500px;
-  position: relative;
+  width: 550px;
+  height: 600px;
   float: right;
+  position: relative;
+  z-index: 5;
+  margin-right: 0px;
 }
 
 #map-detail {
@@ -266,7 +337,7 @@ li {
 
 .footer-container {
     height: 150px;
-    padding-top: 40px;
+    // padding-top: 40px;
     text-align: center;
     font-family: "Inconsolata";
     background-color: #F0F9FE;

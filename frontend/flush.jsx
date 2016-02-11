@@ -26,9 +26,7 @@ var App = React.createClass({
     return (
         <div>
           <NavBar history={this.props.history} location={this.props.location} />
-          <div className = "container below-nav">
             {this.props.children}
-          </div>
         </div>
     );
   }
@@ -36,7 +34,7 @@ var App = React.createClass({
 
 var routes = (
   <Route path="/" component={App}>
-    <IndexRoute component={LandingPage} />
+    <IndexRoute component={Home} />
     <Route path="/search/:loc" component={SearchIndex} />
     <Route path="spots/new" component={SpotForm} />
     <Route path="spots/:spotId" component={SpotShow}>
