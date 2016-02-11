@@ -21,7 +21,7 @@ var Spot = React.createClass({
     var Link = ReactRouter.Link;
 
       return (
-          <div id="spot-detail">
+          <div className="spot-detail">
                   <h3>{this.props.spot.name}</h3>
                   <li>Rating: {this.props.spot.average_rating || "No reviews yet"}</li>
                   <li>Description: {this.props.spot.description}</li>

@@ -29,12 +29,29 @@ var SpotShow = React.createClass({
     },
 
     componentDidMount: function() {
-        this.spotListener = SpotStore.addListener(this._spotChanged);
-        SpotUtil.fetchSpots();
+        console.log("did component mount");
+        this.spotListener = SpotStore.addListener(this.onChange);
+        SpotUtil.fetchSingleSpot(parseInt(this.props.params.spotId));
     },
 
     componentWillUnmount: function () {
         this.spotListener.remove();
+    },
+
+    componentWillReceiveProps: function(newProps) {
+        SpotUtil.fetchSingleSpot(parseInt(newProps.params.spotId));
+    },
+
+    onChange: function() {
+        var spotId = parseInt(this.props.params.spotId);
+        var current_spot;
+        if (SpotStore.current()) {
+            current_spot = SpotStore.current();
+        }
+
+        this.setState({
+            spot: current_spot
+        });
     },
 
     _spotChanged: function () {
@@ -44,9 +61,6 @@ var SpotShow = React.createClass({
     },
 
     render: function () {
-        console.log(this.state.spot.id);
-        console.log(this.props.params.spotId);
-
         var spots = [];
         if (this.state.spot) {
             spots.push(this.state.spot);
@@ -80,6 +94,7 @@ var SpotShow = React.createClass({
             <div className="container-spots-show">
                 {this.props.children || <Link to={reviewURL}>Leave a Review</Link>}
             </div>
+            <p />
         </div>
         );
     }

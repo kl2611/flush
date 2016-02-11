@@ -49,6 +49,10 @@ var RandomReview = React.createClass({
 
         if (!randSpot || isNaN(rating) || rating === 0) {
             randSpotRating = "No rating yet!";
+        } else if (randSpot.pictures === undefined) {
+            spotLink = "/spots/" + randSpot.id;
+            imgSource = "assets/icon-default.jpg"
+            name = randSpot.name;
         } else {
             spotLink = "/spots/" + randSpot.id;
             imgSource = randSpot.pictures[0].source;

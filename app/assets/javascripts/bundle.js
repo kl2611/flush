@@ -32021,12 +32021,29 @@
 	    },
 	
 	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._spotChanged);
-	        SpotUtil.fetchSpots();
+	        console.log("did component mount");
+	        this.spotListener = SpotStore.addListener(this.onChange);
+	        SpotUtil.fetchSingleSpot(parseInt(this.props.params.spotId));
 	    },
 	
 	    componentWillUnmount: function () {
 	        this.spotListener.remove();
+	    },
+	
+	    componentWillReceiveProps: function (newProps) {
+	        SpotUtil.fetchSingleSpot(parseInt(newProps.params.spotId));
+	    },
+	
+	    onChange: function () {
+	        var spotId = parseInt(this.props.params.spotId);
+	        var current_spot;
+	        if (SpotStore.current()) {
+	            current_spot = SpotStore.current();
+	        }
+	
+	        this.setState({
+	            spot: current_spot
+	        });
 	    },
 	
 	    _spotChanged: function () {
@@ -32036,9 +32053,6 @@
 	    },
 	
 	    render: function () {
-	        console.log(this.state.spot.id);
-	        console.log(this.props.params.spotId);
-	
 	        var spots = [];
 	        if (this.state.spot) {
 	            spots.push(this.state.spot);
@@ -32090,7 +32104,8 @@
 	                    { to: reviewURL },
 	                    'Leave a Review'
 	                )
-	            )
+	            ),
+	            React.createElement('p', null)
 	        );
 	    }
 	});
@@ -32129,7 +32144,7 @@
 	
 	    return React.createElement(
 	      'div',
-	      { id: 'spot-detail' },
+	      { className: 'spot-detail' },
 	      React.createElement(
 	        'h3',
 	        null,
@@ -33587,6 +33602,10 @@
 	
 	        if (!randSpot || isNaN(rating) || rating === 0) {
 	            randSpotRating = "No rating yet!";
+	        } else if (randSpot.pictures === undefined) {
+	            spotLink = "/spots/" + randSpot.id;
+	            imgSource = "assets/icon-default.jpg";
+	            name = randSpot.name;
 	        } else {
 	            spotLink = "/spots/" + randSpot.id;
 	            imgSource = randSpot.pictures[0].source;
