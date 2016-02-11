@@ -151,6 +151,7 @@ var SearchIndex = React.createClass({
                         </div>
 
                         <div className="col-md-4">
+                            <p /><p />
                             <div className="map">
                             <Map
                                 centerLatLng = {this.state.centerLatLng}

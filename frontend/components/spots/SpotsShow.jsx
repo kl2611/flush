@@ -53,23 +53,29 @@ var SpotShow = React.createClass({
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
 
         return (
-            <div className="spots-reviews">
+        <div className="container-fluid">
+            <div className="container-spots-show">
 
-                <Link to = "/">Back to Restrooms Index</Link>
+                <div className="row">
+                    <div className="col-md-8">
+                        <Link to = "/">Back to Restrooms Index</Link>
 
-                <Map className="map"
-                    singleSpot={true}
-                    spots={spots}
-                    onMapClick={this.handleMapClick} />
-                <Spot spot={this.state.spot} className="map"/>
+                        <Spot spot={this.state.spot} className="map"/>
+                    </div>
 
-                <div className="review-form">
-                {
-                    this.props.children ||
-                        <Link to={reviewURL}>Leave a Review</Link>
-                }
+                    <div className="col-md-4">
+                        <Map className="map"
+                            singleSpot={true}
+                            spots={spots}
+                            onMapClick={this.handleMapClick} />
+                    </div>
                 </div>
             </div>
+
+            <div className="container-spots-show">
+                {this.props.children || <Link to={reviewURL}>Leave a Review</Link>}
+            </div>
+        </div>
         );
     }
 });

@@ -13,7 +13,6 @@ var UserButtons = React.createClass({
         var username = this.props.currentUser.username;
 
         return (
-
                 <ul className='nav navbar-nav navbar-right'>
                     <li className="dropdown">
                     <a

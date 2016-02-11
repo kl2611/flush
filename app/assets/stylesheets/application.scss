@@ -160,15 +160,17 @@ li {
     right: 0;
 }
 
-.jumbotron-search {
-
-}
-
 .jumbotron-header {
     padding-top: 18%;
     padding-left: 5%;
     padding-right: 5%;
     text-align: center;
+}
+
+.jumbotron h2 {
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 1px 0 black, 0 1px black, 0px 0 black, 0 0px black;
 }
 
 .jumbotron-header h1 {
@@ -221,11 +223,15 @@ li {
 // }
 
 /* NAVBAR *******/
+
+
 // .shadow {
 //     -webkit-box-shadow: 0 1px 10px -6px black;
 //        -moz-box-shadow: 0 1px 10px -6px black;
 //             box-shadow: 0 1px 10px -6px black;
 // }
+
+
 
 
 /* CONTENT *************/
@@ -249,7 +255,17 @@ li {
 }
 
 .container-spots-show {
-    width: 300px;
+    margin: auto;
+    width: 1000px;
+    height: 100%;
+    display: flex;
+    padding-left: 15px;
+    background-color: #FFFFFF;
+}
+
+.leave-a-review {
+    position: absolute;
+    bottom: 0;
 }
 
 .list {
@@ -310,6 +326,14 @@ li {
     background-color: #FFFFFF;
 }
 
+// #search-index-map-container {
+//     position: fixed;
+//     top: 80px;
+//     right: 0px;
+//     width: 35%;
+//     height: calc(100% - 190px);
+// }
+
 /* MAP ************/
 .map {
   width: 550px;
@@ -320,11 +344,16 @@ li {
   margin-right: 0px;
 }
 
-#map-detail {
+.map-detail {
     width: 350px;
     height: 250px;
     position: relative;
     float: right;
+}
+
+.map.sticky {
+    position: fixed;
+    top: 0;
 }
 
 /* FORMS **************/

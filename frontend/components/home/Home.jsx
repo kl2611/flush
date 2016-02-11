@@ -5,7 +5,9 @@ var RecentReviews = require('../reviews/RecentReviews');
 var LandingPage = require('./LandingPage');
 
 var Home = React.createClass({
-
+    componentDidMount: function() {
+        window.scroll(0, 100);
+    },
 
     render: function() {
         return (

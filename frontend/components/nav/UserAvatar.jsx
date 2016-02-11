@@ -45,7 +45,9 @@ var UserAvatar = React.createClass({
           <img src={imgSrc}
                 alt="User Avatar"
                 height="40"
-                width="40" />
+                width="40"
+                className="avatar" />
+
           );
   }
 });
