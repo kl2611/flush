@@ -186,16 +186,18 @@ li {
 
 /* BOOTSTRAP NAVBAR *******/
 .navbar {
+    height: 100%;
     margin-bottom: -1px;
     border-radius: 0 !important;
-}
-
-
-.navbar-default {
-    background-color: #F0F9FE;
     padding-top: 5px;
-    padding-bottom: 8px;
+    padding-bottom: 0px;
 }
+
+// .navbar-light {
+//     background-color: #F0F9FE;
+//     margin-top: 5px;
+//     padding-bottom: 0px;
+// }
 
 // .navbar-header {
 //     margin-top: 50px;
@@ -208,7 +210,6 @@ li {
 .navbar-collapse {
     text-align: center;
     text-transform: none;
-    margin-top: 10px;
 }
 
 // .navbar-right li {
@@ -224,6 +225,9 @@ li {
 
 /* NAVBAR *******/
 
+.avatar {
+    padding: 0px !important;
+}
 
 // .shadow {
 //     -webkit-box-shadow: 0 1px 10px -6px black;

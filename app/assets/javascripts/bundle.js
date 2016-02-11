@@ -33794,7 +33794,7 @@
 	  render: function () {
 	    var navBar = React.createElement(
 	      'nav',
-	      { className: 'navbar navbar-default' },
+	      { className: 'navbar navbar-light' },
 	      React.createElement(
 	        'div',
 	        { className: 'container-fluid' },
@@ -33817,7 +33817,7 @@
 	            'a',
 	            { href: '#', className: 'pull-left' },
 	            React.createElement('img', { src: 'http://res.cloudinary.com/kellyliu/image/upload/v1455066768/flushr-logo_copy_ltm8na.png',
-	              height: '60' })
+	              height: '45' })
 	          )
 	        ),
 	        React.createElement(
@@ -33839,11 +33839,7 @@
 	            )
 	          ),
 	          React.createElement(SearchBar, { history: this.props.history }),
-	          React.createElement(
-	            'ul',
-	            { className: 'nav navbar-nav navbar-right' },
-	            React.createElement(NavUserIndex, { history: this.props.history })
-	          )
+	          React.createElement(NavUserIndex, { history: this.props.history })
 	        )
 	      )
 	    );
@@ -50973,7 +50969,7 @@
 	                React.createElement(
 	                    'a',
 	                    {
-	                        className: 'dropdown-toggle',
+	                        className: 'dropdown-toggle avatar',
 	                        'data-toggle': 'dropdown',
 	                        role: 'button',
 	                        'aria-haspopup': 'true',
@@ -51076,8 +51072,7 @@
 	    return React.createElement('img', { src: imgSrc,
 	      alt: 'User Avatar',
 	      height: '40',
-	      width: '40',
-	      className: 'avatar' });
+	      width: '40' });
 	  }
 	});
 	

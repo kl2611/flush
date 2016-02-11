@@ -16,7 +16,7 @@ var UserButtons = React.createClass({
                 <ul className='nav navbar-nav navbar-right'>
                     <li className="dropdown">
                     <a
-                        className="dropdown-toggle"
+                        className="dropdown-toggle avatar"
                         data-toggle="dropdown"
                         role="button"
                         aria-haspopup="true"
