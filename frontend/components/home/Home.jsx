@@ -3,6 +3,7 @@ var Grid = require('react-bootstrap').Grid;
 var HomeSearchbar = require('./HomeSearchbar');
 var RecentReviews = require('../reviews/RecentReviews');
 var LandingPage = require('./LandingPage');
+var Footer = require('./Footer');
 
 var Home = React.createClass({
     componentDidMount: function() {
@@ -21,13 +22,22 @@ var Home = React.createClass({
                         <div className="jumbotron-searchbar">
                             <HomeSearchbar history={this.props.history}/>
                         </div>
+
+                        <div className="jumbotron-img">
+                            <img src="assets/flushr-logo.png" height="90" />
+                        </div>
                     </div>
+
+
+
                 </div>
             </div>
 
-            <div className="landing-page">
+            <div className="landing-page shadow">
                     <LandingPage />
             </div>
+
+            <Footer />
         </div>
 
         );

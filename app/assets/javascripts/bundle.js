@@ -31551,7 +31551,7 @@
 	
 	    componentDidMount: function () {
 	        this.reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchRecentReviews(5);
+	        ReviewUtil.fetchRecentReviews(6);
 	    },
 	
 	    onChange: function () {
@@ -31632,7 +31632,7 @@
 	            'div',
 	            { className: 'recent-reviews' },
 	            React.createElement(
-	                'h2',
+	                'h3',
 	                { className: 'recent-reviews' },
 	                'Recent Activity'
 	            ),
@@ -33720,7 +33720,11 @@
 	                    React.createElement(
 	                        'div',
 	                        { className: 'list-item-description' },
-	                        comment
+	                        React.createElement(
+	                            'blockquote',
+	                            null,
+	                            comment
+	                        )
 	                    )
 	                );
 	            });
@@ -33730,7 +33734,7 @@
 	            'div',
 	            { className: 'review-of-the-day' },
 	            React.createElement(
-	                'h2',
+	                'h4',
 	                null,
 	                'Reviews of the Day'
 	            ),
@@ -33816,8 +33820,8 @@
 	          React.createElement(
 	            'a',
 	            { href: '#', className: 'pull-left' },
-	            React.createElement('img', { src: 'http://res.cloudinary.com/kellyliu/image/upload/v1455066768/flushr-logo_copy_ltm8na.png',
-	              height: '45' })
+	            React.createElement('img', { src: 'assets/flushr-logo.png',
+	              height: '50' })
 	          )
 	        ),
 	        React.createElement(
@@ -51484,6 +51488,7 @@
 	var HomeSearchbar = __webpack_require__(527);
 	var RecentReviews = __webpack_require__(241);
 	var LandingPage = __webpack_require__(268);
+	var Footer = __webpack_require__(529);
 	
 	var Home = React.createClass({
 	    displayName: 'Home',
@@ -51519,15 +51524,21 @@
 	                            'div',
 	                            { className: 'jumbotron-searchbar' },
 	                            React.createElement(HomeSearchbar, { history: this.props.history })
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'jumbotron-img' },
+	                            React.createElement('img', { src: 'assets/flushr-logo.png', height: '90' })
 	                        )
 	                    )
 	                )
 	            ),
 	            React.createElement(
 	                'div',
-	                { className: 'landing-page' },
+	                { className: 'landing-page shadow' },
 	                React.createElement(LandingPage, null)
-	            )
+	            ),
+	            React.createElement(Footer, null)
 	        );
 	    }
 	});
@@ -51673,6 +51684,145 @@
 	});
 	
 	module.exports = HomeSearchBar;
+
+/***/ },
+/* 528 */,
+/* 529 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	
+	var Footer = React.createClass({
+	  displayName: "Footer",
+	
+	  mixins: [History],
+	
+	  goToHome: function () {
+	    this.history.pushState(null, "/");
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      "footer",
+	      { className: "footer" },
+	      React.createElement(
+	        "section",
+	        { className: "footer-wrapper container" },
+	        React.createElement(
+	          "ul",
+	          { className: "footer-nav" },
+	          React.createElement(
+	            "a",
+	            { className: "logo", onClick: this.goToHome },
+	            "Flushr"
+	          )
+	        ),
+	        React.createElement(
+	          "ul",
+	          { className: "footer-nav" },
+	          React.createElement(
+	            "h5",
+	            null,
+	            "COMPANY"
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "About"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "Careers"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "Press"
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          "ul",
+	          { className: "footer-nav" },
+	          React.createElement(
+	            "h5",
+	            null,
+	            "DISCOVER"
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "Flushr Blog"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "Support"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              null,
+	              "Developers"
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          "ul",
+	          { className: "footer-nav" },
+	          React.createElement(
+	            "h5",
+	            null,
+	            "CONTACT"
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              { target: "_blank", href: "https://github.com/kl2611" },
+	              "GitHub"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              { target: "_blank", href: "https://www.linkedin.com/in/kellyliu1" },
+	              "LinkedIn"
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Footer;
 
 /***/ }
 /******/ ]);

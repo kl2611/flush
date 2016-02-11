@@ -17,7 +17,7 @@ var RecentReviews = React.createClass({
 
     componentDidMount: function() {
         this.reviewListener = ReviewStore.addListener(this.onChange);
-        ReviewUtil.fetchRecentReviews(5);
+        ReviewUtil.fetchRecentReviews(6);
     },
 
     onChange: function() {
@@ -70,7 +70,7 @@ var RecentReviews = React.createClass({
 
         return (
             <div className ="recent-reviews">
-            <h2 className="recent-reviews">Recent Activity</h2>
+            <h3 className="recent-reviews">Recent Activity</h3>
                 {reviews}
             </div>
         );

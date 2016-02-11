@@ -75,7 +75,7 @@ var RandomReview = React.createClass({
                                 <p />
                                 {review.rating} stars, {review.date}
                                 <p />
-                                <div className="list-item-description">{comment}</div>
+                                <div className="list-item-description"><blockquote>{comment}</blockquote></div>
                             </div>
                 );
             });
@@ -83,7 +83,7 @@ var RandomReview = React.createClass({
 
         return (
                 <div className="review-of-the-day">
-                    <h2>Reviews of the Day</h2>
+                    <h4>Reviews of the Day</h4>
                     <hr />
                     <div className="wrapper">
                         <img src={imgSource}
