@@ -51,21 +51,23 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var browserHistory = ReactRouter.browserHistory;
+	var Redirect = ReactRouter.Redirect;
 	
 	// components
 	var SpotForm = __webpack_require__(206);
 	var SpotsSearch = __webpack_require__(237);
-	var SpotShow = __webpack_require__(253);
-	var ReviewForm = __webpack_require__(258);
-	var Review = __webpack_require__(257);
+	var SpotShow = __webpack_require__(246);
+	var ReviewForm = __webpack_require__(255);
+	var Review = __webpack_require__(254);
 	
-	var SearchIndex = __webpack_require__(263);
-	var LandingPage = __webpack_require__(268);
+	var SearchIndex = __webpack_require__(260);
+	var LandingPage = __webpack_require__(265);
 	var MapActions = __webpack_require__(270);
 	
 	var NavBar = __webpack_require__(271);
-	var SearchBar = __webpack_require__(251);
+	var SearchBar = __webpack_require__(244);
 	var Home = __webpack_require__(526);
+	var Footer = __webpack_require__(528);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -75,7 +77,8 @@
 	      'div',
 	      null,
 	      React.createElement(NavBar, { history: this.props.history, location: this.props.location }),
-	      this.props.children
+	      this.props.children,
+	      React.createElement(Footer, null)
 	    );
 	  }
 	});
@@ -85,6 +88,7 @@
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: Home }),
 	  React.createElement(Route, { path: '/search/:loc', component: SearchIndex }),
+	  React.createElement(Redirect, { path: '/search', to: '/search/morningside-heights' }),
 	  React.createElement(Route, { path: 'spots/new', component: SpotForm }),
 	  React.createElement(
 	    Route,
@@ -31308,8 +31312,8 @@
 	var SpotStore = __webpack_require__(238);
 	var SpotUtil = __webpack_require__(207);
 	var SpotsIndex = __webpack_require__(239);
-	var Map = __webpack_require__(249);
-	var Search = __webpack_require__(251);
+	var Map = __webpack_require__(242);
+	var Search = __webpack_require__(244);
 	
 	function _getAllSpots() {
 	    return SpotStore.all();
@@ -31534,9 +31538,9 @@
 	var ReactRouter = __webpack_require__(159);
 	var Link = ReactRouter.Link;
 	
-	var ReviewStore = __webpack_require__(242);
-	var ReviewUtil = __webpack_require__(244);
-	var Rating = __webpack_require__(246);
+	var ReviewStore = __webpack_require__(252);
+	var ReviewUtil = __webpack_require__(249);
+	var Rating = __webpack_require__(267);
 	
 	String.prototype.capitalizeFirstLetter = function () {
 	    return this.charAt(0).toUpperCase() + this.slice(1);
@@ -31563,7 +31567,7 @@
 	    },
 	
 	    handleItemClick: function (spot) {
-	        setTimeout(this.props.history.pushState(null, "spots/" + spot.id), 1500);
+	        this.props.history.pushState(null, "spots/" + spot.id);
 	    },
 	
 	    render: function () {
@@ -31606,7 +31610,7 @@
 	                        status,
 	                        React.createElement(
 	                            Link,
-	                            { to: spotLink },
+	                            { to: spotLink, params: { spotId: handleItemClick } },
 	                            review.spot_name.name,
 	                            ':'
 	                        )
@@ -31647,6 +31651,749 @@
 /* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	var FilterActions = __webpack_require__(243);
+	var Search = __webpack_require__(244);
+	
+	function _getCoordsObj(latLng) {
+	  return {
+	    lat: latLng.lat(),
+	    lng: latLng.lng()
+	  };
+	}
+	
+	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
+	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
+	
+	var Map = React.createClass({
+	  displayName: 'Map',
+	
+	  _initializeMaps: function (centerLatLng) {
+	    console.log("map mounted");
+	    this.currentCenter = centerLatLng;
+	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
+	
+	    if (centerLatLng) {
+	      var mapOptions = {
+	        center: this.centerLatLng,
+	        zoom: 15
+	      };
+	    } else {
+	      var mapOptions = {
+	        center: { lat: 40.728, lng: -74.000 },
+	        zoom: 15
+	      };
+	    };
+	
+	    this.map = new google.maps.Map(mapEl, mapOptions);
+	    this.registerListeners();
+	    this.markers = [];
+	  },
+	
+	  componentDidMount: function () {
+	    console.log("mapCompMounted");
+	    this._initializeMaps(this.props.centerLatLng);
+	
+	    if (this.props.spots) {
+	      this.props.spots.forEach(this.createMarkerFromSpot);
+	    };
+	  },
+	
+	  componentWillUnmount: function () {
+	    //this.markerListener.remove();
+	    console.log("map UNmounted");
+	  },
+	
+	  componentDidUpdate: function (oldProps) {
+	    this._onChange();
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    var newCenter = newProps.centerLatLng;
+	
+	    if (!(this.currentCenter === newCenter)) {
+	      this.map.setCenter(newCenter);
+	      this.currentCenter = newCenter;
+	    }
+	  },
+	
+	  // _isSameCoord: function(coord1, coord2) {
+	  //   return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
+	  // },
+	
+	  _onChange: function () {
+	    var spots = this.props.spots;
+	    var toAdd = [],
+	        toRemove = this.markers.slice(0);
+	    spots.forEach(function (spot, idx) {
+	      var idx = -1;
+	
+	      for (var i = 0; i < toRemove.length; i++) {
+	        if (toRemove[i].spotId == spot.id) {
+	          idx = i;
+	          break;
+	        }
+	      }
+	      if (idx === -1) {
+	        toAdd.push(spot);
+	      } else {
+	        toRemove.splice(idx, 1);
+	      }
+	    });
+	    toAdd.forEach(this.createMarkerFromSpot);
+	    toRemove.forEach(this.removeMarker);
+	
+	    if (this.props.singleSpot) {
+	      this.map.setOptions({ draggable: false, scrollable: false, zoom: 18 });
+	      this.map.setCenter(this.centerSpotCoords());
+	    }
+	  },
+	
+	  centerSpotCoords: function () {
+	    if (this.props.spots[0] && this.props.spots[0].lng) {
+	      var spot = this.props.spots[0];
+	      return { lat: spot.lat, lng: spot.lng };
+	    } else {
+	      return CENTER;
+	    }
+	  },
+	
+	  registerListeners: function () {
+	    var that = this;
+	    google.maps.event.addListener(this.map, 'idle', function () {
+	      var bounds = that.map.getBounds();
+	      var northEast = _getCoordsObj(bounds.getNorthEast());
+	      var southWest = _getCoordsObj(bounds.getSouthWest());
+	      var bounds = {
+	        northEast: northEast,
+	        southWest: southWest
+	      };
+	      FilterActions.updateBounds(bounds);
+	    });
+	    google.maps.event.addListener(this.map, 'click', function (event) {
+	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+	      that.props.onMapClick(coords);
+	    });
+	  },
+	
+	  createMarkerFromSpot: function (spot) {
+	    var that = this;
+	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
+	    var marker = new google.maps.Marker({
+	      position: pos,
+	      map: this.map,
+	      spotId: spot.id
+	    });
+	
+	    this.markerListener = marker.addListener('click', function () {
+	      that.props.onMarkerClick(spot);
+	    });
+	    this.markers.push(marker);
+	  },
+	
+	  removeMarker: function (marker) {
+	    for (var i = 0; i < this.markers.length; i++) {
+	      if (this.markers[i].spotId === marker.spotId) {
+	        this.markers[i].setMap(null);
+	        this.markers.splice(i, 1);
+	        break;
+	      }
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement('div', { className: 'map', ref: 'map', id: 'map' });
+	  }
+	});
+	
+	module.exports = Map;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var FilterConstants = __webpack_require__(232);
+	
+	var FilterActions = {
+	  updateBounds: function (bounds) {
+	    AppDispatcher.dispatch({
+	      actionType: FilterConstants.UPDATE_BOUNDS,
+	      bounds: bounds
+	    });
+	  }
+	};
+	
+	module.exports = FilterActions;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(233);
+	var SpotUtil = __webpack_require__(207);
+	//var Map = require('../spots/Map');
+	//var Geocomplete = require('geocomplete');
+	var Dropdown = __webpack_require__(245);
+	
+	var SearchBar = React.createClass({
+	    displayName: 'SearchBar',
+	
+	    getInitialState: function () {
+	        // this.styleSheetShow = document.createElement('style');
+	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	        return {
+	            loc: "",
+	            placeholder: "Address, neighborhood, city, state or zip",
+	            showAutocomplete: false,
+	            showSpinner: false
+	        };
+	    },
+	
+	    searchBarOnClick: function () {
+	        this.setState({
+	            showAutocomplete: true
+	        });
+	    },
+	
+	    searchBarOffClick: function () {
+	        this.setState({
+	            showAutocomplete: false
+	        });
+	    },
+	
+	    handleSearch: function (e) {
+	        if (arguments.length > 0) {
+	            e.preventDefault();
+	        }
+	
+	        if (this.state.loc === "") {
+	            this.setState({
+	                placeholder: "Please set location"
+	            });
+	        } else {
+	            setTimeout(this.redirectToSearch, 1000);
+	
+	            this.setState({
+	                showSpinner: true
+	            });
+	        }
+	    },
+	
+	    redirectToSearch: function () {
+	        var loc = this.state.loc.replace(/\W+/g, "-");
+	        console.log("pushStatefromsearch");
+	        this.props.history.pushState(null, '/search/' + loc);
+	
+	        // hmm fix this somehow
+	        this.setState({
+	            showSpinner: false
+	        });
+	    },
+	
+	    handleLocChange: function (e) {
+	        this.setState({
+	            loc: this.refs.locinput.value
+	        });
+	    },
+	
+	    render: function () {
+	        var buttonSubmit = React.createElement(
+	            'button',
+	            { className: 'btn btn-default', onClick: this.handleSearch },
+	            React.createElement('span', { className: 'glyphicon glyphicon-search' })
+	        );
+	
+	        var buttonProgress = React.createElement(
+	            'button',
+	            { className: 'btn btn-default', disabled: true },
+	            React.createElement(
+	                'div',
+	                { className: 'three-quarters-loader' },
+	                'Loading…'
+	            )
+	        );
+	
+	        var design = React.createElement('input', {
+	            type: 'text',
+	            size: '40',
+	            className: 'form-control',
+	            id: 'landing-search-input',
+	            onChange: this.handleLocChange,
+	            placeholder: this.state.placeholder,
+	            ref: 'locinput',
+	            onFocus: this.searchBarOnClick,
+	            onBlur: this.searchBarOffClick });
+	
+	        var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	
+	        return React.createElement(
+	            'form',
+	            { className: 'navbar-form navbar-nav', role: 'search', onSubmit: this.handleSearch },
+	            React.createElement(
+	                'strong',
+	                null,
+	                'Near  '
+	            ),
+	            design,
+	            buttonSubmit,
+	            showAutocomplete ? React.createElement(Dropdown, {
+	                locinput: this.refs.locinput,
+	                handleSearch: this.handleSearch,
+	                handleLocChange: this.handleLocChange }) : ""
+	        );
+	    }
+	});
+	
+	module.exports = SearchBar;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	    displayName: 'DropDown',
+	
+	    _fillInAddress: function () {
+	        this.props.handleLocChange();
+	        this.props.handleSearch();
+	    },
+	
+	    componentWillUnmount: function () {
+	        console.log('dropdown unmounted');
+	    },
+	
+	    componentDidMount: function () {
+	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	        this.autofillOptions = {
+	            types: ['geocode']
+	        };
+	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	        this.autofill.addListener('place_changed', this._fillInAddress);
+	    },
+	
+	    render: function () {
+	        return React.createElement('div', null);
+	    }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var SpotStore = __webpack_require__(238);
+	var Spot = __webpack_require__(247);
+	var Map = __webpack_require__(242);
+	var SpotUtil = __webpack_require__(207);
+	
+	var Review = __webpack_require__(254);
+	
+	var SpotShow = React.createClass({
+	    displayName: 'SpotShow',
+	
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	
+	    getInitialState: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId) || {};
+	        return { spot: spot };
+	    },
+	
+	    _findSpotById: function (id) {
+	        var res;
+	        SpotStore.all().forEach(function (spot) {
+	            if (id == spot.id) {
+	                res = spot;
+	            }
+	        }.bind(this));
+	        return res;
+	    },
+	
+	    componentDidMount: function () {
+	        this.spotListener = SpotStore.addListener(this._spotChanged);
+	        SpotUtil.fetchSpots();
+	    },
+	
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
+	    },
+	
+	    _spotChanged: function () {
+	        var spotId = this.props.params.spotId;
+	        var spot = this._findSpotById(spotId);
+	        this.setState({ spot: spot });
+	    },
+	
+	    render: function () {
+	        var spots = [];
+	        if (this.state.spot) {
+	            spots.push(this.state.spot);
+	        }
+	
+	        var Link = ReactRouter.Link;
+	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
+	
+	        return React.createElement(
+	            'div',
+	            { className: 'container-fluid' },
+	            React.createElement(
+	                'div',
+	                { className: 'container-spots-show' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'col-md-8' },
+	                        React.createElement(
+	                            Link,
+	                            { to: '/' },
+	                            'Back to Restrooms Index'
+	                        ),
+	                        React.createElement(Spot, { spot: this.state.spot, className: 'map' })
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        { className: 'col-md-4' },
+	                        React.createElement(Map, { className: 'map',
+	                            singleSpot: true,
+	                            spots: spots,
+	                            onMapClick: this.handleMapClick })
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: 'container-spots-show' },
+	                this.props.children || React.createElement(
+	                    Link,
+	                    { to: reviewURL },
+	                    'Leave a Review'
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SpotShow;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var History = ReactRouter.History;
+	var LinkedStateMixin = __webpack_require__(233);
+	
+	var ReviewIndex = __webpack_require__(248);
+	var ReviewStore = __webpack_require__(252);
+	var Review = __webpack_require__(254);
+	
+	var TaggingUtil = __webpack_require__(256);
+	var TagStore = __webpack_require__(257);
+	
+	var StarRating = __webpack_require__(259);
+	
+	var Spot = React.createClass({
+	  displayName: 'Spot',
+	
+	  mixins: [History],
+	
+	  render: function () {
+	    var spotRating = ReviewStore.averageRating();
+	    var reviews = this.props.spot.reviews || [];
+	    var Link = ReactRouter.Link;
+	
+	    return React.createElement(
+	      'div',
+	      { id: 'spot-detail' },
+	      React.createElement(
+	        'h3',
+	        null,
+	        this.props.spot.name
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Rating: ',
+	        this.props.spot.average_rating || "No reviews yet"
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        'Description: ',
+	        this.props.spot.description
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'reviews' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Reviews'
+	        ),
+	        reviews.map(function (review) {
+	          return React.createElement(Review, _extends({ key: review.id }, review));
+	        }),
+	        React.createElement('p', null)
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Spot;
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var ReviewUtil = __webpack_require__(249);
+	var ReviewStore = __webpack_require__(252);
+	var ReviewIndexItem = __webpack_require__(253);
+	
+	var ReviewIndex = React.createClass({
+	    displayName: 'ReviewIndex',
+	
+	    getInitialState: function () {
+	        return { allReviews: [] };
+	    },
+	
+	    componentDidMount: function () {
+	        reviewListener = ReviewStore.addListener(this.onChange);
+	        ReviewUtil.fetchReviews();
+	    },
+	
+	    componentWillUnmount: function () {
+	        reviewListener.remove();
+	    },
+	
+	    onChange: function () {
+	        this.setState({ allReviews: ReviewStore.all() });
+	    },
+	
+	    render: function () {
+	        var reviews = this.props.reviews;
+	
+	        if (reviews.length === 0) {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                'You are the first to review'
+	            );
+	        } else {
+	            reviewDisplay = React.createElement(
+	                'div',
+	                null,
+	                this.state.reviews.map(function (review) {
+	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
+	                })
+	            );
+	        }
+	
+	        return React.createElement(
+	            'div',
+	            null,
+	            reviewDisplay
+	        );
+	    }
+	});
+	
+	module.exports = ReviewIndex;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ReviewActions = __webpack_require__(250);
+	
+	var ReviewUtil = {
+	    createReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            type: 'POST',
+	            data: { review: review },
+	            success: function (review) {
+	                ReviewActions.receiveSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            type: "PATCH",
+	            dataType: "json",
+	            data: { review: review },
+	            success: function (reviewData) {
+	                ReviewActions.updateSingleReview(reviewData);
+	            }
+	        });
+	    },
+	
+	    fetchReviews: function () {
+	        $.ajax({
+	            url: 'api/reviews',
+	            success: function (reviews) {
+	                ReviewActions.receiveAllReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        $.ajax({
+	            url: 'api/reviews/' + review.id,
+	            data: { review: review },
+	            type: "DELETE",
+	            dataType: "json",
+	            success: function (review) {
+	                ReviewActions.deleteSingleReview(review);
+	            }
+	        });
+	    },
+	
+	    fetchSingleReview: function (id) {
+	        $.ajax({
+	            url: 'api/reviews/' + id,
+	            success: function (id) {
+	                ReviewActions.receiveSingleReview(id);
+	            }
+	        });
+	    },
+	
+	    fetchUserReviews: function (userId) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { user_id: userId },
+	            success: function (reviews) {
+	                ReviewActions.receiveUserReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    fetchSpotReviews: function (spotId) {
+	        $.ajax({
+	            url: "api/reviews",
+	            dataType: 'json',
+	            success: function (reviews) {
+	                ReviewActions.receiveSpotReviews(reviews);
+	            }
+	        });
+	    },
+	
+	    fetchRecentReviews: function (number) {
+	        $.ajax({
+	            url: 'api/reviews',
+	            dataType: 'json',
+	            data: { number: number },
+	            success: function (reviews) {
+	                ReviewActions.receiveRecentReviews(reviews);
+	            }
+	        });
+	    }
+	};
+	
+	module.exports = ReviewUtil;
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(209);
+	var ReviewConstants = __webpack_require__(251);
+	
+	var ReviewActions = {
+	    receiveAllReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEWS_RECEIVED,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.REVIEW_RECEIVED,
+	            review: review
+	        });
+	    },
+	
+	    updateSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.UPDATE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    deleteSingleReview: function (review) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.DELETE_REVIEW,
+	            review: review
+	        });
+	    },
+	
+	    receiveRecentReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveUserReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
+	            reviews: reviews
+	        });
+	    },
+	
+	    receiveSpotReviews: function (reviews) {
+	        AppDispatcher.dispatch({
+	            actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
+	            reviews: reviews
+	        });
+	    }
+	};
+	
+	module.exports = ReviewActions;
+
+/***/ },
+/* 251 */
+/***/ function(module, exports) {
+
+	ReviewConstants = {
+	    REVIEWS_RECEIVED: "REVIEWS_RECEIVED",
+	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
+	    UPDATE_REVIEW: "UPDATE_REVIEW",
+	    DELETE_REVIEW: "DELETE_REVIEW",
+	    RECEIVE_RANDOM_REVIEWS: "RECEIVE_RANDOM_REVIEWS",
+	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
+	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
+	};
+	
+	module.exports = ReviewConstants;
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Store = __webpack_require__(215).Store;
 	var AppDispatcher = __webpack_require__(209);
 	var _reviews = [];
@@ -31657,7 +32404,7 @@
 	var _randomReview = [];
 	var currentReview = null;
 	
-	var ReviewConstants = __webpack_require__(243);
+	var ReviewConstants = __webpack_require__(251);
 	var ReviewStore = new Store(AppDispatcher);
 	
 	var resetReviews = function (reviews) {
@@ -31857,858 +32604,7 @@
 	module.exports = ReviewStore;
 
 /***/ },
-/* 243 */
-/***/ function(module, exports) {
-
-	ReviewConstants = {
-	    REVIEWS_RECEIVED: "REVIEWS_RECEIVED",
-	    REVIEW_RECEIVED: "REVIEW_RECEIVED",
-	    UPDATE_REVIEW: "UPDATE_REVIEW",
-	    DELETE_REVIEW: "DELETE_REVIEW",
-	    RECEIVE_RANDOM_REVIEWS: "RECEIVE_RANDOM_REVIEWS",
-	    RECEIVE_USER_REVIEWS: "RECEIVE_USER_REVIEWS",
-	    RECEIVE_SPOT_REVIEWS: "RECEIVE_SPOT_REVIEWS"
-	};
-	
-	module.exports = ReviewConstants;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ReviewActions = __webpack_require__(245);
-	
-	var ReviewUtil = {
-	    createReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            type: 'POST',
-	            data: { review: review },
-	            success: function (review) {
-	                ReviewActions.receiveSingleReview(review);
-	            }
-	        });
-	    },
-	
-	    updateSingleReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews/' + review.id,
-	            type: "PATCH",
-	            dataType: "json",
-	            data: { review: review },
-	            success: function (reviewData) {
-	                ReviewActions.updateSingleReview(reviewData);
-	            }
-	        });
-	    },
-	
-	    fetchReviews: function () {
-	        $.ajax({
-	            url: 'api/reviews',
-	            success: function (reviews) {
-	                ReviewActions.receiveAllReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    deleteSingleReview: function (review) {
-	        $.ajax({
-	            url: 'api/reviews/' + review.id,
-	            data: { review: review },
-	            type: "DELETE",
-	            dataType: "json",
-	            success: function (review) {
-	                ReviewActions.deleteSingleReview(review);
-	            }
-	        });
-	    },
-	
-	    fetchSingleReview: function (id) {
-	        $.ajax({
-	            url: 'api/reviews/' + id,
-	            success: function (id) {
-	                ReviewActions.receiveSingleReview(id);
-	            }
-	        });
-	    },
-	
-	    fetchUserReviews: function (userId) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            data: { user_id: userId },
-	            success: function (reviews) {
-	                ReviewActions.receiveUserReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    fetchSpotReviews: function (spotId) {
-	        $.ajax({
-	            url: "api/reviews",
-	            dataType: 'json',
-	            success: function (reviews) {
-	                ReviewActions.receiveSpotReviews(reviews);
-	            }
-	        });
-	    },
-	
-	    fetchRecentReviews: function (number) {
-	        $.ajax({
-	            url: 'api/reviews',
-	            dataType: 'json',
-	            data: { number: number },
-	            success: function (reviews) {
-	                ReviewActions.receiveRecentReviews(reviews);
-	            }
-	        });
-	    }
-	};
-	
-	module.exports = ReviewUtil;
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var ReviewConstants = __webpack_require__(243);
-	
-	var ReviewActions = {
-	    receiveAllReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.REVIEWS_RECEIVED,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.REVIEW_RECEIVED,
-	            review: review
-	        });
-	    },
-	
-	    updateSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.UPDATE_REVIEW,
-	            review: review
-	        });
-	    },
-	
-	    deleteSingleReview: function (review) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.DELETE_REVIEW,
-	            review: review
-	        });
-	    },
-	
-	    receiveRecentReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_RANDOM_REVIEWS,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveUserReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_USER_REVIEWS,
-	            reviews: reviews
-	        });
-	    },
-	
-	    receiveSpotReviews: function (reviews) {
-	        AppDispatcher.dispatch({
-	            actionType: ReviewConstants.RECEIVE_SPOT_REVIEWS,
-	            reviews: reviews
-	        });
-	    }
-	};
-	
-	module.exports = ReviewActions;
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var StarRating = __webpack_require__(247);
-	
-	var Rating = React.createClass({
-	    displayName: 'Rating',
-	
-	    componentDidMount: function () {
-	        var options = {
-	            max_value: 5,
-	            step_size: 1,
-	            initial_value: 1
-	        };
-	        $("#spot-rating").rating(options);
-	    },
-	
-	    componentWillReceiveProps: function (newProp) {
-	        $("#spot-rating").rating('update', newProp.rating);
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'ul',
-	                null,
-	                React.createElement(
-	                    'li',
-	                    null,
-	                    React.createElement('input', { id: 'spot-rating',
-	                        className: 'rating',
-	                        type: 'number',
-	                        min: '1',
-	                        max: '5' })
-	                )
-	            )
-	        );
-	    }
-	
-	});
-	
-	module.exports = Rating;
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(248),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-	
-	(function () {
-		'use strict';
-	
-		var hasOwn = {}.hasOwnProperty;
-	
-		function classNames () {
-			var classes = [];
-	
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-	
-				var argType = typeof arg;
-	
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-	
-			return classes.join(' ');
-		}
-	
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	var FilterActions = __webpack_require__(250);
-	var Search = __webpack_require__(251);
-	
-	function _getCoordsObj(latLng) {
-	  return {
-	    lat: latLng.lat(),
-	    lng: latLng.lng()
-	  };
-	}
-	
-	//var CENTER = {lat: 40.728, lng: -74.000}; //midtown somewhere
-	var CENTER = { lat: 40.8081, lng: -73.9621 }; // Columbia University campus
-	
-	var Map = React.createClass({
-	  displayName: 'Map',
-	
-	  _initializeMaps: function (centerLatLng) {
-	    console.log("map mounted");
-	    this.currentCenter = centerLatLng;
-	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
-	
-	    if (centerLatLng) {
-	      var mapOptions = {
-	        center: this.centerLatLng,
-	        zoom: 15
-	      };
-	    } else {
-	      var mapOptions = {
-	        center: { lat: 40.728, lng: -74.000 },
-	        zoom: 15
-	      };
-	    };
-	
-	    this.map = new google.maps.Map(mapEl, mapOptions);
-	    this.registerListeners();
-	    this.markers = [];
-	  },
-	
-	  componentDidMount: function () {
-	    console.log("mapCompMounted");
-	    this._initializeMaps(this.props.centerLatLng);
-	
-	    if (this.props.spots) {
-	      this.props.spots.forEach(this.createMarkerFromSpot);
-	    };
-	  },
-	
-	  componentWillUnmount: function () {
-	    //this.markerListener.remove();
-	    console.log("map UNmounted");
-	  },
-	
-	  componentDidUpdate: function (oldProps) {
-	    this._onChange();
-	  },
-	
-	  componentWillReceiveProps: function (newProps) {
-	    var newCenter = newProps.centerLatLng;
-	
-	    if (!(this.currentCenter === newCenter)) {
-	      this.map.setCenter(newCenter);
-	      this.currentCenter = newCenter;
-	    }
-	  },
-	
-	  // _isSameCoord: function(coord1, coord2) {
-	  //   return (coord1.lat === coord2.lat && coord1.lng === coord2.lng);
-	  // },
-	
-	  _onChange: function () {
-	    var spots = this.props.spots;
-	    var toAdd = [],
-	        toRemove = this.markers.slice(0);
-	    spots.forEach(function (spot, idx) {
-	      var idx = -1;
-	
-	      for (var i = 0; i < toRemove.length; i++) {
-	        if (toRemove[i].spotId == spot.id) {
-	          idx = i;
-	          break;
-	        }
-	      }
-	      if (idx === -1) {
-	        toAdd.push(spot);
-	      } else {
-	        toRemove.splice(idx, 1);
-	      }
-	    });
-	    toAdd.forEach(this.createMarkerFromSpot);
-	    toRemove.forEach(this.removeMarker);
-	
-	    if (this.props.singleSpot) {
-	      this.map.setOptions({ draggable: false, scrollable: false, zoom: 18 });
-	      this.map.setCenter(this.centerSpotCoords());
-	    }
-	  },
-	
-	  centerSpotCoords: function () {
-	    if (this.props.spots[0] && this.props.spots[0].lng) {
-	      var spot = this.props.spots[0];
-	      return { lat: spot.lat, lng: spot.lng };
-	    } else {
-	      return CENTER;
-	    }
-	  },
-	
-	  registerListeners: function () {
-	    var that = this;
-	    google.maps.event.addListener(this.map, 'idle', function () {
-	      var bounds = that.map.getBounds();
-	      var northEast = _getCoordsObj(bounds.getNorthEast());
-	      var southWest = _getCoordsObj(bounds.getSouthWest());
-	      var bounds = {
-	        northEast: northEast,
-	        southWest: southWest
-	      };
-	      FilterActions.updateBounds(bounds);
-	    });
-	    google.maps.event.addListener(this.map, 'click', function (event) {
-	      var coords = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-	      that.props.onMapClick(coords);
-	    });
-	  },
-	
-	  createMarkerFromSpot: function (spot) {
-	    var that = this;
-	    var pos = new google.maps.LatLng(spot.lat, spot.lng);
-	    var marker = new google.maps.Marker({
-	      position: pos,
-	      map: this.map,
-	      spotId: spot.id
-	    });
-	
-	    this.markerListener = marker.addListener('click', function () {
-	      that.props.onMarkerClick(spot);
-	    });
-	    this.markers.push(marker);
-	  },
-	
-	  removeMarker: function (marker) {
-	    for (var i = 0; i < this.markers.length; i++) {
-	      if (this.markers[i].spotId === marker.spotId) {
-	        this.markers[i].setMap(null);
-	        this.markers.splice(i, 1);
-	        break;
-	      }
-	    }
-	  },
-	
-	  render: function () {
-	    return React.createElement('div', { className: 'map', ref: 'map', id: 'map' });
-	  }
-	});
-	
-	module.exports = Map;
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(209);
-	var FilterConstants = __webpack_require__(232);
-	
-	var FilterActions = {
-	  updateBounds: function (bounds) {
-	    AppDispatcher.dispatch({
-	      actionType: FilterConstants.UPDATE_BOUNDS,
-	      bounds: bounds
-	    });
-	  }
-	};
-	
-	module.exports = FilterActions;
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(233);
-	var SpotUtil = __webpack_require__(207);
-	//var Map = require('../spots/Map');
-	//var Geocomplete = require('geocomplete');
-	var Dropdown = __webpack_require__(252);
-	
-	var SearchBar = React.createClass({
-	    displayName: 'SearchBar',
-	
-	    getInitialState: function () {
-	        // this.styleSheetShow = document.createElement('style');
-	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-	        return {
-	            loc: "",
-	            placeholder: "Address, neighborhood, city, state or zip",
-	            showAutocomplete: false,
-	            showSpinner: false
-	        };
-	    },
-	
-	    searchBarOnClick: function () {
-	        this.setState({
-	            showAutocomplete: true
-	        });
-	    },
-	
-	    searchBarOffClick: function () {
-	        this.setState({
-	            showAutocomplete: false
-	        });
-	    },
-	
-	    handleSearch: function (e) {
-	        if (arguments.length > 0) {
-	            e.preventDefault();
-	        }
-	
-	        if (this.state.loc === "") {
-	            this.setState({
-	                placeholder: "Please set location"
-	            });
-	        } else {
-	            setTimeout(this.redirectToSearch, 1000);
-	
-	            this.setState({
-	                showSpinner: true
-	            });
-	        }
-	    },
-	
-	    redirectToSearch: function () {
-	        var loc = this.state.loc.replace(/\W+/g, "-");
-	        console.log("pushStatefromsearch");
-	        this.props.history.pushState(null, '/search/' + loc);
-	
-	        // hmm fix this somehow
-	        this.setState({
-	            showSpinner: false
-	        });
-	    },
-	
-	    handleLocChange: function (e) {
-	        this.setState({
-	            loc: this.refs.locinput.value
-	        });
-	    },
-	
-	    render: function () {
-	        var buttonSubmit = React.createElement(
-	            'button',
-	            { className: 'btn btn-default', onClick: this.handleSearch },
-	            React.createElement('span', { className: 'glyphicon glyphicon-search' })
-	        );
-	
-	        var buttonProgress = React.createElement(
-	            'button',
-	            { className: 'btn btn-default', disabled: true },
-	            React.createElement(
-	                'div',
-	                { className: 'three-quarters-loader' },
-	                'Loading…'
-	            )
-	        );
-	
-	        var design = React.createElement('input', {
-	            type: 'text',
-	            size: '40',
-	            className: 'form-control',
-	            id: 'landing-search-input',
-	            onChange: this.handleLocChange,
-	            placeholder: this.state.placeholder,
-	            ref: 'locinput',
-	            onFocus: this.searchBarOnClick,
-	            onBlur: this.searchBarOffClick });
-	
-	        var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
-	
-	        return React.createElement(
-	            'form',
-	            { className: 'navbar-form navbar-nav', role: 'search', onSubmit: this.handleSearch },
-	            React.createElement(
-	                'strong',
-	                null,
-	                'Near  '
-	            ),
-	            design,
-	            buttonSubmit,
-	            showAutocomplete ? React.createElement(Dropdown, {
-	                locinput: this.refs.locinput,
-	                handleSearch: this.handleSearch,
-	                handleLocChange: this.handleLocChange }) : ""
-	        );
-	    }
-	});
-	
-	module.exports = SearchBar;
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	var DropDown = React.createClass({
-	    displayName: 'DropDown',
-	
-	    _fillInAddress: function () {
-	        this.props.handleLocChange();
-	        this.props.handleSearch();
-	    },
-	
-	    componentWillUnmount: function () {
-	        console.log('dropdown unmounted');
-	    },
-	
-	    componentDidMount: function () {
-	        this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	        this.autofillOptions = {
-	            types: ['geocode']
-	        };
-	        this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	        this.autofill.addListener('place_changed', this._fillInAddress);
-	    },
-	
-	    render: function () {
-	        return React.createElement('div', null);
-	    }
-	});
-	
-	module.exports = DropDown;
-
-/***/ },
 /* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(238);
-	var Spot = __webpack_require__(254);
-	var Map = __webpack_require__(249);
-	var SpotUtil = __webpack_require__(207);
-	
-	var Review = __webpack_require__(257);
-	
-	var SpotShow = React.createClass({
-	    displayName: 'SpotShow',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    getInitialState: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId) || {};
-	        return { spot: spot };
-	    },
-	
-	    _findSpotById: function (id) {
-	        var res;
-	        SpotStore.all().forEach(function (spot) {
-	            if (id == spot.id) {
-	                res = spot;
-	            }
-	        }.bind(this));
-	        return res;
-	    },
-	
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._spotChanged);
-	        SpotUtil.fetchSpots();
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	
-	    _spotChanged: function () {
-	        var spotId = this.props.params.spotId;
-	        var spot = this._findSpotById(spotId);
-	        this.setState({ spot: spot });
-	    },
-	
-	    render: function () {
-	        var spots = [];
-	        if (this.state.spot) {
-	            spots.push(this.state.spot);
-	        }
-	
-	        var Link = ReactRouter.Link;
-	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'container-fluid' },
-	            React.createElement(
-	                'div',
-	                { className: 'container-spots-show' },
-	                React.createElement(
-	                    'div',
-	                    { className: 'row' },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'col-md-8' },
-	                        React.createElement(
-	                            Link,
-	                            { to: '/' },
-	                            'Back to Restrooms Index'
-	                        ),
-	                        React.createElement(Spot, { spot: this.state.spot, className: 'map' })
-	                    ),
-	                    React.createElement(
-	                        'div',
-	                        { className: 'col-md-4' },
-	                        React.createElement(Map, { className: 'map',
-	                            singleSpot: true,
-	                            spots: spots,
-	                            onMapClick: this.handleMapClick })
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { className: 'container-spots-show' },
-	                this.props.children || React.createElement(
-	                    Link,
-	                    { to: reviewURL },
-	                    'Leave a Review'
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotShow;
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var History = ReactRouter.History;
-	var LinkedStateMixin = __webpack_require__(233);
-	
-	var ReviewIndex = __webpack_require__(255);
-	var ReviewStore = __webpack_require__(242);
-	var Review = __webpack_require__(257);
-	
-	var TaggingUtil = __webpack_require__(259);
-	var TagStore = __webpack_require__(260);
-	
-	var StarRating = __webpack_require__(262);
-	
-	var Spot = React.createClass({
-	  displayName: 'Spot',
-	
-	  mixins: [History],
-	
-	  render: function () {
-	    var spotRating = ReviewStore.averageRating();
-	    var reviews = this.props.spot.reviews || [];
-	    var Link = ReactRouter.Link;
-	
-	    return React.createElement(
-	      'div',
-	      { id: 'spot-detail' },
-	      React.createElement(
-	        'h3',
-	        null,
-	        this.props.spot.name
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'Rating: ',
-	        this.props.spot.average_rating || "No reviews yet"
-	      ),
-	      React.createElement(
-	        'li',
-	        null,
-	        'Description: ',
-	        this.props.spot.description
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'reviews' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          'Reviews'
-	        ),
-	        reviews.map(function (review) {
-	          return React.createElement(Review, _extends({ key: review.id }, review));
-	        }),
-	        React.createElement('p', null)
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = Spot;
-
-/***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewIndexItem = __webpack_require__(256);
-	
-	var ReviewIndex = React.createClass({
-	    displayName: 'ReviewIndex',
-	
-	    getInitialState: function () {
-	        return { allReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchReviews();
-	    },
-	
-	    componentWillUnmount: function () {
-	        reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        this.setState({ allReviews: ReviewStore.all() });
-	    },
-	
-	    render: function () {
-	        var reviews = this.props.reviews;
-	
-	        if (reviews.length === 0) {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                'You are the first to review'
-	            );
-	        } else {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                this.state.reviews.map(function (review) {
-	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
-	                })
-	            );
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            reviewDisplay
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndex;
-
-/***/ },
-/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32799,16 +32695,16 @@
 	module.exports = ReviewIndexItem;
 
 /***/ },
-/* 257 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactRouter = __webpack_require__(159);
 	
-	var ReviewActions = __webpack_require__(245);
-	var ReviewForm = __webpack_require__(258);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewUtil = __webpack_require__(244);
+	var ReviewActions = __webpack_require__(250);
+	var ReviewForm = __webpack_require__(255);
+	var ReviewStore = __webpack_require__(252);
+	var ReviewUtil = __webpack_require__(249);
 	
 	var Review = React.createClass({
 	  displayName: 'Review',
@@ -32873,14 +32769,14 @@
 	module.exports = Review;
 
 /***/ },
-/* 258 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var LinkedStateMixin = __webpack_require__(233);
 	var History = __webpack_require__(159).History;
 	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(244);
+	var ReviewUtil = __webpack_require__(249);
 	
 	var ReviewForm = React.createClass({
 	    displayName: 'ReviewForm',
@@ -32920,6 +32816,15 @@
 	                    null,
 	                    'Rating'
 	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'star-rating' },
+	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '1' }),
+	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '2' }),
+	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '3' }),
+	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '4' }),
+	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '5' })
+	                ),
 	                React.createElement('br', null),
 	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
 	                React.createElement('br', null),
@@ -32948,7 +32853,7 @@
 	module.exports = ReviewForm;
 
 /***/ },
-/* 259 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var SpotActions = __webpack_require__(208);
@@ -32982,13 +32887,13 @@
 	module.exports = TaggingUtil;
 
 /***/ },
-/* 260 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
 	var Store = __webpack_require__(215).Store;
 	var TagStore = new Store(AppDispatcher);
-	var TagConstants = __webpack_require__(261);
+	var TagConstants = __webpack_require__(258);
 	
 	var _tags = [];
 	var _queriedTags = [];
@@ -33041,7 +32946,7 @@
 	module.exports = TagStore;
 
 /***/ },
-/* 261 */
+/* 258 */
 /***/ function(module, exports) {
 
 	TagConstants = {
@@ -33053,7 +32958,7 @@
 	module.exports = TagConstants;
 
 /***/ },
-/* 262 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33143,7 +33048,7 @@
 	module.exports = StarRating;
 
 /***/ },
-/* 263 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33152,11 +33057,11 @@
 	var SpotUtil = __webpack_require__(207);
 	var SpotActions = __webpack_require__(208);
 	
-	var Map = __webpack_require__(249);
-	var Search = __webpack_require__(251);
-	var List = __webpack_require__(264);
+	var Map = __webpack_require__(242);
+	var Search = __webpack_require__(244);
+	var List = __webpack_require__(261);
 	
-	var MapStore = __webpack_require__(266);
+	var MapStore = __webpack_require__(263);
 	var FilterStore = __webpack_require__(214);
 	
 	function _getAllSpots() {
@@ -33333,11 +33238,11 @@
 	module.exports = SearchIndex;
 
 /***/ },
-/* 264 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ListItem = __webpack_require__(265);
+	var ListItem = __webpack_require__(262);
 	var ReactRouter = __webpack_require__(159);
 	var Link = ReactRouter.Link;
 	
@@ -33345,7 +33250,7 @@
 	  displayName: 'List',
 	
 	  handleItemClick: function (spot) {
-	    this.props.history.pushState(null, "/spots/" + spot.id);
+	    setTimeout(this.props.history.pushState(null, "/spots/" + spot.id), 200);
 	  },
 	
 	  render: function () {
@@ -33363,7 +33268,12 @@
 	        React.createElement(
 	          'h4',
 	          null,
-	          'Or, check out the demo at Morningside Heights'
+	          'Or, check out the demo at  ',
+	          React.createElement(
+	            'a',
+	            { href: '#/search/Morningside-Heights-New-York-NY-United-States?_k=kyrwns' },
+	            " Morningside Heights, NYC"
+	          )
 	        )
 	      );
 	    } else {
@@ -33391,7 +33301,7 @@
 	module.exports = List;
 
 /***/ },
-/* 265 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33400,8 +33310,8 @@
 	
 	var SpotUtil = __webpack_require__(207);
 	var SpotStore = __webpack_require__(238);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewUtil = __webpack_require__(244);
+	var ReviewStore = __webpack_require__(252);
+	var ReviewUtil = __webpack_require__(249);
 	
 	String.prototype.capitalizeFirstLetter = function () {
 	  return this.charAt(0).toUpperCase() + this.slice(1);
@@ -33524,12 +33434,12 @@
 	module.exports = ListItem;
 
 /***/ },
-/* 266 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(215).Store;
 	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(267);
+	var MapConstants = __webpack_require__(264);
 	
 	var MapStore = new Store(AppDispatcher);
 	
@@ -33554,7 +33464,7 @@
 	module.exports = MapStore;
 
 /***/ },
-/* 267 */
+/* 264 */
 /***/ function(module, exports) {
 
 	var MapConstants = {
@@ -33564,15 +33474,15 @@
 	module.exports = MapConstants;
 
 /***/ },
-/* 268 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Search = __webpack_require__(251);
+	var Search = __webpack_require__(244);
 	// var SpotStore = require('../../stores/spot.js');
 	// var SpotUtil = require('../../util/spot_util.js');
 	var RecentReviews = __webpack_require__(241);
-	var RandomReview = __webpack_require__(269);
+	var RandomReview = __webpack_require__(266);
 	// var UserInfo = require('../nav/UserInfo');
 	
 	var LandingPage = React.createClass({
@@ -33612,7 +33522,7 @@
 	module.exports = LandingPage;
 
 /***/ },
-/* 269 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33621,9 +33531,9 @@
 	
 	var SpotUtil = __webpack_require__(207);
 	var SpotStore = __webpack_require__(238);
-	var ReviewStore = __webpack_require__(242);
-	var ReviewUtil = __webpack_require__(244);
-	var Rating = __webpack_require__(246);
+	var ReviewStore = __webpack_require__(252);
+	var ReviewUtil = __webpack_require__(249);
+	var Rating = __webpack_require__(267);
 	
 	var RandomReview = React.createClass({
 	    displayName: 'RandomReview',
@@ -33754,11 +33664,119 @@
 	module.exports = RandomReview;
 
 /***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	var StarRating = __webpack_require__(268);
+	
+	var Rating = React.createClass({
+	    displayName: 'Rating',
+	
+	    componentDidMount: function () {
+	        var options = {
+	            max_value: 5,
+	            step_size: 1,
+	            initial_value: 1
+	        };
+	        $("#spot-rating").rating(options);
+	    },
+	
+	    componentWillReceiveProps: function (newProp) {
+	        $("#spot-rating").rating('update', newProp.rating);
+	    },
+	
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'ul',
+	                null,
+	                React.createElement(
+	                    'li',
+	                    null,
+	                    React.createElement('input', { id: 'spot-rating',
+	                        className: 'rating',
+	                        type: 'number',
+	                        min: '1',
+	                        max: '5' })
+	                )
+	            )
+	        );
+	    }
+	
+	});
+	
+	module.exports = Rating;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";function _interopRequireDefault(t){return t&&t.__esModule?t:{"default":t}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _possibleConstructorReturn(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function isFloat(t){return t===Number(t)&&t%1!==0}var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var a=arguments[e];for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(t[n]=a[n])}return t},_createClass=function(){function t(t,e){for(var a=0;a<e.length;a++){var n=e[a];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,a,n){return a&&t(e.prototype,a),n&&t(e,n),e}}();Object.defineProperty(exports,"__esModule",{value:!0});var _react=__webpack_require__(1),_react2=_interopRequireDefault(_react),_reactDom=__webpack_require__(158),_reactDom2=_interopRequireDefault(_reactDom),_classnames=__webpack_require__(269),_classnames2=_interopRequireDefault(_classnames),StarRating=function(t){function e(t){_classCallCheck(this,e);var a=_possibleConstructorReturn(this,Object.getPrototypeOf(e).call(this,t));return a.state={currentRatingVal:t.rating,currentRatingPos:a.getStarRatingPosition(t.rating),editing:t.editing||!0,rating:t.rating,pos:a.getStarRatingPosition(t.rating),glyph:a.getStars(),size:t.size},a}return _inherits(e,t),_createClass(e,[{key:"componentWillMount",value:function(){this.min=0,this.max=this.props.totalStars||5,this.props.rating&&(this.state.editing=this.props.editing||!1)}},{key:"componentDidMount",value:function(){this.root=_reactDom2["default"].findDOMNode(this.refs.root),this.ratingContainer=_reactDom2["default"].findDOMNode(this.refs.ratingContainer)}},{key:"componentWillUnmount",value:function(){delete this.root,delete this.ratingContainer}},{key:"getStars",value:function(){for(var t="",e=this.props.totalStars,a=0;e>a;a++)t+="★";return t}},{key:"getPosition",value:function(t){return t.clientX-this.root.getBoundingClientRect().left}},{key:"getWidthFromValue",value:function(t){var e=this.min,a=this.max;return e>=t||e===a?0:t>=a?100:100*(t-e)/(a-e)}},{key:"applyPrecision",value:function(t,e){return parseFloat(t.toFixed(e))}},{key:"getDecimalPlaces",value:function(t){var e=(""+t).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return e?Math.max(0,(e[1]?e[1].length:0)-(e[2]?+e[2]:0)):0}},{key:"getValueFromPosition",value:function(t){var e=this.getDecimalPlaces(this.props.step),a=this.ratingContainer.offsetWidth,n=this.max-this.min,r=n*t/(a*this.props.step);r=Math.ceil(r);var i=this.applyPrecision(parseFloat(this.min+r*this.props.step),e);return i=Math.max(Math.min(i,this.max),this.min)}},{key:"calculate",value:function(t){var e=this.getValueFromPosition(t),a=this.getWidthFromValue(e);return a+="%",{width:a,val:e}}},{key:"getStarRatingPosition",value:function(t){return this.getWidthFromValue(t)+"%"}},{key:"getRatingEvent",value:function(t){var e=this.getPosition(t);return this.calculate(e)}},{key:"getSvg",value:function(t){for(var e=[],a=0;a<this.props.totalStars;a++){var n={};n.transform="translate("+50*a+", 0)",n.fill=a+this.props.step<=t?"#FFA91B":"#C6C6C6",e.push(_react2["default"].createElement("path",_extends({},n,{key:"star-"+a,mask:"url(#half-star-mask)",d:"m0,18.1l19.1,0l5.9,-18.1l5.9,18.1l19.1,0l-15.4,11.2l5.9,18.1l-15.4,-11.2l-15.4,11.2l5.9,-18.1l-15.4,-11.2l0,0z"})))}var r={width:e.length*this.props.size+"px",height:this.props.size+"px"};return _react2["default"].createElement("svg",{className:"rsr__star",style:r,viewBox:"0 0 "+e.length+" 50",preserveAspectRatio:"xMinYMin meet",version:"1.1",xmlns:"http://www.w3.org/2000/svg"},_react2["default"].createElement("g",null,e.map(function(t){return t})))}},{key:"updateRating",value:function(t,e){this.setState({pos:t,rating:e})}},{key:"shouldComponentUpdate",value:function(t,e){return t!==this.props?(this.updateRating(this.getStarRatingPosition(t.rating),t.rating),!0):e.currentRatingVal!==this.state.currentRatingVal||e.rating!==this.state.rating}},{key:"handleMouseLeave",value:function(){this.setState({pos:this.state.currentRatingPos,rating:this.state.currentRatingVal})}},{key:"handleMouseMove",value:function(t){var e=this.getRatingEvent(t);this.updateRating(e.width,e.val)}},{key:"handleClick",value:function(t){if(this.props.disabled)return t.stopPropagation(),t.preventDefault(),!1;var e={currentRatingPos:this.state.pos,currentRatingVal:this.state.rating,caption:this.props.caption,name:this.props.name};this.setState(e),this.props.onRatingClick(t,{rating:this.state.rating,position:this.state.pos,caption:this.props.caption,name:this.props.name})}},{key:"treatName",value:function(t){return"string"==typeof t?t.toLowerCase().split(" ").join("_"):void 0}},{key:"getClasses",value:function(){return(0,_classnames2["default"])({"rsr-root":!0,"rsr--disabled":this.props.disabled,"rsr--editing":this.state.editing})}},{key:"getCaption",value:function(){return this.props.caption?_react2["default"].createElement("span",{className:"rsr__caption"},this.props.caption):null}},{key:"setAttrs",value:function(){var t={};return this.state.editing&&(t.onMouseMove=this.handleMouseMove.bind(this),t.onMouseLeave=this.handleMouseLeave.bind(this),t.onClick=this.handleClick.bind(this)),t}},{key:"render",value:function(){var t=this.getClasses(),e=this.getCaption(),a=this.setAttrs();return _react2["default"].createElement("span",{className:"rsr-container"},e,_react2["default"].createElement("div",{ref:"root",className:t},_react2["default"].createElement("div",_extends({ref:"ratingContainer",className:"rsr rating-gly-star","data-content":this.state.glyph},a),this.getSvg(this.state.rating),_react2["default"].createElement("input",{type:"number",name:this.props.name,value:this.state.currentRatingVal,style:{display:"none !important"},min:this.min,max:this.max,readOnly:!0}))))}}]),e}(_react2["default"].Component);StarRating.propTypes={name:_react2["default"].PropTypes.string.isRequired,caption:_react2["default"].PropTypes.string,totalStars:_react2["default"].PropTypes.number.isRequired,rating:_react2["default"].PropTypes.number,onRatingClick:_react2["default"].PropTypes.func,disabled:_react2["default"].PropTypes.bool,editing:_react2["default"].PropTypes.bool,size:_react2["default"].PropTypes.number},StarRating.defaultProps={step:1,totalStars:5,onRatingClick:function(){},disabled:!1,size:50,rating:0},exports["default"]=StarRating;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var hasOwn = {}.hasOwnProperty;
+	
+		function classNames () {
+			var classes = [];
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+	
+			return classes.join(' ');
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
 /* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(209);
-	var MapConstants = __webpack_require__(267);
+	var MapConstants = __webpack_require__(264);
 	
 	var MapActions = {
 	    mapsReady: function () {
@@ -33779,7 +33797,7 @@
 	var ApiUtil = __webpack_require__(272);
 	var ReactRouter = __webpack_require__(159);
 	// var UserInfo = require('./UserInfo');
-	var SearchBar = __webpack_require__(251);
+	var SearchBar = __webpack_require__(244);
 	// var LoggedOut = require("./logged_out");
 	var NavUserIndex = __webpack_require__(275);
 	
@@ -33983,7 +34001,7 @@
 	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(276);
 	var SessionActions = __webpack_require__(278);
-	var ReviewActions = __webpack_require__(245);
+	var ReviewActions = __webpack_require__(250);
 	var Modal = __webpack_require__(279).Modal;
 	
 	var UserButtons = __webpack_require__(520);
@@ -35459,7 +35477,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -35597,7 +35615,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -35699,7 +35717,7 @@
 	
 	var _utilsValidComponentChildren2 = _interopRequireDefault(_utilsValidComponentChildren);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -35761,7 +35779,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -35824,7 +35842,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36104,7 +36122,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36322,7 +36340,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36538,7 +36556,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36610,7 +36628,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36877,7 +36895,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36940,7 +36958,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -36997,7 +37015,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -37308,7 +37326,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -37561,7 +37579,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -37814,7 +37832,7 @@
 	
 	var _Collapse2 = _interopRequireDefault(_Collapse);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -37942,7 +37960,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -38394,7 +38412,7 @@
 	
 	var _domHelpersEventsOn2 = _interopRequireDefault(_domHelpersEventsOn);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -38910,7 +38928,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -42586,7 +42604,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43062,7 +43080,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43417,7 +43435,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43480,7 +43498,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43630,7 +43648,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43796,7 +43814,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43852,7 +43870,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43914,7 +43932,7 @@
 	
 	var _ListGroupItem2 = _interopRequireDefault(_ListGroupItem);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44048,7 +44066,7 @@
 	
 	var _styleMaps = __webpack_require__(303);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44181,7 +44199,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44320,7 +44338,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44716,7 +44734,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44841,7 +44859,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44916,7 +44934,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -44970,7 +44988,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -45077,7 +45095,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -45129,7 +45147,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -46266,7 +46284,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -46487,7 +46505,7 @@
 	
 	var _uncontrollable2 = _interopRequireDefault(_uncontrollable);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -46755,7 +46773,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -47046,7 +47064,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -47361,7 +47379,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -47496,7 +47514,7 @@
 	
 	var _Fade2 = _interopRequireDefault(_Fade);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -47828,7 +47846,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -48631,7 +48649,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -48670,7 +48688,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -48753,7 +48771,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -48808,7 +48826,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49064,7 +49082,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49179,7 +49197,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49431,7 +49449,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49564,7 +49582,7 @@
 	
 	var _styleMaps = __webpack_require__(303);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49753,7 +49771,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -49850,7 +49868,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50084,7 +50102,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50212,7 +50230,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50278,7 +50296,7 @@
 	
 	exports.__esModule = true;
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50726,7 +50744,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50798,7 +50816,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50906,7 +50924,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(248);
+	var _classnames = __webpack_require__(269);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -51487,8 +51505,7 @@
 	var Grid = __webpack_require__(279).Grid;
 	var HomeSearchbar = __webpack_require__(527);
 	var RecentReviews = __webpack_require__(241);
-	var LandingPage = __webpack_require__(268);
-	var Footer = __webpack_require__(529);
+	var LandingPage = __webpack_require__(265);
 	
 	var Home = React.createClass({
 	    displayName: 'Home',
@@ -51537,8 +51554,7 @@
 	                'div',
 	                { className: 'landing-page shadow' },
 	                React.createElement(LandingPage, null)
-	            ),
-	            React.createElement(Footer, null)
+	            )
 	        );
 	    }
 	});
@@ -51554,7 +51570,7 @@
 	//var SpotUtil = require('../../util/spot_util');
 	//var Map = require('../spots/Map');
 	//var Geocomplete = require('geocomplete');
-	var Dropdown = __webpack_require__(252);
+	var Dropdown = __webpack_require__(245);
 	
 	var HomeSearchBar = React.createClass({
 	    displayName: 'HomeSearchBar',
@@ -51686,8 +51702,7 @@
 	module.exports = HomeSearchBar;
 
 /***/ },
-/* 528 */,
-/* 529 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

@@ -6,7 +6,7 @@ var Link = ReactRouter.Link;
 
 var List = React.createClass({
   handleItemClick: function (spot) {
-    this.props.history.pushState(null, "/spots/" + spot.id );
+    setTimeout(this.props.history.pushState(null, "/spots/" + spot.id ), 200);
   },
 
   render: function(){
@@ -14,7 +14,7 @@ var List = React.createClass({
 
     if (this.props.spots.length === 0) {
       results = <div><h3>No public restrooms near you. Click on the map to place a new location!</h3>
-      <h4>Or, check out the demo at Morningside Heights</h4>
+      <h4>Or, check out the demo at  <a href="#/search/Morningside-Heights-New-York-NY-United-States?_k=kyrwns">{" Morningside Heights, NYC"}</a></h4>
       </div>
     } else {
         results = <div>{this.props.spots.map(function(spot){

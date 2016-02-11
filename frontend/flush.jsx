@@ -5,6 +5,7 @@ var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 var browserHistory = ReactRouter.browserHistory;
+var Redirect = ReactRouter.Redirect;
 
 // components
 var SpotForm = require('./components/spots/SpotsForm');
@@ -20,6 +21,7 @@ var MapActions = require('./actions/map_actions');
 var NavBar = require('./components/nav/Navbar');
 var SearchBar = require('./components/nav/Search');
 var Home = require('./components/home/Home');
+var Footer = require('./components/home/Footer');
 
 var App = React.createClass({
   render: function() {
@@ -27,6 +29,7 @@ var App = React.createClass({
         <div>
           <NavBar history={this.props.history} location={this.props.location} />
             {this.props.children}
+          <Footer />
         </div>
     );
   }
@@ -36,6 +39,7 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Home} />
     <Route path="/search/:loc" component={SearchIndex} />
+    <Redirect path="/search" to="/search/morningside-heights" />
     <Route path="spots/new" component={SpotForm} />
     <Route path="spots/:spotId" component={SpotShow}>
       <Route path="review" components={ReviewForm} />

@@ -29,7 +29,7 @@ var RecentReviews = React.createClass({
     },
 
     handleItemClick: function (spot) {
-        setTimeout(this.props.history.pushState(null, "spots/" + spot.id ), 1500);
+        this.props.history.pushState(null, "spots/" + spot.id );
     },
 
     render: function() {
@@ -60,7 +60,7 @@ var RecentReviews = React.createClass({
                               height="90"
                               width="90"
                               className="img" />
-                                <li>{nameDisplay}{status}<Link to={spotLink}>{review.spot_name.name}:</Link></li>
+                                <li>{nameDisplay}{status}<Link to={spotLink} params={{spotId: handleItemClick}}>{review.spot_name.name}:</Link></li>
                                 <li>{review.rating} Stars, {review.date}</li>
                                 <li>{review.comment}</li>
                                 <br />
