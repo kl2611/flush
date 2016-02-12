@@ -11,6 +11,25 @@ var ReviewForm = React.createClass({
         return { rating: 5, comment: "" };
     },
 
+    componentDidMount: function() {
+        $("#review-rating").rating({min: "1",
+                                    max: "5",
+                                    step: "0.5",
+                                    showClear: false,
+                                    showCaption: false,
+                                    size: "xs"});
+        $("#review-rating").rating('update', this.state.rating);
+        $('#review-rating').on('rating.change', function(event, value, caption) {
+        this.setState({rating: value});
+        }.bind(this));
+    },
+
+    componentWillUnmount: function() {
+        $('#review-rating').off('rating.change', function(event, value, caption) {
+            this.setState({rating: value});
+        });
+    },
+
     navigateToSpotShow: function () {
         var spotUrl = "/spots/" + this.props.params.spotId;
         this.props.history.pushState(null, spotUrl);
@@ -30,6 +49,7 @@ var ReviewForm = React.createClass({
         );
         ReviewUtil.createReview(review);
         this.navigateToSpotShow();
+        location.reload();
     },
 
     render: function () {
@@ -38,9 +58,7 @@ var ReviewForm = React.createClass({
                 <form onSubmit={this.handleSubmit}>
                     <label>Rating</label>
                     <br />
-                    <input type="number" valueLink={this.linkState('rating')} />
-                    <br />
-
+                    <input id="review-rating" type="number" className="rating" min='1' max='5' valueLink={this.linkState('rating')}/>
                     <label>Comment</label>
                     <br />
                     <textarea

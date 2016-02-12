@@ -32175,64 +32175,52 @@
 
 /***/ },
 /* 248 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var ReviewUtil = __webpack_require__(249);
-	var ReviewStore = __webpack_require__(252);
-	var ReviewIndexItem = __webpack_require__(253);
-	
-	var ReviewIndex = React.createClass({
-	    displayName: 'ReviewIndex',
-	
-	    getInitialState: function () {
-	        return { allReviews: [] };
-	    },
-	
-	    componentDidMount: function () {
-	        reviewListener = ReviewStore.addListener(this.onChange);
-	        ReviewUtil.fetchReviews();
-	    },
-	
-	    componentWillUnmount: function () {
-	        reviewListener.remove();
-	    },
-	
-	    onChange: function () {
-	        this.setState({ allReviews: ReviewStore.all() });
-	    },
-	
-	    render: function () {
-	        var reviews = this.props.reviews;
-	
-	        if (reviews.length === 0) {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                'You are the first to review'
-	            );
-	        } else {
-	            reviewDisplay = React.createElement(
-	                'div',
-	                null,
-	                this.state.reviews.map(function (review) {
-	                    return React.createElement(ReviewIndexItem, _extends({ key: review.id }, review, { reviewCount: reviewCount }));
-	                })
-	            );
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            null,
-	            reviewDisplay
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndex;
+	// var React = require('react');
+	// var ReactRouter = require('react-router');
+	// var ReviewUtil = require('../../util/review_util');
+	// var ReviewStore = require('../../stores/review');
+	// var ReviewIndexItem = require('./ReviewsIndexItem');
+
+	// var ReviewIndex = React.createClass({
+	//     getInitialState: function() {
+	//         return ({ allReviews: [] });
+	//     },
+
+	//     componentDidMount: function() {
+	//         reviewListener = ReviewStore.addListener(this.onChange);
+	//         ReviewUtil.fetchReviews();
+	//     },
+
+	//     componentWillUnmount: function() {
+	//         reviewListener.remove();
+	//     },
+
+	//     onChange: function() {
+	//         this.setState({ allReviews: ReviewStore.all() });
+	//     },
+
+	//     render: function() {
+	//         var reviews = this.props.reviews;
+
+	//         if (reviews.length === 0) {
+	//             reviewDisplay = <div>You are the first to review</div>
+	//         } else {
+	//             reviewDisplay = <div>
+	//                 {this.state.reviews.map(function(review) {
+	//                     return <ReviewIndexItem key={review.id} {...review} reviewCount={reviewCount} />;
+	//                 })}
+	//             </div>
+	//         }
+
+	//         return (
+	//             <div>{reviewDisplay}</div>
+	//         );
+	//     }
+	// });
+
+	// module.exports = ReviewIndex;
 
 /***/ },
 /* 249 */
@@ -32620,97 +32608,7 @@
 	module.exports = ReviewStore;
 
 /***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var ReviewIndexItem = React.createClass({
-	    displayName: 'ReviewIndexItem',
-	
-	    componentDidMount: function () {
-	        var reviewId = "#review-rating-user-" + this.props.id;
-	        var that = this;
-	        $(reviewId).rating({
-	            min: "0",
-	            max: "5",
-	            step: "1",
-	            showClear: false,
-	            showCaption: false,
-	            readonly: true,
-	            size: "xxs"
-	        });
-	        $(reviewId).rating('update', this.props.rating);
-	    },
-	
-	    render: function () {
-	        var reviewId = "review-rating-user-" + this.props.id;
-	        var name = this.props.username;
-	        var altTag = name + " User Avatar";
-	
-	        var userReviewCount;
-	        if (this.props.reviewCount < 2) {
-	            userReviewCount = this.props.reviewCount + " review";
-	        } else {
-	            userReviewCount = this.props.reviewCount + " reviews";
-	        }
-	
-	        return React.createElement(
-	            'div',
-	            { className: 'review-index-item-components' },
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-info' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        username
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        userReviewCount
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                'div',
-	                { id: 'current-user-review' },
-	                React.createElement(
-	                    'ul',
-	                    null,
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        React.createElement('input', { id: reviewId,
-	                            className: 'rating',
-	                            type: 'number',
-	                            min: '1',
-	                            max: '5' }),
-	                        React.createElement(
-	                            'div',
-	                            null,
-	                            this.props.date
-	                        )
-	                    ),
-	                    React.createElement(
-	                        'li',
-	                        null,
-	                        this.props.comment
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = ReviewIndexItem;
-
-/***/ },
+/* 253 */,
 /* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -32803,6 +32701,25 @@
 	        return { rating: 5, comment: "" };
 	    },
 	
+	    componentDidMount: function () {
+	        $("#review-rating").rating({ min: "1",
+	            max: "5",
+	            step: "0.5",
+	            showClear: false,
+	            showCaption: false,
+	            size: "xs" });
+	        $("#review-rating").rating('update', this.state.rating);
+	        $('#review-rating').on('rating.change', function (event, value, caption) {
+	            this.setState({ rating: value });
+	        }.bind(this));
+	    },
+	
+	    componentWillUnmount: function () {
+	        $('#review-rating').off('rating.change', function (event, value, caption) {
+	            this.setState({ rating: value });
+	        });
+	    },
+	
 	    navigateToSpotShow: function () {
 	        var spotUrl = "/spots/" + this.props.params.spotId;
 	        this.props.history.pushState(null, spotUrl);
@@ -32818,6 +32735,7 @@
 	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
 	        ReviewUtil.createReview(review);
 	        this.navigateToSpotShow();
+	        location.reload();
 	    },
 	
 	    render: function () {
@@ -32833,8 +32751,7 @@
 	                    'Rating'
 	                ),
 	                React.createElement('br', null),
-	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),
-	                React.createElement('br', null),
+	                React.createElement('input', { id: 'review-rating', type: 'number', className: 'rating', min: '1', max: '5', valueLink: this.linkState('rating') }),
 	                React.createElement(
 	                    'label',
 	                    null,
@@ -33585,7 +33502,7 @@
 	
 	        if (!randSpot || isNaN(rating) || rating === 0) {
 	            randSpotRating = "No rating yet!";
-	        } else if (randSpot.pictures === undefined) {
+	        } else if (randSpot.pictures[0] === undefined) {
 	            spotLink = "/spots/" + randSpot.id;
 	            imgSource = "assets/icon-default.jpg";
 	            name = randSpot.name;
