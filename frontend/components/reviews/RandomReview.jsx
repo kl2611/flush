@@ -17,9 +17,13 @@ var RandomReview = React.createClass({
     },
 
     componentDidMount: function() {
-        var randSpot = Math.floor((Math.random()) * 3 + 2);
+        var randSpot = Math.floor((Math.random()) + 2);
+        console.log(randSpot);
         SpotUtil.fetchSingleSpot(randSpot);
         ReviewUtil.fetchSpotReviews(randSpot);
+    },
+
+    componentWillMount: function() {
         spotListener = SpotStore.addListener(this.onChange);
         reviewListener = ReviewStore.addListener(this.onChange);
     },
@@ -36,9 +40,9 @@ var RandomReview = React.createClass({
         reviewListener.remove();
     },
 
-    handleItemClick: function (spot) {
-        this.props.history.pushState(null, "spots/" + spot.id );
-    },
+    // handleItemClick: function (spot) {
+    //     this.props.history.pushState(null, "spots/" + spot.id );
+    // },
 
     render: function() {
         var randSpot = this.state.randSpot;
@@ -59,7 +63,9 @@ var RandomReview = React.createClass({
             name = randSpot.name;
         }
 
-        reviews = this.state.reviews;
+        console.log(this.state);
+
+        var reviews = this.state.reviews;
         if (!reviews) {
             return <div />;
         } else {
@@ -75,11 +81,12 @@ var RandomReview = React.createClass({
                 return (
                             <div key={review.id}>
                                 <hr />
-                                <strong>{nameDisplay}</strong>  wrote a <b>review</b> for <strong><Link to={spotLink}>{name}</Link></strong>
-                                <p />
-                                {review.rating} stars, {review.date}
-                                <p />
                                 <div className="list-item-description"><blockquote>{comment}</blockquote></div>
+                                    <div className="nameDisplay">
+                                        - <strong>{nameDisplay}</strong>
+                                        <br />
+                                        {review.rating} stars, {review.date}
+                                    </div>
                             </div>
                 );
             });
@@ -92,7 +99,8 @@ var RandomReview = React.createClass({
                     <div className="wrapper">
                         <img src={imgSource}
                             alt={name}
-                            height="150" />
+                            height="150" /><br />
+                        <strong><Link to={spotLink}>{name}</Link></strong>
                     </div>
                     {reviewList}
                 </div>

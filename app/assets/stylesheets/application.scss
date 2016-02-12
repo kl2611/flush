@@ -115,6 +115,8 @@ blockquote em{
 .wrapper {
     clear: both;
     overflow: hidden;
+    margin: auto;
+    text-align: center;
 }
 
 .clearfix {
@@ -341,6 +343,10 @@ blockquote em{
     position: relative;
 }
 
+.nameDisplay {
+  text-align: right;
+}
+
 .spot-list-item ul, li {
     list-style: none;
 }
@@ -370,6 +376,11 @@ blockquote em{
 
 .spot-detail {
     width: 400px;
+}
+
+.spot-rating input, label {
+  display: inline;
+  vertical-align: top;
 }
 
 .reviews {

@@ -15,4 +15,3 @@ end
 date_array = @review[:updated_at].to_s(:db).split.first.split("-")
 
 json.date "#{date_array[1]}/#{date_array[2]}/#{date_array[0]}"
-

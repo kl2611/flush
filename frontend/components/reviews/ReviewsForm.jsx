@@ -49,7 +49,6 @@ var ReviewForm = React.createClass({
         );
         ReviewUtil.createReview(review);
         this.navigateToSpotShow();
-        location.reload();
     },
 
     render: function () {
