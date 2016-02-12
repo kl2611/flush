@@ -33682,7 +33682,7 @@
 	          ),
 	          React.createElement(
 	            'a',
-	            { href: '#', className: 'pull-left' },
+	            { href: 'http://www.flushr.info', className: 'pull-left' },
 	            React.createElement('img', { src: '/assets/flushr-logo.png',
 	              height: '50' })
 	          )

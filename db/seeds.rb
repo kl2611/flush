@@ -27,23 +27,23 @@ User.create ([ {username: "Kelly",
 ])
 
 Picture.create([
-    {name: "Guest Picture",
-        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455058190/fumichan.jpg",
+    {name: "Kelly Picture",
+        source: "https://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455058190/fumichan.jpg",
         imageable_id: 1,
         imageable_type: "User"},
 
     {name: "Jibanyan Picture",
-        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057847/Jibanyan.png",
+        source: "https://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057847/Jibanyan.png",
         imageable_id: 2,
         imageable_type: "User"},
 
     {name: "Komasan Picture",
-        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057804/Komasan.jpg",
+        source: "https://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057804/Komasan.jpg",
         imageable_id: 3,
         imageable_type: "User"},
 
     {name: "Pikachu Picture",
-        source: "http://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057764/pikachu.jpg",
+        source: "https://res.cloudinary.com/kellyliu/image/upload/c_scale,w_200/v1455057764/pikachu.jpg",
         imageable_id: 4,
         imageable_type: "User"}
 ])
@@ -128,43 +128,43 @@ Spot.create ([{
 
 Picture.create([{
                             name: "Lerner Hall 1",
-                            source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_1.jpg",
+                            source: "https://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_1.jpg",
                             imageable_id: 1,
                             imageable_type: "Spot"
                            },
                            {
                              name: "Lerner Hall 2",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_2.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454126865/lerner_2.jpg",
                              imageable_id: 1,
                              imageable_type: "Spot"
                            },
                            {
                              name: "Low Library 1",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_1.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_1.jpg",
                              imageable_id: 2,
                              imageable_type: "Spot"
                            },
                            {
                              name: "Low Library 2",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_2.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454126752/low_library_2.jpg",
                              imageable_id: 2,
                              imageable_type: "Spot"
                            },
                            {
                              name: "Diana Center 1",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454127564/banard_diana_1.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454127564/banard_diana_1.jpg",
                              imageable_id: 3,
                              imageable_type: "Spot"
                            },
                            {
                              name: "Diana Center 2",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454130200/banard_diana_2.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454130200/banard_diana_2.jpg",
                              imageable_id: 3,
                              imageable_type: "Spot"
                            },
                            {
                              name: "Northwest Corner Building 1",
-                             source: "http://res.cloudinary.com/kellyliu/image/upload/v1454127536/columbia_noco_1.jpg",
+                             source: "https://res.cloudinary.com/kellyliu/image/upload/v1454127536/columbia_noco_1.jpg",
                              imageable_id: 4,
                              imageable_type: "Spot"
                            },
