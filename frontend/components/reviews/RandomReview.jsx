@@ -17,7 +17,7 @@ var RandomReview = React.createClass({
     },
 
     componentDidMount: function() {
-        var randSpot = Math.floor((Math.random()) * 5  + 1);
+        var randSpot = Math.floor((Math.random()) * 4  + 1);
         SpotUtil.fetchSingleSpot(randSpot);
         ReviewUtil.fetchSpotReviews(randSpot);
     },
