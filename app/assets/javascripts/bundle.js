@@ -31634,13 +31634,17 @@
 	
 	        return React.createElement(
 	            'div',
-	            { className: 'recent-reviews' },
+	            null,
 	            React.createElement(
 	                'h3',
 	                { className: 'recent-reviews' },
 	                'Recent Activity'
 	            ),
-	            reviews
+	            React.createElement(
+	                'div',
+	                { className: 'recent-reviews' },
+	                reviews
+	            )
 	        );
 	    }
 	});
@@ -32751,7 +32755,7 @@
 	            React.createElement(
 	              'li',
 	              null,
-	              React.createElement('input', { id: reviewId, className: 'rating', type: 'number', min: '1', max: '5' })
+	              React.createElement('input', { id: reviewId, className: 'rating', readOnly: 'true', type: 'number', min: '1', max: '5' })
 	            ),
 	            React.createElement(
 	              'li',
@@ -32792,20 +32796,18 @@
 	    },
 	
 	    componentDidMount: function () {
-	        $("#review-rating").rating({ min: "1",
-	            max: "5",
-	            step: "0.5",
+	        $("#input-id").rating({
 	            showClear: false,
-	            showCaption: false,
-	            size: "xs" });
-	        $("#review-rating").rating('update', this.state.rating);
-	        $('#review-rating').on('rating.change', function (event, value, caption) {
+	            showCaption: false
+	        });
+	        $("#input-id").rating('update', this.state.rating);
+	        $('#input-id').on('rating.change', function (event, value, caption) {
 	            this.setState({ rating: value });
 	        }.bind(this));
 	    },
 	
 	    componentWillUnmount: function () {
-	        $('#review-rating').off('rating.change', function (event, value, caption) {
+	        $('#input-id').off('rating.change', function (event, value, caption) {
 	            this.setState({ rating: value });
 	        });
 	    },
@@ -32825,6 +32827,7 @@
 	        var review = $.extend({}, this.state, { spot_id: this.props.params.spotId });
 	        ReviewUtil.createReview(review);
 	        this.navigateToSpotShow();
+	        location.reload();
 	    },
 	
 	    render: function () {
@@ -32840,7 +32843,12 @@
 	                    'Rating'
 	                ),
 	                React.createElement('br', null),
-	                React.createElement('input', { id: 'review-rating', type: 'number', className: 'rating', min: '1', max: '5', valueLink: this.linkState('rating') }),
+	                React.createElement('input', { id: 'input-id',
+	                    type: 'number',
+	                    className: 'rating',
+	                    min: '1', max: '5',
+	                    step: '1',
+	                    'data-size': 'xs' }),
 	                React.createElement(
 	                    'label',
 	                    null,
@@ -33559,8 +33567,7 @@
 	    },
 	
 	    componentDidMount: function () {
-	        var randSpot = Math.floor(Math.random() + 2);
-	        console.log(randSpot);
+	        var randSpot = Math.floor(Math.random() * 5 + 1);
 	        SpotUtil.fetchSingleSpot(randSpot);
 	        ReviewUtil.fetchSpotReviews(randSpot);
 	    },
@@ -33604,8 +33611,6 @@
 	            imgSource = randSpot.pictures[0].source;
 	            name = randSpot.name;
 	        }
-	
-	        console.log(this.state);
 	
 	        var reviews = this.state.reviews;
 	        if (!reviews) {
@@ -33729,7 +33734,7 @@
 	  render: function () {
 	    var navBar = React.createElement(
 	      'nav',
-	      { className: 'navbar navbar-light' },
+	      { className: 'navbar navbar-default' },
 	      React.createElement(
 	        'div',
 	        { className: 'container-fluid' },

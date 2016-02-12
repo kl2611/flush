@@ -69,9 +69,11 @@ var RecentReviews = React.createClass({
         }
 
         return (
-            <div className ="recent-reviews">
+            <div>
             <h3 className="recent-reviews">Recent Activity</h3>
-                {reviews}
+                <div className ="recent-reviews">
+                    {reviews}
+                </div>
             </div>
         );
     }

@@ -12,20 +12,18 @@ var ReviewForm = React.createClass({
     },
 
     componentDidMount: function() {
-        $("#review-rating").rating({min: "1",
-                                    max: "5",
-                                    step: "0.5",
+        $("#input-id").rating({
                                     showClear: false,
-                                    showCaption: false,
-                                    size: "xs"});
-        $("#review-rating").rating('update', this.state.rating);
-        $('#review-rating').on('rating.change', function(event, value, caption) {
+                                    showCaption: false
+                                    });
+        $("#input-id").rating('update', this.state.rating);
+        $('#input-id').on('rating.change', function(event, value, caption) {
         this.setState({rating: value});
         }.bind(this));
     },
 
     componentWillUnmount: function() {
-        $('#review-rating').off('rating.change', function(event, value, caption) {
+        $('#input-id').off('rating.change', function(event, value, caption) {
             this.setState({rating: value});
         });
     },
@@ -49,6 +47,7 @@ var ReviewForm = React.createClass({
         );
         ReviewUtil.createReview(review);
         this.navigateToSpotShow();
+        location.reload();
     },
 
     render: function () {
@@ -57,7 +56,12 @@ var ReviewForm = React.createClass({
                 <form onSubmit={this.handleSubmit}>
                     <label>Rating</label>
                     <br />
-                    <input id="review-rating" type="number" className="rating" min='1' max='5' valueLink={this.linkState('rating')}/>
+                    <input id="input-id"
+                        type="number"
+                        className="rating"
+                        min='1' max='5'
+                        step='1'
+                        data-size="xs" />
                     <label>Comment</label>
                     <br />
                     <textarea

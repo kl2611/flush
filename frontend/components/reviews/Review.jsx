@@ -50,7 +50,7 @@ var Review = React.createClass({
 
             <div className="col-md-9">
             <ul>
-              <li><input id={reviewId} className="rating" type="number" min='1' max='5' /></li>
+              <li><input id={reviewId} className="rating" readOnly="true" type="number" min='1' max='5' /></li>
               <li>{this.props.date}</li>
               <li>{this.props.comment}</li>
             </ul>

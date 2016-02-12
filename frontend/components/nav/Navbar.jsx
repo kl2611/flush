@@ -20,7 +20,7 @@ var NavBar = React.createClass({
 
   render: function() {
     var navBar = (
-    <nav className="navbar navbar-light">
+    <nav className="navbar navbar-default">
       <div className="container-fluid">
 
         <div className="navbar-header">
