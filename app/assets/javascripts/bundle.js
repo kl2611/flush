@@ -31517,11 +31517,11 @@
 	                var status = " wrote a review for ";
 	
 	                if (review.user.avatar === undefined) {
-	                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	                    imgSrc = "/assets/default-icon-swirl.jpg";
 	                } else if (review.user.avatar.source) {
 	                    imgSrc = review.user.avatar.source;
 	                } else {
-	                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	                    imgSrc = "/assets/default-icon-swirl.jpg";
 	                }
 	
 	                return React.createElement(
@@ -50972,7 +50972,7 @@
 	  change: function () {
 	    if (UserStore.user()[0].avatar === undefined) {
 	      this.setState({
-	        avatar: "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+	        avatar: "assets/default-icon-swirl.jpg"
 	      });
 	    } else {
 	      this.setState({
@@ -50983,11 +50983,11 @@
 	
 	  render: function () {
 	    if (this.state.avatar === undefined) {
-	      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	      imgSrc = "assets/default-icon-swirl.jpg";
 	    } else if (this.state.avatar) {
 	      imgSrc = this.state.avatar;
 	    } else {
-	      imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg";
+	      imgSrc = "assets/default-icon-swirl.jpg";
 	    }
 	
 	    return React.createElement('img', { src: imgSrc,

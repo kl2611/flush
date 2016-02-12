@@ -46,11 +46,11 @@ var RecentReviews = React.createClass({
                 var status = " wrote a review for ";
 
                 if (review.user.avatar === undefined) {
-                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+                    imgSrc = "/assets/default-icon-swirl.jpg"
                 } else if (review.user.avatar.source) {
                     imgSrc = review.user.avatar.source
                 } else {
-                    imgSrc = "https://res.cloudinary.com/kellyliu/image/upload/v1455063173/swirl.jpg"
+                    imgSrc = "/assets/default-icon-swirl.jpg"
                 }
 
                 return (
