@@ -16,6 +16,10 @@ var HomeSearchBar = React.createClass({
         });
     },
 
+    componentDidMount: function() {
+
+    },
+
     searchBarOnClick: function() {
         this.setState({
             showAutocomplete: true

@@ -18,16 +18,6 @@ class Spot < ActiveRecord::Base
         .where("lng < ?", bounds[:northEast][:lng])
     end
 
-    # def self.find_by_tag_partial(str)
-    #     partial = "%#{str}%"
-    #     Spot.includes(:tags).references(:tags).where("tags.name LIKE ?", partial)
-    # end
-
-    # def self.find_by_spot_partial(str)
-    #     partial = "%#{str.downcase}%"
-    #     Spot.where("lower(name) LIKE ?", partial)
-    # end
-
     def review_count
         reviews.count
     end

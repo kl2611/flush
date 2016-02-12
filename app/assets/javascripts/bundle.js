@@ -55,6 +55,7 @@
 	
 	// components
 	var SpotForm = __webpack_require__(206);
+	var SpotFormModal = __webpack_require__(528);
 	var SpotsSearch = __webpack_require__(237);
 	var SpotShow = __webpack_require__(251);
 	var ReviewForm = __webpack_require__(255);
@@ -24053,6 +24054,7 @@
 /* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
 	var React = __webpack_require__(1);
 	var SpotUtil = __webpack_require__(207);
 	var LinkedStateMixin = __webpack_require__(233);
@@ -24093,68 +24095,66 @@
 	            lng = this._coords().lng;
 	        return React.createElement(
 	            'div',
-	            { className: 'form' },
+	            { className: 'container-fluid' },
 	            React.createElement(
-	                'h3',
-	                null,
-	                'New Restroom Form'
-	            ),
-	            React.createElement(
-	                'form',
-	                { onSubmit: this.handleSubmit },
+	                'div',
+	                { className: 'search-index-container' },
 	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
+	                    'div',
+	                    { className: 'form' },
 	                    React.createElement(
-	                        'label',
+	                        'h3',
 	                        null,
-	                        'Name of Restroom'
+	                        'New Restroom Form'
 	                    ),
-	                    React.createElement('input', { type: 'name', className: 'form-control', placeholder: 'e.g. Times Square', valueLink: this.linkState('name') })
-	                ),
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
 	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Description'
+	                        'form',
+	                        { onSubmit: this.handleSubmit },
+	                        React.createElement(
+	                            'fieldset',
+	                            { className: 'form-group' },
+	                            React.createElement(
+	                                'label',
+	                                null,
+	                                'Name of Restroom'
+	                            ),
+	                            React.createElement('input', { type: 'name', className: 'form-control', placeholder: 'e.g. Times Square', valueLink: this.linkState('name') })
+	                        ),
+	                        React.createElement(
+	                            'fieldset',
+	                            { className: 'form-group' },
+	                            React.createElement(
+	                                'label',
+	                                null,
+	                                'Description'
+	                            ),
+	                            React.createElement('input', { type: 'description', className: 'form-control', placeholder: 'e.g. Located on the second floor of the buildling', valueLink: this.linkState('description') })
+	                        ),
+	                        React.createElement(
+	                            'fieldset',
+	                            { className: 'form-group' },
+	                            React.createElement(
+	                                'label',
+	                                null,
+	                                'Latitude'
+	                            ),
+	                            React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lat }),
+	                            React.createElement(
+	                                'label',
+	                                null,
+	                                'Longitude'
+	                            ),
+	                            React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lng })
+	                        ),
+	                        React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Create spot' })
 	                    ),
-	                    React.createElement('input', { type: 'description', className: 'form-control', placeholder: 'e.g. Located on the second floor of the buildling', valueLink: this.linkState('description') })
-	                ),
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
+	                    React.createElement('p', null),
 	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'City'
-	                    ),
-	                    React.createElement('input', { type: 'city', className: 'form-control', placeholder: 'New York', valueLink: this.linkState('city') })
-	                ),
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Latitude'
-	                    ),
-	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lat }),
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Longitude'
-	                    ),
-	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lng })
-	                ),
-	                React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Create spot' })
-	            ),
-	            React.createElement('p', null),
-	            React.createElement(
-	                'button',
-	                { type: 'submit', className: 'btn btn-primary', onClick: this.handleCancel },
-	                'Cancel'
+	                        'button',
+	                        { type: 'submit', className: 'btn btn-primary', onClick: this.handleCancel },
+	                        'Cancel'
+	                    )
+	                )
 	            )
 	        );
 	    }
@@ -32423,6 +32423,7 @@
 	var SpotStore = __webpack_require__(238);
 	var Spot = __webpack_require__(252);
 	var Map = __webpack_require__(247);
+	// var MapDetail = require('./MapDetail');
 	var SpotUtil = __webpack_require__(207);
 	
 	var Review = __webpack_require__(254);
@@ -32487,6 +32488,8 @@
 	        var Link = ReactRouter.Link;
 	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
 	
+	        // <h5><Link to = "/search/">Back to Search Results</Link></h5>
+	
 	        return React.createElement(
 	            'div',
 	            { className: 'container-fluid' },
@@ -32500,15 +32503,6 @@
 	                        'div',
 	                        { className: 'col-md-8' },
 	                        React.createElement('p', null),
-	                        React.createElement(
-	                            'h5',
-	                            null,
-	                            React.createElement(
-	                                Link,
-	                                { to: '/search/' },
-	                                'Back to Search Results'
-	                            )
-	                        ),
 	                        React.createElement(Spot, { spot: this.state.spot, className: 'map' })
 	                    ),
 	                    React.createElement(
@@ -32526,7 +32520,11 @@
 	                this.props.children || React.createElement(
 	                    Link,
 	                    { to: reviewURL },
-	                    'Leave a Review'
+	                    React.createElement(
+	                        'strong',
+	                        null,
+	                        'Leave a Review'
+	                    )
 	                )
 	            ),
 	            React.createElement('p', null)
@@ -51556,6 +51554,8 @@
 	        };
 	    },
 	
+	    componentDidMount: function () {},
+	
 	    searchBarOnClick: function () {
 	        this.setState({
 	            showAutocomplete: true
@@ -51810,6 +51810,115 @@
 	});
 	
 	module.exports = Footer;
+
+/***/ },
+/* 527 */,
+/* 528 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Modal = __webpack_require__(276).Modal;
+	var SpotUtil = __webpack_require__(207);
+	var LinkedStateMixin = __webpack_require__(233);
+	
+	var SpotForm = React.createClass({
+	    displayName: 'SpotForm',
+	
+	    mixins: [LinkedStateMixin],
+	    contextTypes: {
+	        router: React.PropTypes.func
+	    },
+	    getInitialState: function () {
+	        return { name: "" };
+	    },
+	
+	    closeModal: function () {
+	        this.props.onHide();
+	    },
+	
+	    handleSubmit: function (event) {
+	        event.preventDefault();
+	        var spot = Object.assign({}, this.state, this._coords());
+	        SpotUtil.createSpot(spot);
+	        this.navigateToSearch();
+	    },
+	
+	    navigateToSearch: function () {
+	        this.props.history.pushState(null, "/");
+	    },
+	
+	    handleCancel: function (event) {
+	        event.preventDefault();
+	        this.navigateToSearch();
+	    },
+	
+	    _coords: function () {
+	        return this.props.location.query;
+	    },
+	
+	    render: function () {
+	        var lat = this._coords().lat,
+	            lng = this._coords().lng;
+	        return React.createElement(
+	            Modal,
+	            null,
+	            React.createElement(
+	                'h3',
+	                null,
+	                'New Restroom Form'
+	            ),
+	            React.createElement(
+	                'form',
+	                { onSubmit: this.handleSubmit },
+	                React.createElement(
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Name of Restroom'
+	                    ),
+	                    React.createElement('input', { type: 'name', className: 'form-control', placeholder: 'e.g. Times Square', valueLink: this.linkState('name') })
+	                ),
+	                React.createElement(
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Description'
+	                    ),
+	                    React.createElement('input', { type: 'description', className: 'form-control', placeholder: 'e.g. Located on the second floor of the buildling', valueLink: this.linkState('description') })
+	                ),
+	                React.createElement(
+	                    'fieldset',
+	                    { className: 'form-group' },
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Latitude'
+	                    ),
+	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lat }),
+	                    React.createElement(
+	                        'label',
+	                        null,
+	                        'Longitude'
+	                    ),
+	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lng })
+	                ),
+	                React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Create spot' })
+	            ),
+	            React.createElement('p', null),
+	            React.createElement(
+	                'button',
+	                { type: 'submit', className: 'btn btn-primary', onClick: this.handleCancel },
+	                'Cancel'
+	            )
+	        );
+	    }
+	});
+	
+	module.exports = SpotForm;
 
 /***/ }
 /******/ ]);

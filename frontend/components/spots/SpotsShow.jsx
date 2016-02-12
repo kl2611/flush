@@ -3,6 +3,7 @@ var ReactRouter = require('react-router');
 var SpotStore = require('../../stores/spot');
 var Spot = require('./Spot');
 var Map = require('./Map');
+// var MapDetail = require('./MapDetail');
 var SpotUtil = require('../../util/spot_util.js');
 
 var Review = require('../reviews/Review');
@@ -65,6 +66,8 @@ var SpotShow = React.createClass({
         var Link = ReactRouter.Link;
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
 
+// <h5><Link to = "/search/">Back to Search Results</Link></h5>
+
         return (
         <div className="container-fluid">
             <div className="container-spots-show">
@@ -72,7 +75,7 @@ var SpotShow = React.createClass({
                 <div className="row">
                     <div className="col-md-8">
                         <p />
-                        <h5><Link to = "/search/">Back to Search Results</Link></h5>
+
 
                         <Spot spot={this.state.spot} className="map"/>
                     </div>
@@ -86,7 +89,7 @@ var SpotShow = React.createClass({
             </div>
 
             <div className="container-spots-show">
-                {this.props.children || <Link to={reviewURL}>Leave a Review</Link>}
+                {this.props.children || <Link to={reviewURL}><strong>Leave a Review</strong></Link>}
             </div>
             <p />
         </div>
