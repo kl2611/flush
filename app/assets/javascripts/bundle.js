@@ -33682,7 +33682,7 @@
 	          ),
 	          React.createElement(
 	            'a',
-	            { href: 'http://www.flushr.info', className: 'pull-left' },
+	            { href: '/', className: 'pull-left' },
 	            React.createElement('img', { src: '/assets/flushr-logo.png',
 	              height: '50' })
 	          )
@@ -51166,7 +51166,7 @@
 	    },
 	
 	    fillOutLogin: function () {
-	        var username = "Kelly";
+	        var username = "guest";
 	        var password = "password";
 	
 	        this.setState({
