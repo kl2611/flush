@@ -66,16 +66,14 @@ var SpotShow = React.createClass({
         var Link = ReactRouter.Link;
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
 
-// <h5><Link to = "/search/">Back to Search Results</Link></h5>
-
         return (
         <div className="container-fluid">
             <div className="container-spots-show">
-
                 <div className="row">
-                    <div className="col-md-8">
-                        <p />
 
+                    <div className="col-md-8">
+                    <h5><Link to = "/search/">Back to Demo Search Results</Link></h5>
+                        <p />
 
                         <Spot spot={this.state.spot} className="map"/>
                     </div>

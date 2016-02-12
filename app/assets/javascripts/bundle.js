@@ -32417,8 +32417,6 @@
 	        var Link = ReactRouter.Link;
 	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
 	
-	        // <h5><Link to = "/search/">Back to Search Results</Link></h5>
-	
 	        return React.createElement(
 	            'div',
 	            { className: 'container-fluid' },
@@ -32431,6 +32429,15 @@
 	                    React.createElement(
 	                        'div',
 	                        { className: 'col-md-8' },
+	                        React.createElement(
+	                            'h5',
+	                            null,
+	                            React.createElement(
+	                                Link,
+	                                { to: '/search/' },
+	                                'Back to Demo Search Results'
+	                            )
+	                        ),
 	                        React.createElement('p', null),
 	                        React.createElement(Spot, { spot: this.state.spot, className: 'map' })
 	                    ),
@@ -33682,7 +33689,7 @@
 	          ),
 	          React.createElement(
 	            'a',
-	            { href: '/', className: 'pull-left' },
+	            { href: '#', className: 'pull-left' },
 	            React.createElement('img', { src: '/assets/flushr-logo.png',
 	              height: '50' })
 	          )
