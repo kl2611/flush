@@ -55,7 +55,6 @@
 	
 	// components
 	var SpotForm = __webpack_require__(206);
-	var SpotFormModal = __webpack_require__(528);
 	var SpotsSearch = __webpack_require__(237);
 	var SpotShow = __webpack_require__(251);
 	var ReviewForm = __webpack_require__(255);
@@ -31305,107 +31304,98 @@
 
 /***/ },
 /* 237 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	var SpotStore = __webpack_require__(238);
-	var SpotUtil = __webpack_require__(207);
-	var SpotsIndex = __webpack_require__(239);
-	var Map = __webpack_require__(247);
-	var Search = __webpack_require__(249);
-	
-	function _getAllSpots() {
-	    return SpotStore.all();
-	}
-	
-	var SpotsSearch = React.createClass({
-	    displayName: 'SpotsSearch',
-	
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	
-	    _spotsChanged: function () {
-	        this.setState({ spots: _getAllSpots() });
-	    },
-	
-	    getInitialState: function () {
-	        return {
-	            spots: _getAllSpots(),
-	            clickedLoc: null
-	        };
-	    },
-	
-	    _onChange: function () {
-	        this.setState({ spots: SpotStore.all() });
-	    },
-	
-	    componentDidMount: function () {
-	        this.spotListener = SpotStore.addListener(this._onChange);
-	        SpotUtil.fetchSpots();
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
-	    },
-	
-	    handleMapClick: function (coords) {
-	        this.props.history.pushState(null, "spots/new", coords);
-	    },
-	
-	    handleMarkerClick: function (spot) {
-	        this.props.history.pushState(null, "spots/" + spot.id);
-	    },
-	
-	    _geoConverter: function (locStr) {
-	        var _showMaps = this._showMaps;
-	        this.geocoder.geocode({ "address": locStr }, function (results, status) {
-	            if (status === google.maps.GeocoderStatus.OK) {
-	                var latLng = {
-	                    lat: results[0].geometry.location.lat(),
-	                    lng: results[0].geometry.location.lng()
-	                };
-	                _showMaps(latLng);
-	            } else {
-	                console.log('Geocode was not successful for the following reason: ' + status);
-	            }
-	        });
-	    },
-	
-	    _showMaps: function (centerLatLng) {
-	        this.setState({
-	            showResult: true,
-	            centerLatLng: centerLatLng
-	        });
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'h4',
-	                null,
-	                'Your Next Review Awaits'
-	            ),
-	            React.createElement(Search, { history: this.props.history }),
-	            ' ',
-	            React.createElement('p', null),
-	            React.createElement(Map, {
-	                onMapClick: this.handleMapClick,
-	                onMarkerClick: this.handleMarkerClick,
-	                spots: this.state.spots }),
-	            React.createElement(
-	                'div',
-	                { className: 'map' },
-	                React.createElement(SpotsIndex, { spots: this.state.spots, history: this.props.history })
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotsSearch;
+	// var React = require('react');
+	// var ReactRouter = require('react-router');
+	// var SpotStore = require('../../stores/spot.js');
+	// var SpotUtil = require('../../util/spot_util.js');
+	// var SpotsIndex = require('./SpotsIndex');
+	// var Map = require('./Map');
+	// var Search = require('../nav/Search');
+
+	// function _getAllSpots() {
+	//     return SpotStore.all();
+	// }
+
+	// var SpotsSearch = React.createClass({
+	//     contextTypes: {
+	//         router: React.PropTypes.func
+	//     },
+
+	//     _spotsChanged: function() {
+	//         this.setState({spots: _getAllSpots()});
+	//     },
+
+	//     getInitialState: function() {
+	//         return {
+	//             spots: _getAllSpots(),
+	//             clickedLoc: null
+	//         };
+	//     },
+
+	//     _onChange: function() {
+	//         this.setState({ spots: SpotStore.all() })
+	//     },
+
+	//     componentDidMount: function() {
+	//         this.spotListener = SpotStore.addListener(this._onChange);
+	//         SpotUtil.fetchSpots();
+	//     },
+
+	//     componentWillUnmount: function() {
+	//         this.spotListener.remove();
+	//     },
+
+	//     handleMapClick: function(coords) {
+	//         this.props.history.pushState(null, "spots/new", coords);
+	//     },
+
+	//     handleMarkerClick: function (spot) {
+	//         this.props.history.pushState(null, "spots/" + spot.id);
+	//     },
+
+	//     _geoConverter: function(locStr) {
+	//         var _showMaps = this._showMaps;
+	//         this.geocoder.geocode({"address": locStr}, function(results, status) {
+	//             if (status === google.maps.GeocoderStatus.OK) {
+	//                 var latLng = {
+	//                     lat: results[0].geometry.location.lat(),
+	//                     lng: results[0].geometry.location.lng()
+	//                 };
+	//                 _showMaps(latLng);
+	//             } else {
+	//                 console.log('Geocode was not successful for the following reason: ' + status);
+	//             }
+	//         });
+	//     },
+
+	//     _showMaps: function(centerLatLng) {
+	//         this.setState({
+	//             showResult: true,
+	//             centerLatLng: centerLatLng
+	//         });
+	//     },
+
+	//     render: function() {
+	//         return(
+	//                 <div>
+	//                     <h4>Your Next Review Awaits</h4>
+	//                     <Search history={this.props.history} /> <p />
+	//                     <Map
+	//                         onMapClick={this.handleMapClick}
+	//                         onMarkerClick={this.handleMarkerClick}
+	//                         spots={this.state.spots}/>
+	//                     <div className = "map">
+	//                         <SpotsIndex spots={this.state.spots} history={this.props.history} />
+	//                     </div>
+
+	//                 </div>
+	//         );
+	//     }
+	// });
+
+	// module.exports = SpotsSearch;
 
 /***/ },
 /* 238 */
@@ -31468,69 +31458,8 @@
 	module.exports = SpotStore;
 
 /***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var SpotIndexItem = __webpack_require__(240);
-	var RecentReviews = __webpack_require__(241);
-	
-	var SpotIndex = React.createClass({
-	    displayName: 'SpotIndex',
-	
-	    handleItemClick: function (spot) {
-	        this.props.history.pushState(null, "spots/" + spot.id);
-	    },
-	
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            { className: 'recent-reviews' },
-	            React.createElement(RecentReviews, null)
-	        );
-	    }
-	});
-	
-	module.exports = SpotIndex;
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactRouter = __webpack_require__(159);
-	
-	var History = ReactRouter.History;
-	var Link = ReactRouter.Link;
-	
-	String.prototype.capitalizeFirstLetter = function () {
-	    return this.charAt(0).toUpperCase() + this.slice(1);
-	};
-	
-	var SpotIndexItem = React.createClass({
-	    displayName: 'SpotIndexItem',
-	
-	    mixins: [History],
-	    render: function () {
-	        var spot = this.props.spot;
-	        return React.createElement(
-	            'div',
-	            { className: 'spot-index-item', onClick: this.props.onClick },
-	            spot.name,
-	            React.createElement('br', null),
-	            spot.description,
-	            React.createElement('br', null),
-	            'Rating: ',
-	            spot.average_rating || "No reviews yet",
-	            React.createElement('br', null),
-	            React.createElement('img', { src: spot.picture_url })
-	        );
-	    }
-	});
-	
-	module.exports = SpotIndexItem;
-
-/***/ },
+/* 239 */,
+/* 240 */,
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -33754,7 +33683,7 @@
 	          React.createElement(
 	            'a',
 	            { href: '#', className: 'pull-left' },
-	            React.createElement('img', { src: 'assets/flushr-logo.png',
+	            React.createElement('img', { src: '/assets/flushr-logo.png',
 	              height: '50' })
 	          )
 	        ),
@@ -51810,115 +51739,6 @@
 	});
 	
 	module.exports = Footer;
-
-/***/ },
-/* 527 */,
-/* 528 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var Modal = __webpack_require__(276).Modal;
-	var SpotUtil = __webpack_require__(207);
-	var LinkedStateMixin = __webpack_require__(233);
-	
-	var SpotForm = React.createClass({
-	    displayName: 'SpotForm',
-	
-	    mixins: [LinkedStateMixin],
-	    contextTypes: {
-	        router: React.PropTypes.func
-	    },
-	    getInitialState: function () {
-	        return { name: "" };
-	    },
-	
-	    closeModal: function () {
-	        this.props.onHide();
-	    },
-	
-	    handleSubmit: function (event) {
-	        event.preventDefault();
-	        var spot = Object.assign({}, this.state, this._coords());
-	        SpotUtil.createSpot(spot);
-	        this.navigateToSearch();
-	    },
-	
-	    navigateToSearch: function () {
-	        this.props.history.pushState(null, "/");
-	    },
-	
-	    handleCancel: function (event) {
-	        event.preventDefault();
-	        this.navigateToSearch();
-	    },
-	
-	    _coords: function () {
-	        return this.props.location.query;
-	    },
-	
-	    render: function () {
-	        var lat = this._coords().lat,
-	            lng = this._coords().lng;
-	        return React.createElement(
-	            Modal,
-	            null,
-	            React.createElement(
-	                'h3',
-	                null,
-	                'New Restroom Form'
-	            ),
-	            React.createElement(
-	                'form',
-	                { onSubmit: this.handleSubmit },
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Name of Restroom'
-	                    ),
-	                    React.createElement('input', { type: 'name', className: 'form-control', placeholder: 'e.g. Times Square', valueLink: this.linkState('name') })
-	                ),
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Description'
-	                    ),
-	                    React.createElement('input', { type: 'description', className: 'form-control', placeholder: 'e.g. Located on the second floor of the buildling', valueLink: this.linkState('description') })
-	                ),
-	                React.createElement(
-	                    'fieldset',
-	                    { className: 'form-group' },
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Latitude'
-	                    ),
-	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lat }),
-	                    React.createElement(
-	                        'label',
-	                        null,
-	                        'Longitude'
-	                    ),
-	                    React.createElement('input', { type: 'text', className: 'form-control', disabled: 'true', value: lng })
-	                ),
-	                React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Create spot' })
-	            ),
-	            React.createElement('p', null),
-	            React.createElement(
-	                'button',
-	                { type: 'submit', className: 'btn btn-primary', onClick: this.handleCancel },
-	                'Cancel'
-	            )
-	        );
-	    }
-	});
-	
-	module.exports = SpotForm;
 
 /***/ }
 /******/ ]);

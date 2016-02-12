@@ -1,91 +1,91 @@
-var React = require('react');
-var ReactRouter = require('react-router');
-var SpotStore = require('../../stores/spot.js');
-var SpotUtil = require('../../util/spot_util.js');
-var SpotsIndex = require('./SpotsIndex');
-var Map = require('./Map');
-var Search = require('../nav/Search');
+// var React = require('react');
+// var ReactRouter = require('react-router');
+// var SpotStore = require('../../stores/spot.js');
+// var SpotUtil = require('../../util/spot_util.js');
+// var SpotsIndex = require('./SpotsIndex');
+// var Map = require('./Map');
+// var Search = require('../nav/Search');
 
 
-function _getAllSpots() {
-    return SpotStore.all();
-}
+// function _getAllSpots() {
+//     return SpotStore.all();
+// }
 
-var SpotsSearch = React.createClass({
-    contextTypes: {
-        router: React.PropTypes.func
-    },
+// var SpotsSearch = React.createClass({
+//     contextTypes: {
+//         router: React.PropTypes.func
+//     },
 
-    _spotsChanged: function() {
-        this.setState({spots: _getAllSpots()});
-    },
+//     _spotsChanged: function() {
+//         this.setState({spots: _getAllSpots()});
+//     },
 
-    getInitialState: function() {
-        return {
-            spots: _getAllSpots(),
-            clickedLoc: null
-        };
-    },
+//     getInitialState: function() {
+//         return {
+//             spots: _getAllSpots(),
+//             clickedLoc: null
+//         };
+//     },
 
-    _onChange: function() {
-        this.setState({ spots: SpotStore.all() })
-    },
+//     _onChange: function() {
+//         this.setState({ spots: SpotStore.all() })
+//     },
 
-    componentDidMount: function() {
-        this.spotListener = SpotStore.addListener(this._onChange);
-        SpotUtil.fetchSpots();
-    },
+//     componentDidMount: function() {
+//         this.spotListener = SpotStore.addListener(this._onChange);
+//         SpotUtil.fetchSpots();
+//     },
 
-    componentWillUnmount: function() {
-        this.spotListener.remove();
-    },
+//     componentWillUnmount: function() {
+//         this.spotListener.remove();
+//     },
 
-    handleMapClick: function(coords) {
-        this.props.history.pushState(null, "spots/new", coords);
-    },
+//     handleMapClick: function(coords) {
+//         this.props.history.pushState(null, "spots/new", coords);
+//     },
 
-    handleMarkerClick: function (spot) {
-        this.props.history.pushState(null, "spots/" + spot.id);
-    },
+//     handleMarkerClick: function (spot) {
+//         this.props.history.pushState(null, "spots/" + spot.id);
+//     },
 
-    _geoConverter: function(locStr) {
-        var _showMaps = this._showMaps;
-        this.geocoder.geocode({"address": locStr}, function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                var latLng = {
-                    lat: results[0].geometry.location.lat(),
-                    lng: results[0].geometry.location.lng()
-                };
-                _showMaps(latLng);
-            } else {
-                console.log('Geocode was not successful for the following reason: ' + status);
-            }
-        });
-    },
+//     _geoConverter: function(locStr) {
+//         var _showMaps = this._showMaps;
+//         this.geocoder.geocode({"address": locStr}, function(results, status) {
+//             if (status === google.maps.GeocoderStatus.OK) {
+//                 var latLng = {
+//                     lat: results[0].geometry.location.lat(),
+//                     lng: results[0].geometry.location.lng()
+//                 };
+//                 _showMaps(latLng);
+//             } else {
+//                 console.log('Geocode was not successful for the following reason: ' + status);
+//             }
+//         });
+//     },
 
-    _showMaps: function(centerLatLng) {
-        this.setState({
-            showResult: true,
-            centerLatLng: centerLatLng
-        });
-    },
+//     _showMaps: function(centerLatLng) {
+//         this.setState({
+//             showResult: true,
+//             centerLatLng: centerLatLng
+//         });
+//     },
 
-    render: function() {
-        return(
-                <div>
-                    <h4>Your Next Review Awaits</h4>
-                    <Search history={this.props.history} /> <p />
-                    <Map
-                        onMapClick={this.handleMapClick}
-                        onMarkerClick={this.handleMarkerClick}
-                        spots={this.state.spots}/>
-                    <div className = "map">
-                        <SpotsIndex spots={this.state.spots} history={this.props.history} />
-                    </div>
+//     render: function() {
+//         return(
+//                 <div>
+//                     <h4>Your Next Review Awaits</h4>
+//                     <Search history={this.props.history} /> <p />
+//                     <Map
+//                         onMapClick={this.handleMapClick}
+//                         onMarkerClick={this.handleMarkerClick}
+//                         spots={this.state.spots}/>
+//                     <div className = "map">
+//                         <SpotsIndex spots={this.state.spots} history={this.props.history} />
+//                     </div>
 
-                </div>
-        );
-    }
-});
+//                 </div>
+//         );
+//     }
+// });
 
-module.exports = SpotsSearch;
+// module.exports = SpotsSearch;

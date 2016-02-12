@@ -32,7 +32,7 @@ var NavBar = React.createClass({
           </button>
 
           <a href="#" className="pull-left">
-            <img src="assets/flushr-logo.png"
+            <img src="/assets/flushr-logo.png"
                       height="50" />
           </a>
         </div>

@@ -9,7 +9,6 @@ var Redirect = ReactRouter.Redirect;
 
 // components
 var SpotForm = require('./components/spots/SpotsForm');
-var SpotFormModal = require('./components/spots/SpotsFormModal');
 var SpotsSearch = require('./components/spots/SpotsSearch');
 var SpotShow = require('./components/spots/SpotsShow');
 var ReviewForm = require('./components/reviews/ReviewsForm');
