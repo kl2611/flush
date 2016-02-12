@@ -13,6 +13,7 @@ This platform also relies on crowdsourcing so new restroom location information 
 
 ##Design Docs
 DB Schema
+<br />
 Implementation Timeline
 
 ##Bonus Features (TBD)
