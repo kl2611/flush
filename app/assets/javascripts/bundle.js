@@ -31670,7 +31670,6 @@
 	  displayName: 'Map',
 	
 	  _initializeMaps: function (centerLatLng) {
-	    console.log("map mounted");
 	    this.currentCenter = centerLatLng;
 	    var mapEl = ReactDOM.findDOMNode(this.refs.map);
 	
@@ -31692,7 +31691,6 @@
 	  },
 	
 	  componentDidMount: function () {
-	    console.log("Map mounted");
 	    this._initializeMaps(this.props.centerLatLng);
 	
 	    if (this.props.spots) {
@@ -31996,6 +31994,7 @@
 	var SpotUtil = __webpack_require__(207);
 	
 	var Review = __webpack_require__(254);
+	var ReviewStore = __webpack_require__(252);
 	
 	var SpotShow = React.createClass({
 	    displayName: 'SpotShow',
@@ -32021,34 +32020,27 @@
 	    },
 	
 	    componentDidMount: function () {
-	        console.log("did component mount");
-	        this.spotListener = SpotStore.addListener(this.onChange);
-	        SpotUtil.fetchSingleSpot(parseInt(this.props.params.spotId));
-	    },
-	
-	    componentWillUnmount: function () {
-	        this.spotListener.remove();
+	        this.spotListener = SpotStore.addListener(this._spotChanged);
+	        SpotUtil.fetchSpots();
 	    },
 	
 	    componentWillReceiveProps: function (newProps) {
 	        SpotUtil.fetchSingleSpot(parseInt(newProps.params.spotId));
 	    },
 	
-	    onChange: function () {
-	        var spotId = parseInt(this.props.params.spotId);
-	        var current_spot;
-	        if (SpotStore.current()) {
-	            current_spot = SpotStore.current();
-	        }
-	
-	        this.setState({
-	            spot: current_spot
-	        });
+	    componentWillUnmount: function () {
+	        this.spotListener.remove();
 	    },
 	
 	    _spotChanged: function () {
 	        var spotId = this.props.params.spotId;
 	        var spot = this._findSpotById(spotId);
+	
+	        var current_spot;
+	        if (SpotStore.current()) {
+	            current_spot = SpotStore.current();
+	        }
+	
 	        this.setState({ spot: spot });
 	    },
 	
@@ -32058,9 +32050,10 @@
 	            spots.push(this.state.spot);
 	        }
 	
+	        var spot = this.state.spot;
+	
 	        var Link = ReactRouter.Link;
 	        var reviewURL = "/spots/" + this.state.spot.id + "/review";
-	        var locStr = this.props.params.loc;
 	
 	        return React.createElement(
 	            'div',
@@ -32091,8 +32084,7 @@
 	                        { className: 'col-md-4' },
 	                        React.createElement(Map, { className: 'map',
 	                            singleSpot: true,
-	                            spots: spots,
-	                            onMapClick: this.handleMapClick })
+	                            spots: spots })
 	                    )
 	                )
 	            ),
@@ -32839,15 +32831,6 @@
 	                    'label',
 	                    null,
 	                    'Rating'
-	                ),
-	                React.createElement(
-	                    'div',
-	                    { className: 'star-rating' },
-	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '1' }),
-	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '2' }),
-	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '3' }),
-	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '4' }),
-	                    React.createElement('input', { type: 'radio', name: 'example', className: 'rating', value: '5' })
 	                ),
 	                React.createElement('br', null),
 	                React.createElement('input', { type: 'number', valueLink: this.linkState('rating') }),

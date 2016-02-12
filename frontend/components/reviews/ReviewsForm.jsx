@@ -37,16 +37,6 @@ var ReviewForm = React.createClass({
             <div className = "review-form">
                 <form onSubmit={this.handleSubmit}>
                     <label>Rating</label>
-
-            <div className="star-rating">
-                <input type="radio" name="example" className="rating" value="1" />
-                <input type="radio" name="example" className="rating" value="2" />
-                <input type="radio" name="example" className="rating" value="3" />
-                <input type="radio" name="example" className="rating" value="4" />
-                <input type="radio" name="example" className="rating" value="5" />
-            </div>
-
-
                     <br />
                     <input type="number" valueLink={this.linkState('rating')} />
                     <br />

@@ -6,6 +6,7 @@ var Map = require('./Map');
 var SpotUtil = require('../../util/spot_util.js');
 
 var Review = require('../reviews/Review');
+var ReviewStore = require('../../stores/review');
 
 var SpotShow = React.createClass({
     contextTypes: {
@@ -29,34 +30,27 @@ var SpotShow = React.createClass({
     },
 
     componentDidMount: function() {
-        console.log("did component mount");
-        this.spotListener = SpotStore.addListener(this.onChange);
-        SpotUtil.fetchSingleSpot(parseInt(this.props.params.spotId));
+        this.spotListener = SpotStore.addListener(this._spotChanged);
+        SpotUtil.fetchSpots();
+    },
+
+    componentWillReceiveProps: function (newProps) {
+        SpotUtil.fetchSingleSpot(parseInt(newProps.params.spotId));
     },
 
     componentWillUnmount: function () {
         this.spotListener.remove();
     },
 
-    componentWillReceiveProps: function(newProps) {
-        SpotUtil.fetchSingleSpot(parseInt(newProps.params.spotId));
-    },
+    _spotChanged: function () {
+        var spotId = this.props.params.spotId;
+        var spot = this._findSpotById(spotId);
 
-    onChange: function() {
-        var spotId = parseInt(this.props.params.spotId);
         var current_spot;
         if (SpotStore.current()) {
             current_spot = SpotStore.current();
         }
 
-        this.setState({
-            spot: current_spot
-        });
-    },
-
-    _spotChanged: function () {
-        var spotId = this.props.params.spotId;
-        var spot = this._findSpotById(spotId);
         this.setState({ spot: spot });
     },
 
@@ -66,9 +60,10 @@ var SpotShow = React.createClass({
             spots.push(this.state.spot);
         }
 
+        var spot = this.state.spot;
+
         var Link = ReactRouter.Link;
         var reviewURL = "/spots/" + this.state.spot.id + "/review";
-        var locStr = this.props.params.loc;
 
         return (
         <div className="container-fluid">
@@ -85,8 +80,7 @@ var SpotShow = React.createClass({
                     <div className="col-md-4">
                         <Map className="map"
                             singleSpot={true}
-                            spots={spots}
-                            onMapClick={this.handleMapClick} />
+                            spots={spots}/>
                     </div>
                 </div>
             </div>

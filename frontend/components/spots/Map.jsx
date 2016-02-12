@@ -15,7 +15,6 @@ var CENTER = {lat: 40.8081, lng: -73.9621}; // Columbia University campus
 
 var Map = React.createClass({
   _initializeMaps: function(centerLatLng) {
-      console.log("map mounted")
       this.currentCenter = centerLatLng;
       var mapEl = ReactDOM.findDOMNode(this.refs.map);
 
@@ -37,7 +36,6 @@ var Map = React.createClass({
   },
 
   componentDidMount: function() {
-    console.log("Map mounted");
       this._initializeMaps(this.props.centerLatLng);
 
       if (this.props.spots) {
