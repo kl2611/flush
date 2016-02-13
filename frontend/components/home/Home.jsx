@@ -16,7 +16,7 @@ var Home = React.createClass({
                 <div className="jumbotron-container">
                     <div className="jumbotron-header">
                         <h1>FIND PUBLIC RESTROOMS</h1>
-                        <div className=".hidden-sm-down">
+                        <div className="hidden-sm-down">
                             <h2>Wherever in the world you may be.</h2>
 
                             <div className="jumbotron-searchbar">
