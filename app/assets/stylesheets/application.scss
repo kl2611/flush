@@ -18,6 +18,11 @@
 @import 'bootstrap-sprockets';
 @import "bootstrap";
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700);
+@media screen and (max-width: 1024px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
 
 html, body, #root, #app, p, li, span, a {
   font-family: "Roboto", sans-serif;
