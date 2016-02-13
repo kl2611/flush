@@ -33104,6 +33104,7 @@
 	var SpotStore = __webpack_require__(239);
 	var ReviewStore = __webpack_require__(242);
 	var ReviewUtil = __webpack_require__(247);
+	var ListItemRating = __webpack_require__(525);
 	
 	String.prototype.capitalizeFirstLetter = function () {
 	  return this.charAt(0).toUpperCase() + this.slice(1);
@@ -33128,6 +33129,14 @@
 	    this.spotListener = SpotStore.addListener(this.onChange);
 	    this.reviewListener = ReviewStore.addListener(this.onChange);
 	    ReviewUtil.fetchReviews();
+	
+	    $("#spot-rating").rating({ min: "0",
+	      max: "5",
+	      step: "0.5",
+	      showClear: false,
+	      showCaption: false,
+	      readonly: true,
+	      size: "xxs" });
 	  },
 	
 	  onChange: function () {
@@ -33136,6 +33145,10 @@
 	    this.setState({
 	      reviewCount: this.spotReviews.length
 	    });
+	  },
+	
+	  componentWillReceiveProps: function (newProps) {
+	    $("#spot-rating").rating('update', newProps.spot.average_rating);
 	  },
 	
 	  componentWillUnmount: function () {
@@ -33199,11 +33212,7 @@
 	      React.createElement(
 	        'li',
 	        null,
-	        'Rating: ',
-	        spot.average_rating || "No reviews yet",
-	        ' ',
-	        reviewCount,
-	        ' Reviews'
+	        React.createElement(ListItemRating, { spotId: spot.id, rating: spot.average_rating, reviewCount: reviewCount })
 	      ),
 	      React.createElement(
 	        'li',
@@ -33399,11 +33408,42 @@
 	                        )
 	                    ),
 	                    React.createElement(
-	                        'li',
+	                        'table',
 	                        null,
-	                        React.createElement(Rating, { rating: review.rating, ratingId: review.id }),
-	                        ' ',
-	                        review.date
+	                        React.createElement(
+	                            'tbody',
+	                            null,
+	                            React.createElement(
+	                                'tr',
+	                                null,
+	                                React.createElement(
+	                                    'td',
+	                                    { className: 'col' },
+	                                    React.createElement(
+	                                        'ul',
+	                                        { className: 'list-unstyled' },
+	                                        React.createElement(
+	                                            'li',
+	                                            null,
+	                                            React.createElement(Rating, { rating: review.rating, ratingId: review.id })
+	                                        )
+	                                    )
+	                                ),
+	                                React.createElement(
+	                                    'td',
+	                                    { className: 'col' },
+	                                    React.createElement(
+	                                        'ul',
+	                                        { className: 'list-unstyled' },
+	                                        React.createElement(
+	                                            'li',
+	                                            null,
+	                                            review.date
+	                                        )
+	                                    )
+	                                )
+	                            )
+	                        )
 	                    ),
 	                    React.createElement(
 	                        'li',
@@ -51750,6 +51790,100 @@
 	});
 	
 	module.exports = Footer;
+
+/***/ },
+/* 525 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactRouter = __webpack_require__(159);
+	
+	var ListItemRating = React.createClass({
+	  displayName: 'ListItemRating',
+	
+	  componentDidMount: function () {
+	    ratingId = "#list-item-rating-" + this.props.spotId;
+	    $(ratingId).rating({ min: "0",
+	      max: "5",
+	      step: "1",
+	      showClear: false,
+	      showCaption: false,
+	      readonly: true,
+	      size: "xxs" });
+	  },
+	
+	  componentWillReceiveProps: function (newProp) {
+	    ratingId = "#list-item-rating-" + this.props.spotId;
+	    $(ratingId).rating('update', newProp.rating);
+	  },
+	
+	  render: function () {
+	    if (isNaN(this.props.rating)) {
+	      ratingCount = "No rating yet!";
+	    } else {
+	      if (this.props.reviewCount === 1) {
+	        ratingCount = this.props.reviewCount + " review";
+	      } else {
+	        ratingCount = this.props.reviewCount + " reviews";
+	      }
+	    }
+	
+	    ratingId = "list-item-rating-" + this.props.spotId;
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        { className: 'list-unstyled' },
+	        React.createElement(
+	          'table',
+	          null,
+	          React.createElement(
+	            'tbody',
+	            null,
+	            React.createElement(
+	              'tr',
+	              null,
+	              React.createElement(
+	                'td',
+	                { className: 'col' },
+	                React.createElement(
+	                  'ul',
+	                  { className: 'list-unstyled' },
+	                  React.createElement(
+	                    'li',
+	                    null,
+	                    React.createElement('input', { id: ratingId,
+	                      className: 'rating',
+	                      type: 'number',
+	                      min: '1',
+	                      max: '5' })
+	                  )
+	                )
+	              ),
+	              React.createElement(
+	                'td',
+	                { className: 'col' },
+	                React.createElement(
+	                  'ul',
+	                  { className: 'list-unstyled' },
+	                  React.createElement(
+	                    'li',
+	                    null,
+	                    ratingCount
+	                  )
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = ListItemRating;
 
 /***/ }
 /******/ ]);

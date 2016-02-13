@@ -6,6 +6,7 @@ var SpotUtil = require('../../util/spot_util');
 var SpotStore = require('../../stores/spot');
 var ReviewStore = require('../../stores/review');
 var ReviewUtil = require('../../util/review_util');
+var ListItemRating = require('./ListItemRating');
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -28,6 +29,14 @@ var ListItem = React.createClass({
     this.spotListener = SpotStore.addListener(this.onChange);
     this.reviewListener = ReviewStore.addListener(this.onChange);
     ReviewUtil.fetchReviews();
+
+    $("#spot-rating").rating({min: "0",
+                                max: "5",
+                                step: "0.5",
+                                showClear: false,
+                                showCaption: false,
+                                readonly: true,
+                                size: "xxs"});
   },
 
   onChange: function() {
@@ -36,6 +45,10 @@ var ListItem = React.createClass({
     this.setState({
       reviewCount: this.spotReviews.length
     });
+  },
+
+  componentWillReceiveProps: function(newProps) {
+    $("#spot-rating").rating('update', newProps.spot.average_rating);
   },
 
   componentWillUnmount: function() {
@@ -81,7 +94,7 @@ var ListItem = React.createClass({
               {spotImg}
           </div>
               <li><b><Link to={null, "/spots/" + spot.id}>{spot.name}</Link></b></li>
-              <li>Rating: {spot.average_rating || "No reviews yet"} {reviewCount} Reviews</li>
+              <li><ListItemRating spotId={spot.id} rating={spot.average_rating} reviewCount={reviewCount} /></li>
               <li><ul className="list-unstyled list-inline tag-list">{taggingList}</ul></li>
 
       <div className="list-item-description">{spot.description}</div>

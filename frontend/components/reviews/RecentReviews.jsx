@@ -61,7 +61,27 @@ var RecentReviews = React.createClass({
                               width="90"
                               className="img" />
                                 <li>{nameDisplay}{status}<Link to={spotLink} params={{spotId: handleItemClick}}>{review.spot_name.name}:</Link></li>
-                                <li><Rating rating={review.rating} ratingId={review.id}/> {review.date}</li>
+
+                                <table>
+                                    <tbody>
+                                      <tr>
+                                        <td className="col">
+                                          <ul className="list-unstyled">
+                                            <li>
+                                                <Rating rating={review.rating} ratingId={review.id} />
+                                            </li>
+                                          </ul>
+                                        </td>
+
+                                        <td className="col">
+                                          <ul className="list-unstyled">
+                                            <li>{review.date}</li>
+                                          </ul>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+
                                 <li>{review.comment}</li>
                                 <br />
                             </ul>);
