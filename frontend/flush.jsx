@@ -60,5 +60,5 @@ document.addEventListener('DOMContentLoaded', function() {
   // Turbolinks.pagesCached(0);
 
   var root = document.getElementById('root');
-  ReactDOM.render(<Router>{routes}</Router>, root);
+  ReactDOM.render(<Router history={browserHistory}>{routes}</Router>, root);
 });

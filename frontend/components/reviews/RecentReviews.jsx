@@ -75,7 +75,7 @@ var RecentReviews = React.createClass({
 
                                         <td className="col">
                                           <ul className="list-unstyled">
-                                            <li>{review.date}</li>
+                                            <li>  {review.date}</li>
                                           </ul>
                                         </td>
                                       </tr>

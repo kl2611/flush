@@ -5,6 +5,7 @@ var Spot = require('./Spot');
 var Map = require('./Map');
 // var MapDetail = require('./MapDetail');
 var SpotUtil = require('../../util/spot_util.js');
+var BackButton = require('./BackButton');
 
 var Review = require('../reviews/Review');
 var ReviewStore = require('../../stores/review');
@@ -72,10 +73,13 @@ var SpotShow = React.createClass({
                 <div className="row">
 
                     <div className="col-md-8">
-                    <h5><Link to = "/search/">Back to Demo Search Results</Link></h5>
-                        <p />
+                    <p />
 
-                        <Spot spot={this.state.spot} className="map"/>
+                    <h7><Link to = "/search/">Check out demo search results</Link></h7>
+
+                    <p />
+
+                    <Spot spot={this.state.spot} className="map"/>
                     </div>
 
                     <div className="col-md-4">

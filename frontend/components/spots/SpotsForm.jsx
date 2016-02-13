@@ -1,7 +1,9 @@
-
 var React = require('react');
+var ReactRouter = require('react-router');
 var SpotUtil = require('../../util/spot_util.js');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
+var Search = require('../nav/Search');
+var BackButton = require('./BackButton');
 
 var SpotForm = React.createClass({
     mixins: [LinkedStateMixin],
@@ -23,16 +25,19 @@ var SpotForm = React.createClass({
         this.props.history.pushState(null, "/");
     },
 
-    handleCancel: function(event) {
-        event.preventDefault();
-        this.navigateToSearch();
-    },
+    // handleCancel: function(event) {
+    //     event.preventDefault();
+    //     this.navigateToSearch();
+    // },
 
     _coords: function() {
         return this.props.location.query;
     },
 
     render: function() {
+        // old backbutton
+        //<button type="submit" className="btn btn-primary" onClick={this.handleCancel}>Cancel</button>
+
         var lat = this._coords().lat, lng = this._coords().lng;
         return (
         <div className="container-fluid">
@@ -61,8 +66,7 @@ var SpotForm = React.createClass({
                             <input type="submit" className="btn btn-primary" value="Create spot" />
                     </form>
                     <p />
-
-                    <button type="submit" className="btn btn-primary" onClick={this.handleCancel}>Cancel</button>
+                    <BackButton>Cancel</BackButton>
                 </div>
             </div>
         </div>
