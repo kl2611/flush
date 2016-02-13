@@ -12,9 +12,9 @@ This platform also relies on crowdsourcing so new restroom location information 
 - [x] Add new restroom location to map (crowdsourced)
 
 ##Design Docs
-DB Schema
+<a href="https://github.com/kl2611/flushr/blob/master/docs/schema.md">Database Schema</a>
 <br />
-Implementation Timeline
+<a href="https://github.com/kl2611/flushr/blob/master/docs/proposal.md">Project Proposal</a>
 
 ##Code
 ###Backend
