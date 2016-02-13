@@ -1,5 +1,5 @@
 #Proposal
-<a href="http://www.flushr.info">http://flushr.info</a>
+<a href="http://www.flushr.info" target="_blank">http://flushr.info</a>
 
 ##Minimum Viable Product
 Flushr is a web application inspired by Yelp, built with Ruby on Rails and React.js
