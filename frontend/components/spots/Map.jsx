@@ -44,8 +44,9 @@ var Map = React.createClass({
     },
 
   componentWillUnmount: function(){
-    //this.markerListener.remove();
+    this.markerListener.remove();
     console.log("map UNmounted");
+
   },
 
   componentDidUpdate: function (oldProps) {
