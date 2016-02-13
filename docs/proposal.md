@@ -14,7 +14,7 @@ Features include:
 - [x] Add new restroom location to map (crowdsourced)
 
 ##Design
-Database Schema
+<a href="https://github.com/kl2611/flushr/blob/master/docs/schema.md">Database Schema</a>
 
 ##Implementation Timeline
 ###Phase 1: User Authentication and JSON API (1 day)
