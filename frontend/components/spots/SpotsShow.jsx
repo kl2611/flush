@@ -87,7 +87,7 @@ var SpotShow = React.createClass({
             </div>
 
             <div className="container-spots-show">
-                {this.props.children || <Link to={reviewURL}><strong>Leave a Review</strong></Link>}
+                {this.props.children || <button type="button" className="btn btn-default"><Link to={reviewURL}>Leave a Review</Link></button>}
             </div>
             <p />
         </div>
