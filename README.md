@@ -16,6 +16,17 @@ DB Schema
 <br />
 Implementation Timeline
 
+##Code
+###Backend
+- Ruby on Rails with PostgreSQL
+- Controllers handle data through JSON API upon AJAX requests
+
+###Frontend
+- Single page app powered by React, ReactRouter, and Flux
+- SessionStore to manage user login/logout status
+- Bootstrap for site layout and component placement
+- jQuery for AJAX requests
+
 ##Bonus Features (TBD)
 - [ ] Add photos for restroom location
 - [ ] Edit personal profile (profile picture and basic details)
