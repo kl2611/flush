@@ -37,3 +37,8 @@ Navigation bar stays constant and does not redirect users after logging in/out. 
 
 ###Phase 6: Styling Cleanup and Seed Data (2 days)
 Create more seed data. Add stars to number ratings. Ensure consistency of layout and design logo and perfecting the UI.
+
+##Bonus Features
+- [ ] Add photos for restroom location
+- [ ] Edit personal profile (profile picture and basic details)
+- [ ] Sort restrooms based on distance, review ratings, and number of reviews
