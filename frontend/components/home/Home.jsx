@@ -16,14 +16,16 @@ var Home = React.createClass({
                 <div className="jumbotron-container">
                     <div className="jumbotron-header">
                         <h1>FIND PUBLIC RESTROOMS</h1>
-                        <h2>Wherever in the world you may be.</h2>
+                        <div className=".hidden-sm-down">
+                            <h2>Wherever in the world you may be.</h2>
 
-                        <div className="jumbotron-searchbar">
-                            <HomeSearchbar history={this.props.history}/>
-                        </div>
+                            <div className="jumbotron-searchbar">
+                                <HomeSearchbar history={this.props.history}/>
+                            </div>
 
-                        <div className="jumbotron-img">
-                            <img src="assets/flushr-logo.png" height="90" />
+                            <div className="jumbotron-img">
+                                <img src="assets/flushr-logo.png" height="90" />
+                            </div>
                         </div>
                     </div>
 
