@@ -51632,7 +51632,7 @@
 	  render: function () {
 	    return React.createElement(
 	      "footer",
-	      { className: "footer" },
+	      { className: "footer hide-mobile" },
 	      React.createElement(
 	        "section",
 	        { className: "footer-wrapper container" },

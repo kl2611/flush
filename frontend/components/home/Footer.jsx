@@ -10,7 +10,7 @@ var Footer = React.createClass({
 
   render: function () {
     return (
-      <footer className="footer">
+      <footer className="footer hide-mobile">
         <section className="footer-wrapper container">
           <ul className="footer-nav">
             <a className="logo" onClick={ this.goToHome }>Flushr</a>
