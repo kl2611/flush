@@ -25,7 +25,7 @@ var Footer = React.createClass({
 
           <ul className="footer-nav">
             <h5>DISCOVER</h5>
-            <li><a>Flushr Blog</a></li>
+            <li><a>Blog</a></li>
             <li><a>Support</a></li>
             <li><a>Developers</a></li>
           </ul>
@@ -33,15 +33,11 @@ var Footer = React.createClass({
           <ul className="footer-nav">
             <h5>CONTACT</h5>
             <li>
-              <a target="_blank" href="https://github.com/kl2611">
-                GitHub
-              </a>
+                <a>GitHub</a>
             </li>
 
             <li>
-              <a target="_blank" href="https://www.linkedin.com/in/kellyliu1">
-                LinkedIn
-              </a>
+                <a>LinkedIn</a>
             </li>
 
           </ul>

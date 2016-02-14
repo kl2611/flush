@@ -91,7 +91,7 @@ var RandomReview = React.createClass({
 
         return (
                 <div className="review-of-the-day">
-                    <h4>Reviews of the Day</h4>
+                    <h4>Review of the Day</h4>
                     <hr />
                     <div className="wrapper">
                         <img src={imgSource}
