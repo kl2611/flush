@@ -8,8 +8,6 @@ var Dropdown = require('./SearchDropdown');
 var SearchBar = React.createClass({
 
     getInitialState: function() {
-        // this.styleSheetShow = document.createElement('style');
-        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
         return ({
             loc: "",
             placeholder: "Address, neighborhood, city, state or zip",

@@ -55,7 +55,6 @@
 	
 	// components
 	var SpotForm = __webpack_require__(206);
-	var SpotsSearch = __webpack_require__(240);
 	var SpotShow = __webpack_require__(241);
 	var ReviewForm = __webpack_require__(249);
 	var Review = __webpack_require__(247);
@@ -107,8 +106,6 @@
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  // checkLibStatus();
-	  // Turbolinks.pagesCached(0);
-	
 	  var root = document.getElementById('root');
 	  ReactDOM.render(React.createElement(
 	    Router,
@@ -31324,8 +31321,6 @@
 	    displayName: 'SearchBar',
 	
 	    getInitialState: function () {
-	        // this.styleSheetShow = document.createElement('style');
-	        // this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
 	        return {
 	            loc: "",
 	            placeholder: "Address, neighborhood, city, state or zip",
@@ -31491,101 +31486,7 @@
 	module.exports = BackButton;
 
 /***/ },
-/* 240 */
-/***/ function(module, exports) {
-
-	// var React = require('react');
-	// var ReactRouter = require('react-router');
-	// var SpotStore = require('../../stores/spot.js');
-	// var SpotUtil = require('../../util/spot_util.js');
-	// var SpotsIndex = require('./SpotsIndex');
-	// var Map = require('./Map');
-	// var Search = require('../nav/Search');
-
-	// function _getAllSpots() {
-	//     return SpotStore.all();
-	// }
-
-	// var SpotsSearch = React.createClass({
-	//     contextTypes: {
-	//         router: React.PropTypes.func
-	//     },
-
-	//     _spotsChanged: function() {
-	//         this.setState({spots: _getAllSpots()});
-	//     },
-
-	//     getInitialState: function() {
-	//         return {
-	//             spots: _getAllSpots(),
-	//             clickedLoc: null
-	//         };
-	//     },
-
-	//     _onChange: function() {
-	//         this.setState({ spots: SpotStore.all() })
-	//     },
-
-	//     componentDidMount: function() {
-	//         this.spotListener = SpotStore.addListener(this._onChange);
-	//         SpotUtil.fetchSpots();
-	//     },
-
-	//     componentWillUnmount: function() {
-	//         this.spotListener.remove();
-	//     },
-
-	//     handleMapClick: function(coords) {
-	//         this.props.history.pushState(null, "spots/new", coords);
-	//     },
-
-	//     handleMarkerClick: function (spot) {
-	//         this.props.history.pushState(null, "spots/" + spot.id);
-	//     },
-
-	//     _geoConverter: function(locStr) {
-	//         var _showMaps = this._showMaps;
-	//         this.geocoder.geocode({"address": locStr}, function(results, status) {
-	//             if (status === google.maps.GeocoderStatus.OK) {
-	//                 var latLng = {
-	//                     lat: results[0].geometry.location.lat(),
-	//                     lng: results[0].geometry.location.lng()
-	//                 };
-	//                 _showMaps(latLng);
-	//             } else {
-	//                 console.log('Geocode was not successful for the following reason: ' + status);
-	//             }
-	//         });
-	//     },
-
-	//     _showMaps: function(centerLatLng) {
-	//         this.setState({
-	//             showResult: true,
-	//             centerLatLng: centerLatLng
-	//         });
-	//     },
-
-	//     render: function() {
-	//         return(
-	//                 <div>
-	//                     <h4>Your Next Review Awaits</h4>
-	//                     <Search history={this.props.history} /> <p />
-	//                     <Map
-	//                         onMapClick={this.handleMapClick}
-	//                         onMarkerClick={this.handleMarkerClick}
-	//                         spots={this.state.spots}/>
-	//                     <div className = "map">
-	//                         <SpotsIndex spots={this.state.spots} history={this.props.history} />
-	//                     </div>
-
-	//                 </div>
-	//         );
-	//     }
-	// });
-
-	// module.exports = SpotsSearch;
-
-/***/ },
+/* 240 */,
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -31594,7 +31495,6 @@
 	var SpotStore = __webpack_require__(242);
 	var Spot = __webpack_require__(243);
 	var Map = __webpack_require__(255);
-	// var MapDetail = require('./MapDetail');
 	var SpotUtil = __webpack_require__(207);
 	var BackButton = __webpack_require__(239);
 	
@@ -31785,7 +31685,6 @@
 	var History = ReactRouter.History;
 	var LinkedStateMixin = __webpack_require__(233);
 	
-	var ReviewIndex = __webpack_require__(244);
 	var ReviewStore = __webpack_require__(245);
 	var Review = __webpack_require__(247);
 	
@@ -31872,55 +31771,7 @@
 	module.exports = Spot;
 
 /***/ },
-/* 244 */
-/***/ function(module, exports) {
-
-	// var React = require('react');
-	// var ReactRouter = require('react-router');
-	// var ReviewUtil = require('../../util/review_util');
-	// var ReviewStore = require('../../stores/review');
-	// var ReviewIndexItem = require('./ReviewsIndexItem');
-
-	// var ReviewIndex = React.createClass({
-	//     getInitialState: function() {
-	//         return ({ allReviews: [] });
-	//     },
-
-	//     componentDidMount: function() {
-	//         reviewListener = ReviewStore.addListener(this.onChange);
-	//         ReviewUtil.fetchReviews();
-	//     },
-
-	//     componentWillUnmount: function() {
-	//         reviewListener.remove();
-	//     },
-
-	//     onChange: function() {
-	//         this.setState({ allReviews: ReviewStore.all() });
-	//     },
-
-	//     render: function() {
-	//         var reviews = this.props.reviews;
-
-	//         if (reviews.length === 0) {
-	//             reviewDisplay = <div>You are the first to review</div>
-	//         } else {
-	//             reviewDisplay = <div>
-	//                 {this.state.reviews.map(function(review) {
-	//                     return <ReviewIndexItem key={review.id} {...review} reviewCount={reviewCount} />;
-	//                 })}
-	//             </div>
-	//         }
-
-	//         return (
-	//             <div>{reviewDisplay}</div>
-	//         );
-	//     }
-	// });
-
-	// module.exports = ReviewIndex;
-
-/***/ },
+/* 244 */,
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -33409,7 +33260,6 @@
 	// var SpotUtil = require('../../util/spot_util.js');
 	var RecentReviews = __webpack_require__(264);
 	var RandomReview = __webpack_require__(266);
-	// var UserInfo = require('../nav/UserInfo');
 	
 	var LandingPage = React.createClass({
 	    displayName: 'LandingPage',
@@ -33814,7 +33664,6 @@
 	var React = __webpack_require__(1);
 	var ApiUtil = __webpack_require__(269);
 	var ReactRouter = __webpack_require__(159);
-	// var UserInfo = require('./UserInfo');
 	var SearchBar = __webpack_require__(237);
 	// var LoggedOut = require("./logged_out");
 	var NavUserIndex = __webpack_require__(272);

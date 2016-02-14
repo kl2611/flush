@@ -3,7 +3,6 @@ var ReactRouter = require('react-router');
 var SpotStore = require('../../stores/spot');
 var Spot = require('./Spot');
 var Map = require('./Map');
-// var MapDetail = require('./MapDetail');
 var SpotUtil = require('../../util/spot_util.js');
 var BackButton = require('./BackButton');
 

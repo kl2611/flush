@@ -2,7 +2,6 @@ var ReactDOM = require('react-dom');
 var React = require('react');
 var ApiUtil = require('../../util/api_util');
 var ReactRouter = require('react-router');
-// var UserInfo = require('./UserInfo');
 var SearchBar = require('./Search');
 // var LoggedOut = require("./logged_out");
 var NavUserIndex = require('./NavUserIndex');

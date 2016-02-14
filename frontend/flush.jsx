@@ -9,7 +9,6 @@ var Redirect = ReactRouter.Redirect;
 
 // components
 var SpotForm = require('./components/spots/SpotsForm');
-var SpotsSearch = require('./components/spots/SpotsSearch');
 var SpotShow = require('./components/spots/SpotsShow');
 var ReviewForm = require('./components/reviews/ReviewsForm');
 var Review = require('./components/reviews/Review');
@@ -57,8 +56,6 @@ var checkLibStatus = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   // checkLibStatus();
-  // Turbolinks.pagesCached(0);
-
   var root = document.getElementById('root');
   ReactDOM.render(<Router history={browserHistory}>{routes}</Router>, root);
 });

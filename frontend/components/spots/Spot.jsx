@@ -3,7 +3,6 @@ var ReactRouter = require('react-router');
 var History = ReactRouter.History;
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 
-var ReviewIndex = require('../reviews/ReviewsIndex');
 var ReviewStore = require('../../stores/review');
 var Review = require('../reviews/Review');
 
