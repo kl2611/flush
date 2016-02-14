@@ -16,12 +16,12 @@ var TagActions = {
         });
     },
 
-    receiveQueryTags: function(tags) {
-        AppDispatcher.dispatch({
-            actionType: TagConstants.QUERIED_TAGS_RECEIVED,
-            tags: tags
-        });
-    }
+    // receiveQueryTags: function(tags) {
+    //     AppDispatcher.dispatch({
+    //         actionType: TagConstants.QUERIED_TAGS_RECEIVED,
+    //         tags: tags
+    //     });
+    // }
 };
 
 module.exports = TagActions;

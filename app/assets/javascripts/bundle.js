@@ -32565,10 +32565,10 @@
 	            addTag(payload.tag);
 	            TagStore.__emitChange();
 	            break;
-	        case TagConstants.QUERIED_TAGS_RECEIVED:
-	            resetQueriedTags(payload.tags);
-	            TagStore.__emitChange();
-	            break;
+	        // case TagConstants.QUERIED_TAGS_RECEIVED:
+	        //     resetQueriedTags(payload.tags);
+	        //     TagStore.__emitChange();
+	        //     break;
 	    }
 	};
 	
@@ -32584,9 +32584,9 @@
 	    return _tags.slice(0);
 	};
 	
-	TagStore.queriedTags = function () {
-	    return _queriedTags.slice(0);
-	};
+	// TagStore.queriedTags = function() {
+	//     return _queriedTags.slice(0);
+	// }
 	
 	module.exports = TagStore;
 
@@ -32596,10 +32596,10 @@
 
 	TagConstants = {
 	    TAGS_RECEIVED: "TAGS_RECEIVED",
-	    TAG_RECEIVED: "TAG_RECEIVED",
-	    QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED"
+	    TAG_RECEIVED: "TAG_RECEIVED"
 	};
 	
+	// QUERIED_TAGS_RECEIVED: "QUERIED_TAGS_RECEIVED",
 	module.exports = TagConstants;
 
 /***/ },

@@ -71,7 +71,6 @@ var ListItem = React.createClass({
       spotImg = <img src="https://res.cloudinary.com/kellyliu/image/upload/v1455005227/icon-default2_hxc6mt.jpg" width="100" height="100" />
     }
 
-
     var taggings = this.props.spot.taggings;
 
     if(taggings === undefined || taggings.length === 0) {

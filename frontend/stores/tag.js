@@ -28,10 +28,10 @@ TagStore.__onDispatch = function(payload) {
             addTag(payload.tag);
             TagStore.__emitChange();
             break;
-        case TagConstants.QUERIED_TAGS_RECEIVED:
-            resetQueriedTags(payload.tags);
-            TagStore.__emitChange();
-            break;
+        // case TagConstants.QUERIED_TAGS_RECEIVED:
+        //     resetQueriedTags(payload.tags);
+        //     TagStore.__emitChange();
+        //     break;
     }
 };
 
@@ -47,8 +47,8 @@ TagStore.all = function() {
     return _tags.slice(0);
 };
 
-TagStore.queriedTags = function() {
-    return _queriedTags.slice(0);
-}
+// TagStore.queriedTags = function() {
+//     return _queriedTags.slice(0);
+// }
 
 module.exports = TagStore;
