@@ -51407,16 +51407,15 @@
 	                    null,
 	                    React.createElement('input', { type: 'checkbox', value: 'remember-me' }),
 	                    'Remember me'
-	                ),
-	                React.createElement(
-	                    'button',
-	                    {
-	                        className: 'btn btn-success',
-	                        type: 'button',
-	                        style: { float: "right" },
-	                        onClick: this.fillOutLogin },
-	                    'Demo Account'
 	                )
+	            ),
+	            React.createElement(
+	                'button',
+	                {
+	                    className: 'btn btn-info btn-block',
+	                    type: 'button',
+	                    onClick: this.fillOutLogin },
+	                'Demo Account'
 	            ),
 	            React.createElement(
 	                'button',

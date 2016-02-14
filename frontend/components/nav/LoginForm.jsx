@@ -83,16 +83,14 @@ var LoginForm = React.createClass({
                         <input type="checkbox" value="remember-me"></input>
                          Remember me
                     </label>
-
-                    <button
-                        className="btn btn-success"
-                        type="button"
-                        style={{float: "right"}}
-                        onClick={this.fillOutLogin}>
-                        Demo Account
-                    </button>
-
                 </div>
+
+                <button
+                    className="btn btn-info btn-block"
+                    type="button"
+                    onClick={this.fillOutLogin}>
+                    Demo Account
+                </button>
 
                 <button
                     className="btn btn-lg btn-primary btn-block"
