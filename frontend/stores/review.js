@@ -163,7 +163,7 @@ ReviewStore.spotReviewsFromAll = function(spotId) {
 };
 
 ReviewStore.findBySpotLimit = function() {
-    return _spotReviews.slice(0, 1);
+    return _spotReviews.slice(0, 3);
 };
 
 ReviewStore.findMySpotReview = function(spotId) {

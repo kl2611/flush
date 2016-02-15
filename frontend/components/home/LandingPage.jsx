@@ -1,7 +1,5 @@
 var React = require('react');
 var Search = require('../nav/Search');
-// var SpotStore = require('../../stores/spot.js');
-// var SpotUtil = require('../../util/spot_util.js');
 var RecentReviews = require('../reviews/RecentReviews');
 var RandomReview = require('../reviews/RandomReview');
 

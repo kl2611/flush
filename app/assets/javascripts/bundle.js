@@ -31940,7 +31940,7 @@
 	};
 	
 	ReviewStore.findBySpotLimit = function () {
-	    return _spotReviews.slice(0, 1);
+	    return _spotReviews.slice(0, 3);
 	};
 	
 	ReviewStore.findMySpotReview = function (spotId) {
@@ -33256,8 +33256,6 @@
 
 	var React = __webpack_require__(1);
 	var Search = __webpack_require__(237);
-	// var SpotStore = require('../../stores/spot.js');
-	// var SpotUtil = require('../../util/spot_util.js');
 	var RecentReviews = __webpack_require__(264);
 	var RandomReview = __webpack_require__(266);
 	
@@ -51744,7 +51742,7 @@
 	            null,
 	            React.createElement(
 	              "a",
-	              null,
+	              { href: "http://www.github.com/kl2611", target: "_blank" },
 	              "GitHub"
 	            )
 	          ),
@@ -51753,8 +51751,17 @@
 	            null,
 	            React.createElement(
 	              "a",
-	              null,
+	              { href: "http://www.linkedin.com/in/kellyliu1", target: "_blank" },
 	              "LinkedIn"
+	            )
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(
+	              "a",
+	              { href: "http://www.kellyliu.me", target: "_blank" },
+	              "Website"
 	            )
 	          )
 	        )

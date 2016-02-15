@@ -33,11 +33,15 @@ var Footer = React.createClass({
           <ul className="footer-nav">
             <h5>CONTACT</h5>
             <li>
-                <a>GitHub</a>
+                <a href="http://www.github.com/kl2611" target="_blank">GitHub</a>
             </li>
 
             <li>
-                <a>LinkedIn</a>
+                <a href="http://www.linkedin.com/in/kellyliu1" target="_blank">LinkedIn</a>
+            </li>
+
+            <li>
+              <a href="http://www.kellyliu.me" target="_blank">Website</a>
             </li>
 
           </ul>
