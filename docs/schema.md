@@ -1,6 +1,6 @@
-#Schema
+# Schema
 
-##users
+## users
 | column name    | data type     | details                   |
 | -------------  | ------------- | --------------------------|
 | id             | integer       |  not null, primary key    |
@@ -8,7 +8,7 @@
 | password_digest| string        |  not null                 |
 | session_token  | string        |  not null, indexed, unique|
 
-##reviews
+## reviews
 | column name   | data type     | details                                          |
 | ------------- | ------------- | -------------------------------------------------|
 | id            | integer       | not null, primary key                            |
@@ -17,7 +17,7 @@
 | rating        | integer       | not null, inclusion validation (1-5)             |
 | comment       | string        | not null                                         |
 
-##spots
+## spots
 | column name   | data type     | details               |
 | ------------- | ------------- | ----------------------|
 | id            | integer       | not null, primary key |
@@ -26,7 +26,7 @@
 | lat           | integer       | not null              |
 | lng           | integer       | not null              |
 
-##pictures
+## pictures
 | column name   | data type     | details                                |
 | ------------- | ------------- | ---------------------------------------|
 | id            | integer       | not null, primary key                  |
@@ -34,7 +34,7 @@
 | imageable_id  | integer       | not null, foreign key (references user)|
 | imageable_type| string        | not null                               |
 
-##tags
+## tags
 | column name   | data type     | details                                          |
 | ------------- | ------------- | -------------------------------------------------|
 | id            | integer       | not null, primary key                            |
